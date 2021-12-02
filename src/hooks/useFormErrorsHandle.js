@@ -17,9 +17,7 @@ export const useFormErrorsHandle = (data, rules, customMessages) => {
                     setErrors(err =>( {...err, [key]: errors}))
           }
 
-          const checkFieldData = (e) => {
-                    e.preventDefault()
-                    const name = e.target.name
+          const checkFieldData = (name) => {
                     const errors = validation.getError(name)
                     if(errors?.length !== 0) {
                               setError(name, errors)

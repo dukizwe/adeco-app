@@ -32,13 +32,14 @@ export default function Login() {
           const submitForm = async () => {
                     setLoading(true)
                     try  {
-                              const { user } = await fetchApi('http://app.mediabox.bi:3140/login', {
+                              /* const { user } = await fetchApi('http://app.mediabox.bi:3140/login', {
                                         method: 'POST',
                                         body: JSON.stringify({email: credetials.email, password: credetials.password}),
                                         headers: {
                                                   'Content-Type': 'application/json'
                                         }
-                              })
+                              }) */
+                              const user = {email: credetials.email, password: credetials.password}
                               setLoading(false)
                               await AsyncStorage.setItem('user', JSON.stringify(user))
                               dispatch(setUserAction(user))

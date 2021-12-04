@@ -9,6 +9,7 @@ import styles, { primaryColor } from './styles'
 export default function Welcome() {
           const navigation = useNavigation()
           const goToLogin = () => navigation.navigate('Login')
+          const goToRegister = () => navigation.navigate('Register')
           return (
                     <NativeBaseProvider>
                               <Center flex={1} px='3' backgroundColor="#F2F5FE">
@@ -23,7 +24,7 @@ export default function Welcome() {
                                                             </Text> */}
                                                             <View style={styles.actions}>
                                                                       <Button onPress={goToLogin} size='lg' w="full" style={styles.login} py={4} backgroundColor={primaryColor} _text={{ fontSize: 18}} borderRadius={10}>Se connecter</Button>
-                                                                      <Button size='lg' w="full" style={styles.register} variant='outline' py={4} _text={{ color: '#333', fontSize: 18}}  borderColor={primaryColor} borderRadius={10}>S'inscrire</Button>
+                                                                      <Button onPress={goToRegister} size='lg' w="full" style={styles.register} variant='outline' py={4} _text={{ color: 'muted.500', fontSize: 18}}  borderColor={primaryColor} borderRadius={10}>S'inscrire</Button>
                                                             </View>
                                                   </Center>
                                         </View>

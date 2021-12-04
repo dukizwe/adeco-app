@@ -7,59 +7,45 @@ const styles = StyleSheet.create({
                     alignItems: 'center',
                     alignContent: 'center',
                     paddingTop: 45,
-                    paddingLeft: 15,
-                    paddingRight: 15,
-                    borderBottomColor: '#ddd',
-                    paddingVertical: 5,
-                    borderBottomWidth: 1,
+                    paddingHorizontal: 30,
+                    paddingBottom: 20,
+                    backgroundColor: '#fff'
           },
-          craText: {
-                    fontSize: 25,
-                    fontWeight: 'bold'
-          },
-          logoImage: {
-                    width: 50,
-                    height: 50
-          },
-          image: {
-                    width: '100%',
-                    height: '100%',
-                    resizeMode: 'contain'
-          },
-          connectedUser: {
+          headerRight: {
                     flexDirection: 'row',
                     alignItems: 'center',
-                    borderWidth: 1,
-                    borderColor: '#ddd',
-                    marginBottom: 5,
-                    borderRadius: 10,
-                    padding: 5
-          },
-          userIcon: {
-                    width: 30,
-                    height: 30,
-                    borderRadius: 50,
-                    borderWidth: 1,
-                    borderColor: '#ddd',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-          },
-          username: {
-                    fontWeight: 'bold',
-                    fontSize: 20,
-                    marginLeft: 5
-          },
-          largeUser: {
                     alignContent: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderBottomColor: '#ddd',
-                    borderBottomWidth: 1
+                    flex: 1
           },
-          userNames: {
-                    fontWeight: 'bold',
+          userImageContainer: {
+                    width: 50,
+                    height: 50,
+          },
+          userImage: {
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 50
+          },
+          nameRole: {
+                    marginLeft: 10
+          },
+          name: {
                     fontSize: 16,
-                    marginTop: 5
+                    fontWeight: 'bold'
+          },
+          role: {
+                    fontSize: 13,
+                    color: '#000',
+                    opacity: 0.6
+          },
+          badge: {
+                    width: 5,
+                    height: 5,
+                    borderRadius: 100,
+                    backgroundColor: 'red',
+                    position: 'absolute',
+                    top: -3,
+                    left: 20
           }
 })
 

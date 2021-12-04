@@ -79,13 +79,13 @@ const styles = StyleSheet.create({
           },
           tabBar: {
                     backgroundColor: '#fff',
-                    height: 70,
+                    height: 80,
                     width: '100%',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     alignContent: 'center',
-                    padding: 0,
+                    paddingVertical: 0,
                     elevation: 1
           },
           tab: {
@@ -93,27 +93,30 @@ const styles = StyleSheet.create({
                     width: width / 3,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    paddingVertical: 10
+                    paddingVertical: 20
           },
           badge: {
                     position: 'absolute',
                     right: -15,
                     top: -10,
                     backgroundColor: '#f53636',
-                    padding: 5,
                     width: 20,
                     height: 20,
                     borderRadius: 100,
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    alignContent: 'center'
           },
           badgeText: {
                     color: '#fff',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    fontSize: 11
           },
           image: {
                     width: 50,
                     height: 50,
-                    borderRadius: 50
+                    borderRadius: 50,
+                    backgroundColor: '#b2d4db',
+                    padding: 5
           }
 })

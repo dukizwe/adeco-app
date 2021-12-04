@@ -66,53 +66,51 @@ export default function Login() {
 
           }
           return (
-                    <NativeBaseProvider>
-                              <Center flex={1} px='3' backgroundColor="#F2F5FE">
-                                        <View style={styles.card}>
-                                                  <Center flex={1}>
-                                                            <Heading mt={5} mb={5} style={{ fontSize: 25}} >Connexion</Heading>
-                                                            {/* <Text>{JSON.stringify(getErrors())}</Text> */}
-                                                            <View style={styles.form}>
-                                                                      <Input isInvalid={hasError('email')} keyboardType='email-address' primaryColor='#000' placeholder="Email" w='full' size='lg' py={3} InputLeftElement={
-                                                                                <Icon
-                                                                                          as={<MaterialIcons name="email" />}
-                                                                                          size={5}
-                                                                                          ml="2"
-                                                                                          color="muted.400"
-                                                                                />}
-                                                                                
-                                                                                value={credetials.email}
-                                                                                onChangeText={newValue => handleChange('email', newValue)}
-                                                                                onBlur={e => checkFieldData('email')}
-                                                                      />
-                                                                      {hasError('email') && <Text style={{color: 'red', fontSize: 13}}>{getError('email')}</Text>}
+                    <Center flex={1} px='3' backgroundColor="#F2F5FE">
+                              <View style={styles.card}>
+                                        <Center flex={1}>
+                                                  <Heading mt={5} mb={5} style={{ fontSize: 25}} >Connexion</Heading>
+                                                  {/* <Text>{JSON.stringify(getErrors())}</Text> */}
+                                                  <View style={styles.form}>
+                                                            <Input isInvalid={hasError('email')} keyboardType='email-address' primaryColor='#000' placeholder="Email" w='full' size='lg' py={3} InputLeftElement={
+                                                                      <Icon
+                                                                                as={<MaterialIcons name="email" />}
+                                                                                size={5}
+                                                                                ml="2"
+                                                                                color="muted.400"
+                                                                      />}
+                                                                      
+                                                                      value={credetials.email}
+                                                                      onChangeText={newValue => handleChange('email', newValue)}
+                                                                      onBlur={e => checkFieldData('email')}
+                                                            />
+                                                            {hasError('email') && <Text style={{color: 'red', fontSize: 13}}>{getError('email')}</Text>}
 
-                                                                      <Input isInvalid={hasError('password')} type={show ? 'text' : 'password'} mt={5} placeholder="Mot de passe" size='lg' py={3} InputLeftElement={
+                                                            <Input isInvalid={hasError('password')} type={show ? 'text' : 'password'} mt={5} placeholder="Mot de passe" size='lg' py={3} InputLeftElement={
+                                                                      <Icon
+                                                                                as={<MaterialIcons name="lock" />}
+                                                                                size={5}
+                                                                                ml="2"
+                                                                                color="muted.400"
+                                                                      />}
+                                                                      value={credetials.password}
+                                                                      onChangeText={newValue => handleChange('password', newValue)}
+                                                                      onBlur={e => checkFieldData('password')}
+                                                                      InputRightElement={
                                                                                 <Icon
-                                                                                          as={<MaterialIcons name="lock" />}
-                                                                                          size={5}
-                                                                                          ml="2"
+                                                                                          as={<MaterialIcons name={show ? "visibility" : "visibility-off"} onPress={() => setShow(s => !s)}/>}
+                                                                                          size={8}
+                                                                                          mr="2"
                                                                                           color="muted.400"
                                                                                 />}
-                                                                                value={credetials.password}
-                                                                                onChangeText={newValue => handleChange('password', newValue)}
-                                                                                onBlur={e => checkFieldData('password')}
-                                                                                InputRightElement={
-                                                                                          <Icon
-                                                                                                    as={<MaterialIcons name={show ? "visibility" : "visibility-off"} onPress={() => setShow(s => !s)}/>}
-                                                                                                    size={8}
-                                                                                                    mr="2"
-                                                                                                    color="muted.400"
-                                                                                          />}
-                                                                      />
-                                                                      {hasError('password') && <Text style={{color: 'red', fontSize: 13}}>{getError('password')}</Text>}
-                                                            </View>
-                                                            <View style={styles.actions}>
-                                                                      <Button isDisabled={credetials.email == '' || credetials.password == ''} isLoading={loading} onPress={submitForm} size='lg' w="full" style={styles.login} py={4} backgroundColor={primaryColor} _text={{ fontSize: 18}} borderRadius={10}>Se connecter</Button>
-                                                            </View>
-                                                  </Center>
-                                        </View>
-                              </Center>
-                    </NativeBaseProvider>
+                                                            />
+                                                            {hasError('password') && <Text style={{color: 'red', fontSize: 13}}>{getError('password')}</Text>}
+                                                  </View>
+                                                  <View style={styles.actions}>
+                                                            <Button isDisabled={credetials.email == '' || credetials.password == ''} isLoading={loading} onPress={submitForm} size='lg' w="full" style={styles.login} py={4} backgroundColor={primaryColor} _text={{ fontSize: 18}} borderRadius={10}>Se connecter</Button>
+                                                  </View>
+                                        </Center>
+                              </View>
+                    </Center>
           )
 }

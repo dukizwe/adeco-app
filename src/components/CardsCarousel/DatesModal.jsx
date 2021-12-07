@@ -2,9 +2,13 @@ import React, { useState } from 'react'
 import { Modal } from 'native-base'
 import { StyleSheet, Text, TextInput, TouchableNativeFeedback, View } from 'react-native'
 import randomInt from '../../helpers/randomInt'
-import { entries } from './CardsCarousel'
 import { AntDesign } from '@expo/vector-icons'; 
 
+const years = []
+const currentYear = new Date().getFullYear()
+for(let i = currentYear; i >= currentYear - 5; i--) {
+          years.push(i)
+}
 export default function DatesModal({ showModal, setShowModal }) {
           return (<Modal isOpen={showModal} onClose={() => setShowModal(false)} size='xl'>
                     <Modal.Content maxWidth="400px">
@@ -13,14 +17,14 @@ export default function DatesModal({ showModal, setShowModal }) {
                                         <View style={styles.modalItem}>
                                                   <TextInput placeholder="Recherche..." style={styles.inputStyles} />
                                         </View>
-                                        {entries.map((item, i) =>
+                                        {years.map((year, i) =>
                                                   <TouchableNativeFeedback
                                                             key={i.toString()}
                                                             accessibilityRole="button"
                                                             onPress={() => setShowModal(false)}
                                                             background={TouchableNativeFeedback.Ripple('#c9c5c5', false)}>
                                                                       <View style={styles.modalItem}>
-                                                                                <Text style={styles.modalItemLabel} numberOfLines={2}>17 sep, 2021</Text>
+                                                                                <Text style={styles.modalItemLabel} numberOfLines={2}>{year}</Text>
                                                                                 <View style={styles.checkSqaure}>{randomInt(1, 5) == i+1 && <AntDesign name="check" size={18} color="black" />}</View>
                                                                       </View>
                                                   </TouchableNativeFeedback>)}

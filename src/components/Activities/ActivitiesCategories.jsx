@@ -34,9 +34,9 @@ export default function ActivitiesCategories() {
                     <View style={styles.quickActions}>
                               {categories.map((category, i) => {
                                         return (
-                                                  <TouchableWithoutFeedback onPress={() => toggleSelect(i)}>
+                                                  <TouchableWithoutFeedback onPress={() => toggleSelect(i)} key={i.toString()}>
                                                             <View>
-                                                            <View style={{...styles.action, opacity: selected.includes(i) ? 0.6 : 1}} key={i.toString()}>
+                                                            <View style={{...styles.action, opacity: selected.includes(i) ? 0.6 : 1}} >
                                                                       <View style={{...styles.actionIcon, backgroundColor: category.color}}>
                                                                                 <Feather name="bell" size={24} color="#fff" />
                                                                       </View>

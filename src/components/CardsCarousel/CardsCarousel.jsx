@@ -64,7 +64,7 @@ export default function CardsCarousel() {
                     <View style={styles.carouselContainer}>
                               <TouchableOpacity onPress={() => setShowModal(true)}>
                                         <View style={styles.category}>
-                                                  <Text style={styles.selectedCategory}>17 sep, 2021</Text>
+                                                  <Text style={styles.selectedCategory}>2021</Text>
                                                   <Entypo name="chevron-small-down" size={24} color="#777" />
                                         </View>
                               </TouchableOpacity>

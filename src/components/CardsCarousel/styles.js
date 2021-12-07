@@ -9,7 +9,8 @@ const styles = StyleSheet.create({
                     marginVertical: 10,
           },
           category: {
-                    width: 150,
+                    width: 90,
+                    justifyContent: 'space-between',
                     flexDirection: 'row',
                     alignItems: 'center',
                     alignContent: 'center',

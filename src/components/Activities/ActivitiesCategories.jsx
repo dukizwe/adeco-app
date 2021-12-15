@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableWithoutFeedback  } from 'react-native'
 import { Feather } from '@expo/vector-icons'
+import { ActivitiesCategoriesStyles } from './styles'
 
 export default function ActivitiesCategories() {
           const categories = [
@@ -30,7 +31,7 @@ export default function ActivitiesCategories() {
                               setSelected(prev => [...prev, index])
                     }
           }
-          return (          
+          return (    
                     <View style={styles.quickActions}>
                               {categories.map((category, i) => {
                                         return (
@@ -53,42 +54,4 @@ export default function ActivitiesCategories() {
           )
 }
 
-const styles = StyleSheet.create({
-          
-          action: {
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignContent: 'center'
-          },
-          quickActions: {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginBottom: 20
-          },
-          actionIcon: {
-                    borderRadius: 20,
-                    padding: 20,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignContent: 'center'
-          },
-          actionTitle: {
-                    marginTop: 5,
-                    color: '#000',
-                    opacity: 0.6,
-                    fontWeight: 'bold'
-          },
-          selectedCheck: {
-                    width: 20,
-                    height: 20,
-                    backgroundColor: 'red',
-                    borderRadius: 100,
-                    position: 'absolute',
-                    top: -10,
-                    right: 0,
-                    padding: 2,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignContent: 'center'
-          }
-})
+const styles = ActivitiesCategoriesStyles

@@ -32,12 +32,12 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                                         };
 
                                         const Icon = () => {
-                                                  if(route.name === 'Comp1') {
+                                                  if(route.name === 'UsersPayment') {
                                                             return <FontAwesome5 name="tasks" size={20} color={isFocused ? primaryColor : '#777'} />
                                                   }else if(route.name === 'Comp2') {
                                                             return <Entypo name="list" size={24} color={isFocused ? primaryColor : '#777'} />
                                                   } else if(route.name === 'Home')  {
-                                                            return <Image source={require('../../../assets/logo.png')} style={styles.image} />
+                                                            return  <Entypo name="home" size={24} color={isFocused ? primaryColor : '#777'} />
                                                   }else if(route.name === 'Comp3')  {
                                                             return <AntDesign name="barschart" size={24} color="#777" />
                                                   }else if(route.name === 'Comp4') {
@@ -63,7 +63,7 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                                                             <View style={styles.tab}>
                                                                       <View>
                                                                                 <Icon />
-                                                                                {route.name === 'Comp1' && <Badge />}
+                                                                                {route.name === 'UsersPayment' && <Badge />}
                                                                       </View>
                                                             </View>
                                                   </TouchableNativeFeedback>

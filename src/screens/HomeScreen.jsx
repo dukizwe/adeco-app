@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Dimensions, ScrollView } from 'react-native'
 import CardsCarousel, { entries } from '../components/CardsCarousel/CardsCarousel';
 import Activities from '../components/Activities/Activities';
@@ -9,10 +9,11 @@ export default function HomeScreen() {
                               // await AsyncStorage.removeItem('user')
                     })()
           }, [])
+          const [loading, setLoading] = useState(true)
           return (
                     <ScrollView style={styles.home}>
-                              <CardsCarousel />
-                              <Activities />
+                              <CardsCarousel setLoading={setLoading} />
+                              <Activities loading={loading} setLoading={setLoading}/>
                     </ScrollView>
           )
 }
@@ -20,7 +21,6 @@ export default function HomeScreen() {
 const { width, height } = Dimensions.get('window')
 const styles = StyleSheet.create({
           home: {
-                    paddingHorizontal: 30,
                     backgroundColor: '#fff',
                     height: '100%'
           },

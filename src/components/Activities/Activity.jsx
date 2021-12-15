@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ReactNative, { View, Text, StyleSheet, TouchableNativeFeedback, Animated, Easing  } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'; 
+import { ActivityStyles } from './styles';
 
 export default function Activity({ activity }) {
           const [bodyShown, setBodyShown] = useState(false)
@@ -58,83 +59,4 @@ export default function Activity({ activity }) {
           )
 }
 
-const styles = StyleSheet.create({
-          transanctionHeader: {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    alignContent: 'center',
-                    marginBottom: 20
-          },
-          transationsTitle: {
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    color: '#000',
-                    opacity: 0.6
-          },
-          transanctionDate: {
-                    color: '#000',
-                    opacity: 0.5,
-                    fontSize: 13,
-                    fontWeight: 'bold',
-                    marginTop: 5
-          },
-          transanction: {
-                    backgroundColor: '#f2f6f7',
-                    borderRadius: 10,
-                    padding: 15,
-                    marginVertical: 10,
-          },
-          transanctionMain: {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    alignContent: 'center',
-                    width: '100%'
-          },
-          transanctionIcon: {
-                    width: 50,
-                    height: 50,
-                    alignItems: 'center',
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    borderRadius: 50,
-                    backgroundColor: '#ebeded'
-          },
-          transanctionRight: {
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    alignContent: 'center',
-          },
-          transanctionMiddle: {
-                    marginLeft: 15,
-          },
-          transationTitle: {
-                    fontSize: 14,
-                    color: '#000',
-                    opacity: 0.7,
-                    fontWeight: 'bold'
-          },
-          transationDay: {
-                    fontSize: 13,
-                    color: '#000',
-                    opacity: 0.5,
-          },
-          transanctionAmount: {
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    alignContent: 'center',
-          },
-          amountSign: {
-                    color: 'red',
-                    fontWeight: 'bold'
-          },
-          amount: {
-                    fontWeight: 'bold',
-                    color: '#000'
-          },
-          body: {
-                    color: '#000',
-                    opacity: 0.7
-          }
-})
+const styles = ActivityStyles

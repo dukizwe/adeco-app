@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Dimensions, View, Text, ImageBackground, TouchableOpacity} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react'
+import { Dimensions, View, Text, ScrollView, TouchableOpacity} from 'react-native';
 import Carousel from 'react-native-snap-carousel'
 import randomInt from '../../helpers/randomInt';
 import subText from '../../helpers/subText';
@@ -58,27 +58,39 @@ const renderItem = ({item, index}) => {
             </View>
 }
 const { width, height } = Dimensions.get('window')
-export default function CardsCarousel() {
+export default function CardsCarousel({ setLoading }) {
           const [showModal, setShowModal] = useState(false)
+          const [activendex, setActiveIndex] = useState(entries.length-1)
+          const scrollViewRef = useRef();
+          useEffect(() => {
+                    setLoading(true)
+                    setTimeout(() => {
+                              setLoading(false)
+                    }, 2000)
+          }, [activendex])
           return (
                     <View style={styles.carouselContainer}>
                               <TouchableOpacity onPress={() => setShowModal(true)}>
                                         <View style={styles.category}>
                                                   <Text style={styles.selectedCategory}>2021</Text>
                                                   <Entypo name="chevron-small-down" size={24} color="#777" />
+                                                  <Text>{activendex}</Text>
                                         </View>
                               </TouchableOpacity>
-                              <View style={styles.carousel}>
-                                                  <Carousel
-                                                            data={entries}
-                                                            renderItem={renderItem}
-                                                            sliderWidth={width - 60}
-                                                            itemWidth={width - 60}
-                                                            initialScrollIndex={entries.length - 1}
-                                                            activeSlideOffset={10}
-                                                            onSnapToItem={(index) => console.log(index)}
-                                                  />
-                              </View>
+                              <ScrollView style={styles.carousel}
+                                        horizontal={true}
+                                        pagingEnabled={true} /* scrollEventThrottle={width - 60} */
+                                        ref={scrollViewRef}
+                                        onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: false })}
+                                        showsHorizontalScrollIndicator={false}
+                                        // onScrollBeginDrag={() => setLoading(true)}
+                                        onScroll={(e) => setActiveIndex(parseInt(e.nativeEvent.contentOffset.x / (width - 60)))}>
+                                                  {entries.map((item, index) => {
+                                                            return <View style={styles.slide} key={index.toString()}>
+                                                                      <Card item={item} />
+                                                            </View>
+                                                  })}
+                              </ScrollView>
                               <DatesModal showModal={showModal} setShowModal={setShowModal} />
                     </View>)
 }

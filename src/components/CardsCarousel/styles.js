@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
           },
           carousel: {
                     marginVertical: 10,
+                    width,
           },
           category: {
                     width: 90,
@@ -19,6 +20,7 @@ const styles = StyleSheet.create({
                     borderWidth: 1,
                     borderColor: '#ddd',
                     borderRadius: 10,
+                    marginLeft: 30
           },
           selectedCategory: {
                     fontSize: 13,
@@ -26,8 +28,9 @@ const styles = StyleSheet.create({
                     opacity: 0.7
           },
           slide: {
-                    width: width - 60,
+                    width: width,
                     height: 200,
+                    paddingHorizontal: 30
           },
           card: {
                     borderRadius: 30,

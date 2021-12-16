@@ -6,7 +6,7 @@ import UsersPaymentContext from '../../context/UsersPaymentContext'
 
 export default function UserPayment({ user }) {
           const [actions, setAction] = useState(user.actions)
-          const { inSelect, setInSelect, selectedBatch, setSelectedBatch, toggleSelectedBatch, isSelected, queueList, setQueueList } = useContext(UsersPaymentContext)
+          const { inSelect, setInSelect, selectedBatch, onUserLongPress, toggleSelectedBatch, isSelected, queueList, setQueueList } = useContext(UsersPaymentContext)
           const CanITouch = (props) => {
                     if(props.touchable == true && inSelect == false) {
                               return (
@@ -21,10 +21,6 @@ export default function UserPayment({ user }) {
                     }
           }
           const inSelectStyles = isSelected(user) ? { backgroundColor: '#c9c9c9' } : {}
-          const onUserLongPress = () => {
-                    setInSelect(true)
-                    toggleSelectedBatch(user)
-          }
           const onUserPress = () => {
                     if(inSelect) {
                               toggleSelectedBatch(user)
@@ -44,13 +40,13 @@ export default function UserPayment({ user }) {
                               } else {
                                         setQueueList(lastList => ({
                                                   ...lastList,
-                                                  [user.id]: {...user, actions: {...queueList[user.id].actions, [actionName]: 6000}}
+                                                  [user.id]: {...user, actions: {...queueList[user.id].actions, [actionName]: user.actions[actionName]}}
                                         }))
                               }
                     } else {
                               setQueueList(lastList => ({
                                         ...lastList,
-                                        [user.id]: {...user, actions: {[actionName]: 6000}}
+                                        [user.id]: {...user, actions: {[actionName]: user.actions[actionName]}}
                               }))
                     }
           }
@@ -59,7 +55,7 @@ export default function UserPayment({ user }) {
                     <TouchableNativeFeedback
                               accessibilityRole="button"
                               background={TouchableNativeFeedback.Ripple('#cbd1d4')}
-                              onLongPress={onUserLongPress}
+                              onLongPress={() => onUserLongPress(user)}
                               onPress={onUserPress}
                     >
                               <View style={{...styles.user, ...inSelectStyles}}>
@@ -89,7 +85,7 @@ export default function UserPayment({ user }) {
                                                                       <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5'}}>
                                                                                 <Text style={styles.actionTitle}>action</Text>
                                                                                 <View style={styles.separator}></View>
-                                                                                <Text style={styles.actionAmount}>6000</Text>
+                                                                                <Text style={styles.actionAmount}>{user.actions.action}</Text>
                                                                       </View>
                                                             </TouchableNativeFeedback>
                                                             <TouchableNativeFeedback
@@ -99,7 +95,7 @@ export default function UserPayment({ user }) {
                                                                       <View  style={{...styles.actionButton, backgroundColor: '#362b89ed'}}>
                                                                                 <Text style={styles.actionTitle}>retard</Text>
                                                                                 <View style={styles.separator}></View>
-                                                                                <Text style={styles.actionAmount}>6000</Text>
+                                                                                <Text style={styles.actionAmount}>{user.actions.rate}</Text>
                                                                       </View>
                                                             </TouchableNativeFeedback>
                                                             {hasDebt &&

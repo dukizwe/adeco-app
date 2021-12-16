@@ -11,8 +11,8 @@ export default function UsersPaymentTab() {
                               lastName: 'Dukizwe',
                               id: 1,
                               actions: {
-                                        action: true,
-                                        rate: true,
+                                        action: 6000,
+                                        rate: 2000,
                                         debt: 60000
                               }
                     },
@@ -21,8 +21,8 @@ export default function UsersPaymentTab() {
                               lastName: 'Dukizwe',
                               id: 2,
                               actions: {
-                                        action: true,
-                                        rate: false,
+                                        action: 6000,
+                                        rate: 2000,
                                         debt: 0
                               }
                     },
@@ -31,8 +31,8 @@ export default function UsersPaymentTab() {
                               lastName: 'Dukizwe',
                               id: 3,
                               actions: {
-                                        action: true,
-                                        rate: true,
+                                        action: 6000,
+                                        rate: 2000,
                                         debt: 0
                               }
                     },
@@ -41,8 +41,8 @@ export default function UsersPaymentTab() {
                               lastName: 'Dukizwe',
                               id: 4,
                               actions: {
-                                        action: false,
-                                        rate: false,
+                                        action: 6000,
+                                        rate: 2000,
                                         debt: 100000
                               }
                     }
@@ -50,17 +50,23 @@ export default function UsersPaymentTab() {
           const [inSelect, setInSelect] = useState(false)
           const [selectedBatch, setSelectedBatch] = useState([])
           const [queueList, setQueueList] = useState({})
+          const [startAnimation, setStartAnimation] = useState(false)
           const isSelected = (user) => selectedBatch.find(u => u.id == user.id)
           const toggleSelectedBatch = (user) => {
                     if(isSelected(user)) {
                               const newSelected = selectedBatch.filter(u => u.id != user.id)
                               setSelectedBatch(newSelected)
                               if(selectedBatch.length -1 === 0) {
-                                        setInSelect(false)
+                                        // setInSelect(false)
                               }
                     } else {
                               setSelectedBatch(prev => ([...prev, user]))
                     }
+          }
+          const onUserLongPress = (user) => {
+                    setInSelect(true)
+                    toggleSelectedBatch(user)
+                    setStartAnimation(true)
           }
           const contextValue = {
                     users,
@@ -71,14 +77,15 @@ export default function UsersPaymentTab() {
                     isSelected,
                     toggleSelectedBatch,
                     queueList,
-                    setQueueList
+                    setQueueList,
+                    onUserLongPress,
+                    setStartAnimation
           }
           return (
                     <UsersPaymentContext.Provider value={contextValue}>
                               <View style={{backgroundColor: '#fff', paddingHorizontal: 20, flex: 1}}>
-                                        <Text>{JSON.stringify(queueList)}</Text>
                                         <FlatList data={users} keyExtractor={(user, index) => index.toString()} renderItem={({ item }) => <UserPayment user={item} />} />
-                                        <UsersPaymentsQuickActions />
+                                        {startAnimation && <UsersPaymentsQuickActions />}
                               </View>
                     </UsersPaymentContext.Provider>
           )

@@ -31,7 +31,7 @@ const Skeletons = () => {
                               </View>
                               <View style={{width: 100, height: 15, borderRadius: 10,backgroundColor: '#d9ddde'}}></View>
                               {(new Array(10).fill(0)).map((activity, i) => {
-                                        return <View >
+                                        return <View key={i.toString()}>
                                         <View style={{...ActivityStyles.transanction, backgroundColor: '#d9ddde'}}>
                                                   <View style={ActivityStyles.transanctionMain}>
                                                             <View style={ActivityStyles.transanctionRight}>

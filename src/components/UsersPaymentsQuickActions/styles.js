@@ -11,7 +11,8 @@ const styles = StyleSheet.create({
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    overflow: 'hidden'
           },
           exitButton: {
                     width: 40,

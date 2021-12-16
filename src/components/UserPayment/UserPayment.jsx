@@ -6,7 +6,7 @@ import UsersPaymentContext from '../../context/UsersPaymentContext'
 
 export default function UserPayment({ user }) {
           const [actions, setAction] = useState(user.actions)
-          const { inSelect, setInSelect, selectedBatch, setSelectedBatch, toggleSelectedBatch, isSelected } = useContext(UsersPaymentContext)
+          const { inSelect, setInSelect, selectedBatch, setSelectedBatch, toggleSelectedBatch, isSelected, queueList, setQueueList } = useContext(UsersPaymentContext)
           const CanITouch = (props) => {
                     if(props.touchable == true && inSelect == false) {
                               return (
@@ -21,21 +21,46 @@ export default function UserPayment({ user }) {
                     }
           }
           const inSelectStyles = isSelected(user) ? { backgroundColor: '#c9c9c9' } : {}
-          const onLongPress = () => {
+          const onUserLongPress = () => {
                     setInSelect(true)
                     toggleSelectedBatch(user)
           }
-          const onPress = () => {
+          const onUserPress = () => {
                     if(inSelect) {
                               toggleSelectedBatch(user)
                     }
           }
+
+          const isInQueueList = (actionName) => queueList[user.id]?.actions[actionName] ? true : false
+          
+          const payAction = (actionName) => {
+                    if(queueList[user.id]) {
+                              if(isInQueueList(actionName)) {
+                                        const { [actionName]: removed, ...newActions } = queueList[user.id].actions
+                                        setQueueList(lastList => ({
+                                                  ...lastList,
+                                                  [user.id]: {...user, actions: newActions}
+                                        }))
+                              } else {
+                                        setQueueList(lastList => ({
+                                                  ...lastList,
+                                                  [user.id]: {...user, actions: {...queueList[user.id].actions, [actionName]: 6000}}
+                                        }))
+                              }
+                    } else {
+                              setQueueList(lastList => ({
+                                        ...lastList,
+                                        [user.id]: {...user, actions: {[actionName]: 6000}}
+                              }))
+                    }
+          }
+          const hasDebt = user.actions.debt > 0
           return (
                     <TouchableNativeFeedback
                               accessibilityRole="button"
                               background={TouchableNativeFeedback.Ripple('#cbd1d4')}
-                              onLongPress={onLongPress}
-                              onPress={onPress}
+                              onLongPress={onUserLongPress}
+                              onPress={onUserPress}
                     >
                               <View style={{...styles.user, ...inSelectStyles}}>
                                         <View style={styles.userImage}>
@@ -45,39 +70,50 @@ export default function UserPayment({ user }) {
                                                   <View style={styles.infoTop}>
                                                             <Text style={styles.userNames}>Dukizwe Darcy</Text>
                                                             <View style={styles.dotIndicator}>
-                                                                      {actions.action && <View style={{...styles.selectedCheck, backgroundColor: '#40c2d7f5', marginRight: actions.retard || actions.dette ? 10 : 0}}>
+                                                                      {isInQueueList('action') && <View style={{...styles.selectedCheck, backgroundColor: '#40c2d7f5'}}>
                                                                                 <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
                                                                       </View>}
-                                                                      {actions.retard && <View style={{...styles.selectedCheck, backgroundColor: '#362b89ed', marginRight: 10}}>
+                                                                      {isInQueueList('rate') && <View style={{...styles.selectedCheck, backgroundColor: '#362b89ed'}}>
                                                                                 <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
                                                                       </View>}
-                                                                      {actions.dette && <View style={{...styles.selectedCheck, backgroundColor: '#873475'}}>
+                                                                      {isInQueueList('debt') && <View style={{...styles.selectedCheck, backgroundColor: '#873475'}}>
                                                                                 <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
                                                                       </View>}
                                                             </View>
                                                   </View>
                                                   <View style={styles.userActions}>
-                                                            <CanITouch touchable={!actions.action} onPress={() => setAction(prev => ({...prev, action: true}))}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5', opacity: actions.action ? 0.5 : 1}}>
+                                                            <TouchableNativeFeedback
+                                                                      accessibilityRole="button"
+                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4')}
+                                                                      onPress={() => payAction('action')}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5'}}>
                                                                                 <Text style={styles.actionTitle}>action</Text>
                                                                                 <View style={styles.separator}></View>
                                                                                 <Text style={styles.actionAmount}>6000</Text>
                                                                       </View>
-                                                            </CanITouch>
-                                                            <CanITouch touchable={!actions.retard} onPress={() => setAction(prev => ({...prev, retard: true}))}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#362b89ed', marginLeft: 10, marginRight: user.hasDebt ? 10 : 0,  opacity: actions.retard ? 0.5 : 1}}>
+                                                            </TouchableNativeFeedback>
+                                                            <TouchableNativeFeedback
+                                                                      accessibilityRole="button"
+                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4')}
+                                                                      onPress={() => payAction('rate')}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#362b89ed'}}>
                                                                                 <Text style={styles.actionTitle}>retard</Text>
                                                                                 <View style={styles.separator}></View>
                                                                                 <Text style={styles.actionAmount}>6000</Text>
                                                                       </View>
-                                                            </CanITouch>
-                                                            {user.hasDebt && <CanITouch touchable={!actions.dette} onPress={() => setAction(prev => ({...prev, dette: true}))}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#873475',  opacity: actions.dette ? 0.5 : 1}}>
+                                                            </TouchableNativeFeedback>
+                                                            {hasDebt &&
+                                                            <TouchableNativeFeedback
+                                                                      accessibilityRole="button"
+                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4')}
+                                                                      onPress={() => payAction('debt')}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#873475'}}>
                                                                                 <Text style={styles.actionTitle}>dette</Text>
                                                                                 <View style={styles.separator}></View>
-                                                                                <Text style={styles.actionAmount}>500 000</Text>
+                                                                                <Text style={styles.actionAmount}>{user.actions.debt}</Text>
                                                                       </View>
-                                                            </CanITouch>}
+                                                            </TouchableNativeFeedback>
+                                                            }
                                                   </View>
                                         </View>
                               </View>

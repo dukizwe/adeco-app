@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { FlatList, Text, View } from 'react-native'
 import UserPayment from '../../components/UserPayment/UserPayment'
+import UsersPaymentsQuickActions from '../../components/UsersPaymentsQuickActions/UsersPaymentsQuickActions'
 import UsersPaymentContext from '../../context/UsersPaymentContext'
 
 export default function UsersPaymentTab() {
@@ -8,50 +9,47 @@ export default function UsersPaymentTab() {
                     {
                               firstName: 'Darcy',
                               lastName: 'Dukizwe',
-                              hasDebt: true,
                               id: 1,
                               actions: {
                                         action: true,
-                                        retard: true,
-                                        dette: false
+                                        rate: true,
+                                        debt: 60000
                               }
                     },
                     {
                               firstName: 'Darcy',
                               lastName: 'Dukizwe',
-                              hasDebt: false,
                               id: 2,
                               actions: {
                                         action: true,
-                                        retard: false,
-                                        dette: true
+                                        rate: false,
+                                        debt: 0
                               }
                     },
                     {
                               firstName: 'Darcy',
                               lastName: 'Dukizwe',
-                              hasDebt: false,
                               id: 3,
                               actions: {
                                         action: true,
-                                        retard: true,
-                                        dette: true
+                                        rate: true,
+                                        debt: 0
                               }
                     },
                     {
                               firstName: 'Darcy',
                               lastName: 'Dukizwe',
-                              hasDebt: true,
                               id: 4,
                               actions: {
                                         action: false,
-                                        retard: false,
-                                        dette: false
+                                        rate: false,
+                                        debt: 100000
                               }
                     }
           ]
           const [inSelect, setInSelect] = useState(false)
           const [selectedBatch, setSelectedBatch] = useState([])
+          const [queueList, setQueueList] = useState({})
           const isSelected = (user) => selectedBatch.find(u => u.id == user.id)
           const toggleSelectedBatch = (user) => {
                     if(isSelected(user)) {
@@ -65,17 +63,22 @@ export default function UsersPaymentTab() {
                     }
           }
           const contextValue = {
+                    users,
                     inSelect,
                     setInSelect,
                     selectedBatch,
                     setSelectedBatch,
                     isSelected,
-                    toggleSelectedBatch
+                    toggleSelectedBatch,
+                    queueList,
+                    setQueueList
           }
           return (
                     <UsersPaymentContext.Provider value={contextValue}>
-                              <View style={{backgroundColor: '#fff', paddingHorizontal: 20}}>
+                              <View style={{backgroundColor: '#fff', paddingHorizontal: 20, flex: 1}}>
+                                        <Text>{JSON.stringify(queueList)}</Text>
                                         <FlatList data={users} keyExtractor={(user, index) => index.toString()} renderItem={({ item }) => <UserPayment user={item} />} />
+                                        <UsersPaymentsQuickActions />
                               </View>
                     </UsersPaymentContext.Provider>
           )

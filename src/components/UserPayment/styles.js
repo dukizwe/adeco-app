@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
           selectedCheck: {
                     width: 20,
                     height: 20,
+                    margin: 2,
                     backgroundColor: 'red',
                     borderRadius: 100,
                     padding: 2,
@@ -56,6 +57,7 @@ const styles = StyleSheet.create({
           },
           actionButton: {
                     flex: 1,
+                    margin: 2,
                     alignContent: 'center',
                     alignItems: 'center',
                     borderRadius: 5,

@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const ActivitiesStyles = StyleSheet.create({
           transationsContainer: {
-                    paddingHorizontal: 30
+                    paddingHorizontal: 20
           },
           transanctionHeader: {
                     flexDirection: 'row',
@@ -52,7 +52,7 @@ export const ActivityStyles = StyleSheet.create({
                     borderRadius: 10,
                     padding: 15,
                     marginVertical: 10,
-                    flex: 1
+                    overflow: 'hidden'
           },
           transanctionMain: {
                     flexDirection: 'row',

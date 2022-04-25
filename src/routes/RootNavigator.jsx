@@ -8,6 +8,7 @@ import Comp2 from '../components/Comp2';
 import Comp3 from '../components/Comp3';
 import Comp4 from '../components/Comp4';
 import Header from '../components/Header/Header';
+import UsersPayHeader from '../components/Header/UsersPayHeader';
 import HomeScreen from '../screens/HomeScreen';
 import UsersPaymentTab from '../screens/UsersPaymentTab/UsersPaymentTab';
 
@@ -18,7 +19,7 @@ export default function RootNavigator() {
           return (
                     <View style={styles.container}>
                               <BottomTab.Navigator initialRouteName="Home" tabBar={props => <BottomTabBar {...props} />} screenOptions={{header: () => <Header />}}>
-                                        <BottomTab.Screen name="UsersPayment" component={UsersPaymentTab} />
+                                        <BottomTab.Screen name="UsersPayment" component={UsersPaymentTab} options={{ headerShown: false }} />
                                         <BottomTab.Screen name="Comp2" component={Comp2} />
                                         <BottomTab.Screen name="Home" component={HomeScreen} />
                                         <BottomTab.Screen name="Comp3" component={Comp3} />

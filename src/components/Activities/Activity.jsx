@@ -29,6 +29,7 @@ export default function Activity({ activity }) {
           const activityRef = useRef(null)
           const containerRef = useRef(null)
           return (
+                    <View>
                     <TouchableNativeFeedback
                               accessibilityRole="button"
                               background={TouchableNativeFeedback.Ripple('#cbd1d4')}
@@ -36,6 +37,8 @@ export default function Activity({ activity }) {
                                         setBodyShown(t => !t)
                               })}
                               ref={containerRef}
+                              useForeground={true}
+                              style={{ backgroundColor: 'red'}}
                     >
                               <Animated.View style={styles.transanction} ref={activityRef}>
                                         <View style={styles.transanctionMain}>
@@ -56,6 +59,7 @@ export default function Activity({ activity }) {
                                         {bodyShown && <Text style={styles.body}>{activity.body}</Text>}
                               </Animated.View>
                     </TouchableNativeFeedback>
+                    </View>
           )
 }
 

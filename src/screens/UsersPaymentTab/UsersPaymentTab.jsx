@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
-import { FlatList, Text, View } from 'react-native'
-import UserPayment from '../../components/UserPayment/UserPayment'
-import UsersPaymentsQuickActions from '../../components/UsersPaymentsQuickActions/UsersPaymentsQuickActions'
+import { Button } from 'native-base'
+import React, { useEffect, useState } from 'react'
+import { FlatList, Text, View, BackHandler } from 'react-native'
+import UsersPayHeader from '../../components/Header/UsersPayHeader'
+import UserPayListHeader from '../../components/UsersPaymentTab/UserPayListHeader'
+import UserPayment from '../../components/UsersPaymentTab/UserPayment'
+import UsersPaymentsQuickActions from '../../components/UsersPaymentTab/UsersPaymentsQuickActions'
 import UsersPaymentContext from '../../context/UsersPaymentContext'
 
 export default function UsersPaymentTab() {
@@ -56,8 +59,9 @@ export default function UsersPaymentTab() {
                     if(isSelected(user)) {
                               const newSelected = selectedBatch.filter(u => u.id != user.id)
                               setSelectedBatch(newSelected)
-                              if(selectedBatch.length -1 === 0) {
-                                        // setInSelect(false)
+                              if(selectedBatch.length-1 === 0) {
+                                        setInSelect(false)
+                                        setStartAnimation(false)
                               }
                     } else {
                               setSelectedBatch(prev => ([...prev, user]))
@@ -84,7 +88,13 @@ export default function UsersPaymentTab() {
           return (
                     <UsersPaymentContext.Provider value={contextValue}>
                               <View style={{backgroundColor: '#fff', paddingHorizontal: 20, flex: 1}}>
-                                        <FlatList data={users} keyExtractor={(user, index) => index.toString()} renderItem={({ item }) => <UserPayment user={item} />} />
+                                        <UsersPayHeader />
+                                        <FlatList
+                                                  ListHeaderComponent={() => <UserPayListHeader />}
+                                                  showsVerticalScrollIndicator={false}
+                                                  data={users}
+                                                  keyExtractor={(user, index) => index.toString()} renderItem={({ item }) => <UserPayment user={item} />}
+                                        />
                                         {startAnimation && <UsersPaymentsQuickActions />}
                               </View>
                     </UsersPaymentContext.Provider>

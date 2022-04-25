@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Image, TouchableNativeFeedback, View, Text } from 'react-native'
-import styles from './styles'
+import { Image, TouchableNativeFeedback, View, Text, StyleSheet } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import UsersPaymentContext from '../../context/UsersPaymentContext'
 
@@ -52,11 +51,14 @@ export default function UserPayment({ user }) {
           }
           const hasDebt = user.actions.debt > 0
           return (
+                    <View>
                     <TouchableNativeFeedback
                               accessibilityRole="button"
                               background={TouchableNativeFeedback.Ripple('#cbd1d4')}
                               onLongPress={() => onUserLongPress(user)}
+                              delayLongPress={100}
                               onPress={onUserPress}
+                              useForeground={true}
                     >
                               <View style={{...styles.user, ...inSelectStyles}}>
                                         <View style={styles.userImage}>
@@ -82,7 +84,7 @@ export default function UserPayment({ user }) {
                                                                       accessibilityRole="button"
                                                                       background={TouchableNativeFeedback.Ripple('#cbd1d4')}
                                                                       onPress={() => payAction('action')}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5'}}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5', opacity: isInQueueList('action') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>action</Text>
                                                                                 <View style={styles.separator}></View>
                                                                                 <Text style={styles.actionAmount}>{user.actions.action}</Text>
@@ -92,7 +94,7 @@ export default function UserPayment({ user }) {
                                                                       accessibilityRole="button"
                                                                       background={TouchableNativeFeedback.Ripple('#cbd1d4')}
                                                                       onPress={() => payAction('rate')}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#362b89ed'}}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#362b89ed', opacity: isInQueueList('rate') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>retard</Text>
                                                                                 <View style={styles.separator}></View>
                                                                                 <Text style={styles.actionAmount}>{user.actions.rate}</Text>
@@ -103,7 +105,7 @@ export default function UserPayment({ user }) {
                                                                       accessibilityRole="button"
                                                                       background={TouchableNativeFeedback.Ripple('#cbd1d4')}
                                                                       onPress={() => payAction('debt')}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#873475'}}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#873475', opacity: isInQueueList('debt') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>dette</Text>
                                                                                 <View style={styles.separator}></View>
                                                                                 <Text style={styles.actionAmount}>{user.actions.debt}</Text>
@@ -114,5 +116,88 @@ export default function UserPayment({ user }) {
                                         </View>
                               </View>
                     </TouchableNativeFeedback>
+                    </View>
           )
 }
+
+
+const styles = StyleSheet.create({
+          user: {
+                    backgroundColor: '#f2f6f7',
+                    borderRadius: 10,
+                    padding: 15,
+                    marginVertical: 10,
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    overflow: 'hidden'
+          },
+          userImage: {
+                    width: 50,
+                    height: 50,
+                    borderRadius: 50
+          },
+          userInfo: {
+                    marginLeft: 20,
+                    flex: 1
+          },
+          infoTop: {
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+          },
+          dotIndicator: {
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+          },
+          selectedCheck: {
+                    width: 20,
+                    height: 20,
+                    margin: 2,
+                    backgroundColor: 'red',
+                    borderRadius: 100,
+                    padding: 2,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    alignContent: 'center'
+          },
+          userNames: {
+                    fontWeight: 'bold',
+                    color: '#000',
+                    fontSize: 16,
+                    opacity: 0.8,
+                    marginBottom: 5
+          },
+          userActions: {
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+          },
+          actionButton: {
+                    flex: 1,
+                    margin: 2,
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 5,
+                    paddingHorizontal: 5
+          },
+          actionTitle: {
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    opacity: 0.8,
+          },
+          separator: {
+                    height: 1,
+                    width: '100%',
+                    backgroundColor: '#fff',
+                    opacity: 0.5
+          },
+          actionAmount: {
+                    color: '#fff',
+                    fontWeight: 'bold',
+          }
+})

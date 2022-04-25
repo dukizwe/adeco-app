@@ -84,7 +84,7 @@ export default function CardsCarousel({ setLoading }) {
                                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: false })}
                                         showsHorizontalScrollIndicator={false}
                                         // onScrollBeginDrag={() => setLoading(true)}
-                                        onScroll={(e) => setActiveIndex(parseInt(e.nativeEvent.contentOffset.x / (width - 60)))}>
+                                        onScroll={(e) => setActiveIndex(parseInt(e.nativeEvent.contentOffset.x / (width - 40)))}>
                                                   {entries.map((item, index) => {
                                                             return <View style={styles.slide} key={index.toString()}>
                                                                       <Card item={item} />

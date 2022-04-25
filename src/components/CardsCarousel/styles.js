@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
           slide: {
                     width: width,
                     height: 200,
-                    paddingHorizontal: 30
+                    paddingHorizontal: 20
           },
           card: {
                     borderRadius: 30,

@@ -1,13 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity } from 'react-native'
 import UsersPaymentContext from '../../context/UsersPaymentContext'
-import { MaterialIcons } from '@expo/vector-icons'; 
+import { MaterialIcons, FontAwesome5, AntDesign, Ionicons } from '@expo/vector-icons'; 
 import { CountUp, useCountUp } from 'use-count-up'
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function UsersPayHeader() {
           const { queueList } = useContext(UsersPaymentContext)
           const [total, setTotal] = useState(0)
           const [prevTotal, setPrevTotal] = useState(0)
+          const navigation = useNavigation()
 
           useEffect(() => {
                     var newTotal = 0
@@ -22,48 +24,62 @@ export default function UsersPayHeader() {
           }, [queueList])
 
           const MyCountUp = () => {
-                    const { value, reset } = useCountUp({ isCounting: true, start: prevTotal, end: total, duration: 0.3, thousandsSeparator: ' '})
-                    /* useEffect(() => {
-                              reset()
-                    }, [total]) */
-                    // return total
+                    const { value, reset } = useCountUp({
+                              isCounting: true,
+                              start: prevTotal,
+                              end: total,
+                              duration: 0.3,
+                              thousandsSeparator: ' ',
+                              onComplete: () => {
+                                        setPrevTotal(total)
+                              }
+                    })
                     return `${value} Fbu`
           }
+          const route = useRoute()
           return (
                     <View style={styles.header}>
-                              <TouchableOpacity>
+                              {route.name == 'UsersPayment' ? <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4')} useForeground>
                                         <View style={styles.opDate}>
-                                                  <Text style={styles.headerTitle}>Date</Text>
-                                                  <Text style={styles.headerValue}>25-01-2022</Text>
+                                                  <FontAwesome5 name="calendar-check" size={22} color="#189fed" style={styles.icon} />
                                         </View>
-                              </TouchableOpacity>
+                              </TouchableNativeFeedback> :
+                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4')} useForeground onPress={() => navigation.goBack()}>
+                                        <View style={styles.opDate}>
+                                                  <Ionicons name="arrow-back" size={22} color="#777" />
+                                        </View>
+                              </TouchableNativeFeedback>}
                               <View style={styles.total}>
-                                        <Text style={styles.headerTitle}>Total</Text>
+                                        <AntDesign name="creditcard" size={24} color="#189fed" style={styles.icon} />
                                         <Text style={styles.headerValue}>
                                                   <MyCountUp />
                                         </Text>
                                         {/* { total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } Fbu */}
                               </View>
-                              {total == 0 ? <View style={{...styles.nextBtn, opacity: 0.5}}>
+                              <TouchableOpacity style={{...styles.nextBtn, opacity: total == 0 ? 0.5 : 1}} disabled={total == 0} onPress={() => {
+                                        setPrevTotal(total)
+                                        setTotal(total)
+                                        navigation.navigate('Debt')
+                              }}>
                                         <Text style={styles.nextText}>Suivant</Text>
                                         <MaterialIcons name="navigate-next" size={24} color="#189fed" />
-                              </View> :
-                              <TouchableOpacity style={{...styles.nextBtn, opacity: total == 0 ? 0.5 : 1}}>
-                                        <Text style={styles.nextText}>Suivant</Text>
-                                        <MaterialIcons name="navigate-next" size={24} color="#189fed" />
-                              </TouchableOpacity>}
+                              </TouchableOpacity>
                     </View>
           )
 }
 
 const styles = StyleSheet.create({
           header: {
-                    paddingVertical: 20,
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     backgroundColor: '#fff',
-                    borderRadius: 10
+                    borderRadius: 10,
+                    paddingHorizontal: 20,
+                    height: 60
+          },
+          icon: {
+                    opacity: 0.8
           },
           headerTitle: {
                     fontWeight: 'bold',
@@ -72,15 +88,18 @@ const styles = StyleSheet.create({
           },
           headerValue: {
                     color: '#777',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    marginLeft: 5
           },
           opDate: {
-                    flex: 1
+                    padding: 5,
+                    borderRadius: 5,
+                    overflow: 'hidden'
           },
           total: {
-                    flex: 1,
                     marginHorizontal: 20,
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    flexDirection: 'row'
           },
           nextBtn: {
                     flex: 1,

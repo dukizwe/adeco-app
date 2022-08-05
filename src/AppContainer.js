@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useState }  from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,8 +10,9 @@ import WelcomeScreen from "./screens/WelcomeScreen";
 import { setUserAction } from "./store/actions/userActions";
 import { userSelector } from "./store/selectors/userSelector";
 import { Text } from 'react-native'
+import { createStackNavigator } from "@react-navigation/stack";
 
-const Stack = createNativeStackNavigator()
+const Stack = createStackNavigator()
 
 export default function AppContainer() {
           const dispatch = useDispatch()

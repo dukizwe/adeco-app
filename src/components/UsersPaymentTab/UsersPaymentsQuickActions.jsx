@@ -32,7 +32,7 @@ export default function UsersPaymentsQuickActions() {
                                                             ...user,
                                                             actions: {
                                                                       ...queueList[user.id].actions,
-                                                                      action: user.actions.rate,
+                                                                      action: user.actions.action,
                                                                       debt: user.actions.debt
                                                             }
                                                   }

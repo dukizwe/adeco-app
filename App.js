@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from 'react-native'
 import { NativeBaseProvider } from 'native-base';
 import React from 'react';

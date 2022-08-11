@@ -32,7 +32,7 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                                         };
 
                                         const Icon = () => {
-                                                  if(route.name === 'UsersPayment') {
+                                                  if(route.name === 'Contribution') {
                                                             return <FontAwesome5 name="tasks" size={20} color={isFocused ? primaryColor : '#777'} />
                                                   }else if(route.name === 'Comp2') {
                                                             return <Entypo name="list" size={24} color={isFocused ? primaryColor : '#777'} />

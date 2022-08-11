@@ -2,9 +2,10 @@ import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/
 import React from 'react'
 import { useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native'
-import UsersPayHeader from '../components/Header/UsersPayHeader';
-import UsersPaymentContext from '../context/UsersPaymentContext';
-import DebtScreen from '../screens/UsersPaymentTab/DebtScreen';
+import { Host } from 'react-native-portalize';
+import ContributionHeader from '../components/Header/ContributionHeader';
+import UsersPaymentContext from '../context/ContributionContext';
+import DebtScreen from '../screens/ContributionTab/DebtScreen';
 import Tabs from './Tabs';
 
 export default function RootNavigator() {
@@ -90,16 +91,18 @@ export default function RootNavigator() {
                     startAnimation
           }
           return (
-                    <UsersPaymentContext.Provider value={contextValue}>
-                              <Stack.Navigator>
-                                        <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
-                                        <Stack.Screen name="Debt" component={DebtScreen} options={{
-                                                  cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-                                                  header: () => <UsersPayHeader />,
-                                                  headerMode: 'float'
-                                        }} />
-                              </Stack.Navigator>
-                    </UsersPaymentContext.Provider>
+                    <Host>
+                              <UsersPaymentContext.Provider value={contextValue}>
+                                        <Stack.Navigator>
+                                                  <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+                                                  <Stack.Screen name="DebtScreen" component={DebtScreen} options={{
+                                                            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                                                            header: () => <ContributionHeader />,
+                                                            headerMode: 'float'
+                                                  }} />
+                                        </Stack.Navigator>
+                              </UsersPaymentContext.Provider>
+                    </Host>
           );
 }
 

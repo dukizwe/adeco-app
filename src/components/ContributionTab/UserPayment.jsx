@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import UsersPaymentContext from '../../context/UsersPaymentContext'
+import ContributionContext from '../../context/ContributionContext'
 
 export default function UserPayment({ user }) {
           const [actions, setAction] = useState(user.actions)
-          const { inSelect, setInSelect, selectedBatch, onUserLongPress, toggleSelectedBatch, isSelected, queueList, setQueueList } = useContext(UsersPaymentContext)
+          const { inSelect, setInSelect, selectedBatch, onUserLongPress, toggleSelectedBatch, isSelected, queueList, setQueueList } = useContext(ContributionContext)
           const CanITouch = (props) => {
                     if(props.touchable == true && inSelect == false) {
                               return (

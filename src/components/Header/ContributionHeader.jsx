@@ -1,15 +1,35 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState, memo } from 'react'
 import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity } from 'react-native'
-import UsersPaymentContext from '../../context/UsersPaymentContext'
+import UsersPaymentContext from '../../context/ContributionContext'
 import { MaterialIcons, FontAwesome5, AntDesign, Ionicons } from '@expo/vector-icons'; 
 import { CountUp, useCountUp } from 'use-count-up'
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-export default function UsersPayHeader() {
+export default memo(function ContributionHeader() {
           const { queueList } = useContext(UsersPaymentContext)
           const [total, setTotal] = useState(0)
           const [prevTotal, setPrevTotal] = useState(0)
           const navigation = useNavigation()
+          const route = useRoute()
+
+          const calendarTranslateX = useSharedValue(0)
+          const calendarOpacity = useSharedValue(1)
+
+          const backBtnTranslateX = useSharedValue(45)
+          const backBtnOpacity = useSharedValue(0)
+          const calendarAnimatedStyles = useAnimatedStyle(() => ({
+                    transform: [{
+                              translateX: calendarTranslateX.value
+                    }],
+                    opacity: calendarOpacity.value
+          }))
+          const backBtnAnimatedStyles = useAnimatedStyle(() => ({
+                    transform: [{
+                              translateX: backBtnTranslateX.value
+                    }],
+                    opacity: backBtnOpacity.value
+          }))
 
           useEffect(() => {
                     var newTotal = 0
@@ -22,6 +42,35 @@ export default function UsersPayHeader() {
                     setPrevTotal(total)
                     setTotal(newTotal)
           }, [queueList])
+
+          const onNextPress = () => {
+                    navigation.navigate('DebtScreen')
+          }
+
+          useFocusEffect(useCallback(() => {
+                    if(route.name == 'DebtScreen') {
+                              calendarTranslateX.value = withSpring(-30)
+                              calendarOpacity.value = withSpring(0)
+          
+                              backBtnTranslateX.value = withSpring(15)
+                              backBtnOpacity.value = withSpring(1)
+                    }
+          }, [route.name]))
+
+          const onBackPress = () => {
+                    navigation.goBack()
+          }
+
+          useEffect(() => {
+                    const unsubscribe = navigation.addListener('beforeRemove', () => {
+                              calendarTranslateX.value = withSpring(0)
+                              calendarOpacity.value = withSpring(1)
+          
+                              backBtnTranslateX.value = withSpring(30)
+                              backBtnOpacity.value = withSpring(0)
+                    })
+                    return unsubscribe
+          }, [])
 
           const MyCountUp = () => {
                     const { value, reset } = useCountUp({
@@ -36,19 +85,18 @@ export default function UsersPayHeader() {
                     })
                     return `${value} Fbu`
           }
-          const route = useRoute()
           return (
                     <View style={styles.header}>
-                              {route.name == 'UsersPayment' ? <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4')} useForeground>
-                                        <View style={styles.opDate}>
+                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4')} useForeground>
+                                        <Animated.View style={[styles.opDate, calendarAnimatedStyles]}>
                                                   <FontAwesome5 name="calendar-check" size={22} color="#189fed" style={styles.icon} />
-                                        </View>
-                              </TouchableNativeFeedback> :
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4')} useForeground onPress={() => navigation.goBack()}>
-                                        <View style={styles.opDate}>
+                                        </Animated.View>
+                              </TouchableNativeFeedback>
+                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4')} useForeground onPress={onBackPress}>
+                                        <Animated.View style={[styles.opDate, backBtnAnimatedStyles, { position: 'absolute' }]}>
                                                   <Ionicons name="arrow-back" size={22} color="#777" />
-                                        </View>
-                              </TouchableNativeFeedback>}
+                                        </Animated.View>
+                              </TouchableNativeFeedback>
                               <View style={styles.total}>
                                         <AntDesign name="creditcard" size={24} color="#189fed" style={styles.icon} />
                                         <Text style={styles.headerValue}>
@@ -56,17 +104,13 @@ export default function UsersPayHeader() {
                                         </Text>
                                         {/* { total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } Fbu */}
                               </View>
-                              <TouchableOpacity style={{...styles.nextBtn, opacity: total == 0 ? 0.5 : 1}} disabled={total == 0} onPress={() => {
-                                        setPrevTotal(total)
-                                        setTotal(total)
-                                        navigation.navigate('Debt')
-                              }}>
+                              <TouchableOpacity style={{...styles.nextBtn, opacity: total == 0 ? 0.5 : 1}} disabled={total == 0} onPress={onNextPress}>
                                         <Text style={styles.nextText}>Suivant</Text>
                                         <MaterialIcons name="navigate-next" size={24} color="#189fed" />
                               </TouchableOpacity>
                     </View>
           )
-}
+})
 
 const styles = StyleSheet.create({
           header: {
@@ -76,7 +120,7 @@ const styles = StyleSheet.create({
                     backgroundColor: '#fff',
                     borderRadius: 10,
                     paddingHorizontal: 20,
-                    height: 60
+                    height: 60,
           },
           icon: {
                     opacity: 0.8

@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Animated, BackHandler, Easing, Text, TouchableNativeFeedback, StyleSheet, View } from 'react-native'
 import { Feather } from '@expo/vector-icons'; 
-import UsersPaymentContext from '../../context/UsersPaymentContext';
+import ContributionContext from '../../context/ContributionContext';
 
 
-export default function UsersPaymentsQuickActions() {
-          const { users, selectedBatch, setSelectedBatch, setInSelect, queueList, setQueueList, setStartAnimation } = useContext(UsersPaymentContext)
+export default function ContributionQuickActions() {
+          const { users, selectedBatch, setSelectedBatch, setInSelect, queueList, setQueueList, setStartAnimation } = useContext(ContributionContext)
           const sideAnim = useRef(new Animated.Value(-65)).current
           const bottomAnim = useRef(new Animated.Value(-50)).current
           const toggleSelectAll = () => {

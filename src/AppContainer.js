@@ -11,6 +11,7 @@ import { setUserAction } from "./store/actions/userActions";
 import { userSelector } from "./store/selectors/userSelector";
 import { Text } from 'react-native'
 import { createStackNavigator } from "@react-navigation/stack";
+import { Host } from "react-native-portalize";
 
 const Stack = createStackNavigator()
 
@@ -34,13 +35,11 @@ export default function AppContainer() {
                     <NavigationContainer>
                               {user ?
                                         <RootNavigator />:
-                              <>
                               <Stack.Navigator>
                                         <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false}}/>
                                         <Stack.Screen name="Login" component={LoginScreen} options={{ title: '', headerShadowVisible: false, headerStyle: {backgroundColor: '#F2F5FE'}}} />
                                         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false}} />
-                              </Stack.Navigator>
-                              </>}
+                              </Stack.Navigator>}
                     </NavigationContainer>
           )
 }

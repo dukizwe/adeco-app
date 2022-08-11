@@ -7,15 +7,15 @@ import Comp2 from '../components/Comp2';
 import Comp3 from '../components/Comp3';
 import Comp4 from '../components/Comp4';
 import Header from '../components/Header/Header';
-import UsersPayHeader from '../components/Header/UsersPayHeader';
+import ContributionHeader from '../components/Header/ContributionHeader';
 import HomeScreen from '../screens/HomeScreen';
-import UsersPaymentTab from '../screens/UsersPaymentTab/UsersPaymentTab';
+import ContributionTab from '../screens/ContributionTab/ContributionTab';
 
 export default function Tabs() {
           const BottomTab = createBottomTabNavigator()
           return (
                     <BottomTab.Navigator initialRouteName="Home" tabBar={props => <BottomTabBar {...props} />} screenOptions={{header: () => <Header />}}>
-                              <BottomTab.Screen name="UsersPayment" component={UsersPaymentTab} options={{ header: () => <UsersPayHeader /> }} />
+                              <BottomTab.Screen name="Contribution" component={ContributionTab} options={{ header: () => <ContributionHeader /> }} />
                               <BottomTab.Screen name="Comp2" component={Comp2} />
                               <BottomTab.Screen name="Home" component={HomeScreen} />
                               <BottomTab.Screen name="Comp3" component={Comp3} />

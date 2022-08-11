@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import { View, Text, StyleSheet, TouchableNativeFeedback } from 'react-native'
 import { Ionicons, Feather } from '@expo/vector-icons'; 
-import UsersPaymentContext from '../../context/UsersPaymentContext';
+import ContributionContext from '../../context/ContributionContext';
 
 
 export default function UserPayListHeader() {
-          const { inSelect, setInSelect, setStartAnimation, setSelectedBatch } = useContext(UsersPaymentContext)
+          const { inSelect, setInSelect, setStartAnimation, setSelectedBatch } = useContext(ContributionContext)
 
           const toggleInSelect = () => {
                     setInSelect(t => !t)

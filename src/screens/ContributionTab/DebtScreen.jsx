@@ -1,15 +1,36 @@
-import React from 'react'
-import { View, Text,  StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { View, Text,  StyleSheet, TouchableOpacity, FlatList } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
+import DebtScreenHeader from '../../components/ContributionTab/DebtScreenHeader';
+import { useContext } from 'react';
+import ContributionContext from '../../context/ContributionContext';
+import UserPayment from '../../components/ContributionTab/UserPayment';
+import UserDebt from '../../components/ContributionTab/UserDebt';
+import DebtForm from '../../components/ContributionTab/DebtForm';
 
 
 export default function DebtScreen() {
           const navigation = useNavigation()
+          const { users } = useContext(ContributionContext)
+          const [showForm, setShowForm] = useState(false)
+          const onUserPress = useCallback((userId) => {
+                    setShowForm(userId)
+          })
+          console.log('render')
           return (
+                    <>
                     <View style={styles.container}>
-                              <Text>Dettes here</Text>
+                              <DebtScreenHeader />
+                              <FlatList
+                                        // ListHeaderComponent={() => <DebtScreenHeader />}
+                                        showsVerticalScrollIndicator={false}
+                                        data={users}
+                                        keyExtractor={(user, index) => index.toString()} renderItem={({ item }) => <UserDebt user={item} onUserPress={onUserPress} />}
+                              />
                     </View>
+                    {showForm && <DebtForm onClose={() => setShowForm(false)} />}
+                    </>
           )
 }
 

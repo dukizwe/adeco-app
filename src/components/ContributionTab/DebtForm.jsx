@@ -5,7 +5,7 @@ import { Portal } from 'react-native-portalize'
 import { primaryColor } from '../../styles'
 import { Feather } from '@expo/vector-icons';
 import { useForm } from '../../hooks/useForm'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, FadeIn } from 'react-native-reanimated'
 
 export default memo(function DebtForm({ onClose }) {
           const monthInputRef = useRef(null)
@@ -65,8 +65,8 @@ export default memo(function DebtForm({ onClose }) {
           }
           return (
                     <Portal>
-                              <TouchableWithoutFeedback onPress={onClose}>
-                                        <Animated.View style={styles.modalContainer} entering={entering} exiting={exiting}  >
+                              <TouchableWithoutFeedback onPress={onClose} entering={FadeIn}>
+                                        <Animated.View style={styles.modalContainer} entering={FadeIn}  >
                                                   <TouchableWithoutFeedback>
                                                             <View style={styles.formContent}>
                                                                       <ScrollView keyboardShouldPersistTaps="handled">

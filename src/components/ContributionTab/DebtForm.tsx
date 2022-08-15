@@ -1,22 +1,50 @@
 import { FormControl, Input, WarningOutlineIcon } from 'native-base'
-import React, { memo, useEffect, useRef } from 'react'
-import { BackHandler, ScrollView, StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native'
+import React, { FC, memo, useContext, useEffect, useRef, useState } from 'react'
+import { BackHandler, InputAccessoryView, ScrollView, StyleSheet, Text, TextInput, TextInputComponent, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import { primaryColor } from '../../styles'
 import { Feather } from '@expo/vector-icons';
 import { useForm } from '../../hooks/useForm'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, FadeIn } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, FadeIn, BaseAnimationBuilder } from 'react-native-reanimated'
+import ContributionContext from '../../context/ContributionContext'
+import { ContributionContextInterface } from '../../types/ContributionContextInterface'
 
-export default memo(function DebtForm({ onClose }) {
-          const monthInputRef = useRef(null)
-          const commentInputRef = useRef(null)
-          const sendBtnOpacity = useSharedValue(1)
+interface Props {
+          /**
+           * Une fonction qui va fermer le form
+           */
+          onClose: () => void,
+          onSubmit: (montant: number, month: number, comment?: string) => void,
+          onRemove: () => void,
+          /**
+           * Represents the selected user id
+           */
+          userId?: number
+}
 
-          const [data, onChange] = useForm({
-                    amount: '',
-                    month: '',
-                    comment: ''
+interface Initial {
+          amount: string,
+          month: string,
+          comment?: string,
+}
+export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove }: Props): JSX.Element {
+          const monthInputRef = useRef<TextInput>(null)
+          const commentInputRef = useRef<TextInput>(null)
+          const sendBtnOpacity = useSharedValue<number>(1)
+          const { queueList } = useContext<ContributionContextInterface>(ContributionContext)
+          
+          /**
+           * Check if we h've already give debt to a user
+           */
+          const debted = userId && queueList[userId] ? queueList[userId].debt : undefined
+          const [isEditing, setIsediting] = useState(false)
+
+          const [data, onChange] = useForm<Initial>({
+                    amount: debted ? debted.montant.toString() : '',
+                    month: debted ? debted.month.toString() : '',
+                    comment: debted ? debted.comment : '',
           })
+          
           useEffect(() => {
                     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
                               onClose()
@@ -31,16 +59,16 @@ export default memo(function DebtForm({ onClose }) {
                     opacity: sendBtnOpacity.value
           }))
 
-          const isValid = data.amount != '' && data.month != '' && data.comment != ''
+          const isValid = data.amount != '' && data.month != ''
           useEffect(() => {
                     sendBtnOpacity.value = withTiming(isValid ? 1 : 0.5, {
                               duration: 200
                     })
           }, [isValid])
-          const entering = (targetValues) => {
+          const entering = () => {
                     'worklet';
                     const animations = {
-                              opacity: withTiming(1, { duration: 2000 }),
+                              opacity: withTiming(1, { duration: 150 }),
                     };
                     const initialValues = {
                               opacity: 0,
@@ -50,10 +78,10 @@ export default memo(function DebtForm({ onClose }) {
                               animations,
                     };
           };
-          const exiting = (values) => {
+          const exiting = () => {
                     'worklet';
                     const animations = {
-                              opacity: withTiming(0, { duration: 2000 }),
+                              opacity: withTiming(0, { duration: 200 }),
                     };
                     const initialValues = {
                               opacity: 1,
@@ -65,8 +93,8 @@ export default memo(function DebtForm({ onClose }) {
           }
           return (
                     <Portal>
-                              <TouchableWithoutFeedback onPress={onClose} entering={FadeIn}>
-                                        <Animated.View style={styles.modalContainer} entering={FadeIn}  >
+                              <TouchableWithoutFeedback onPress={onClose}>
+                                        <Animated.View style={styles.modalContainer} exiting={exiting}  >
                                                   <TouchableWithoutFeedback>
                                                             <View style={styles.formContent}>
                                                                       <ScrollView keyboardShouldPersistTaps="handled">
@@ -78,15 +106,21 @@ export default memo(function DebtForm({ onClose }) {
                                                                                                               placeholder="Entrez le montant"
                                                                                                               borderRadius={8}
                                                                                                               autoFocus
-                                                                                                              value={data.amount}
-                                                                                                              onChangeText={n => onChange('amount', n)}
+                                                                                                              value={data.amount.toString()}
+                                                                                                              onChangeText={n => {
+                                                                                                                        onChange('amount', n)
+                                                                                                                        if(debted && !isEditing) {
+                                                                                                                                  setIsediting(true)
+                                                                                                                        }
+                                                                                                              }}
                                                                                                               _focus={{
-                                                                                                                        borderColor: primaryColor
+                                                                                                                        borderColor: primaryColor,
+                                                                                                                        backgroundColor: '#fff'
                                                                                                               }}
                                                                                                               returnKeyType="next"
                                                                                                               blurOnSubmit={false}
                                                                                                               onSubmitEditing={() => {
-                                                                                                                        monthInputRef.current.focus()
+                                                                                                                        monthInputRef.current?.focus()
                                                                                                               }}
                                                                                                     />
                                                                                                     {/* <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -100,15 +134,21 @@ export default memo(function DebtForm({ onClose }) {
                                                                                                               placeholder="Entrez le mois"
                                                                                                               borderRadius={8}
                                                                                                               _focus={{
-                                                                                                                        borderColor: primaryColor
+                                                                                                                        borderColor: primaryColor,
+                                                                                                                        backgroundColor: '#fff'
                                                                                                               }}
                                                                                                               ref={monthInputRef}
-                                                                                                              value={data.month}
-                                                                                                              onChangeText={n => onChange('month', n)}
+                                                                                                              value={data.month.toString()}
+                                                                                                              onChangeText={n => {
+                                                                                                                        onChange('month', n)
+                                                                                                                        if(debted && !isEditing) {
+                                                                                                                                  setIsediting(true)
+                                                                                                                        }
+                                                                                                              }}
                                                                                                               returnKeyType="next"
                                                                                                               blurOnSubmit={false}
                                                                                                               onSubmitEditing={() => {
-                                                                                                                        commentInputRef.current.focus()
+                                                                                                                        commentInputRef.current?.focus()
                                                                                                               }}
                                                                                                     />
                                                                                           </FormControl>
@@ -122,20 +162,31 @@ export default memo(function DebtForm({ onClose }) {
                                                                                                               multiline
                                                                                                               mr={5}
                                                                                                               _focus={{
-                                                                                                                        borderColor: primaryColor
+                                                                                                                        borderColor: primaryColor,
+                                                                                                                        backgroundColor: '#fff'
                                                                                                               }}
                                                                                                               ref={commentInputRef}
                                                                                                               blurOnSubmit={false}
                                                                                                               value={data.comment}
-                                                                                                              onChangeText={n => onChange('comment', n)}
+                                                                                                              onChangeText={n => {
+                                                                                                                        onChange('comment', n)
+                                                                                                                        if(debted && !isEditing) {
+                                                                                                                                  setIsediting(true)
+                                                                                                                        }
+                                                                                                              }}
                                                                                                               maxHeight={100}
                                                                                                     />
                                                                                           </FormControl>
-                                                                                          <TouchableWithoutFeedback onPress={() => console.log('hy')} disabled={!isValid}>
-                                                                                                    <Animated.View style={[styles.sendBtn, opacityAnimatedstyles]}>
-                                                                                                              <Feather name="save" size={24} color="#fff" />
+                                                                                          {debted && !isEditing ? <TouchableWithoutFeedback onPress={onRemove} >
+                                                                                                    <Animated.View style={[styles.sendBtn, { backgroundColor: '#e35349'}]}>
+                                                                                                              <Feather name="trash" size={24} color="#fff" />
                                                                                                     </Animated.View>
-                                                                                          </TouchableWithoutFeedback>
+                                                                                          </TouchableWithoutFeedback> :
+                                                                                          <TouchableWithoutFeedback onPress={() => onSubmit(parseInt(data.amount, 10), parseInt(data.month), data.comment)} disabled={!isValid}>
+                                                                                          <Animated.View style={[styles.sendBtn, opacityAnimatedstyles]}>
+                                                                                                    <Feather name="save" size={24} color="#fff" />
+                                                                                          </Animated.View>
+                                                                                </TouchableWithoutFeedback>}
                                                                                 </View>
                                                                       </ScrollView>
                                                             </View>

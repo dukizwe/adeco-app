@@ -1,14 +1,29 @@
 import React, { useContext, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet } from 'react-native'
+import ContributionContext from '../../context/ContributionContext'
 import { primaryColor } from '../../styles'
+import { ContributionContextInterface } from '../../types/ContributionContextInterface'
+import { User } from '../../types/User'
 
-export default function UserDebt({ user, onUserPress }) {
-          const inSelectStyles = false ? { backgroundColor: '#c9c9c9' } : {}
+interface Props {
+          user: User,
+          onUserPress: (userId: number) => void,
+          /**
+           * Represents the selected user id
+           */
+          userId?: number
+}
+
+export default function UserDebt({ user, onUserPress, userId }: Props) {
+          const { queueList } = useContext<ContributionContextInterface>(ContributionContext)
+          const isSelected: boolean = user.id === userId
+          const inSelectStyles = isSelected ? { backgroundColor: '#c9c9c9' } : {}
+          const isAleadyDebted: boolean = queueList[user.id]?.debt?.montant ? true : false
           return (
                     <View>
                     <TouchableNativeFeedback
                               accessibilityRole="button"
-                              background={TouchableNativeFeedback.Ripple('#cbd1d4')}
+                              background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                               onPress={() => onUserPress(user.id)}
                               useForeground={true}
                     >
@@ -17,11 +32,16 @@ export default function UserDebt({ user, onUserPress }) {
                                                   <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../assets/girl.jpg')} />
                                         </View>
                                         <View style={styles.userInfo}>
-                                                  <View style={styles.infoTop}>
+                                                  <View style={{}}>
                                                             <Text style={styles.userNames}>Dukizwe Darcy</Text>
                                                   </View>
                                                   <View style={styles.userActions}>
-                                                            <Text style={[styles.debtAmount, { backgroundColor: '#fff', color: '#000'}]}>320 000</Text>
+                                                           {isAleadyDebted &&  <View style={[styles.debtAmount, { backgroundColor: '#fff'}]}>
+                                                                      <Text style={{ fontWeight: 'bold', color: '#96A5B0'}} >
+                                                                                { queueList[user.id].debt?.montant.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
+                                                                      </Text>
+                                                                      <Text style={styles.newBadge}>N</Text>
+                                                            </View>}
                                                             <Text style={[styles.debtAmount, { marginLeft: 5 }]}>320 000</Text>
                                                             <Text style={[styles.debtAmount, { marginLeft: 5 }]}>320 000</Text>
                                                            {/*  <View style={styles.debtCountContainer}>
@@ -94,5 +114,16 @@ const styles = StyleSheet.create({
                     color: '#fff',
                     fontWeight: 'bold',
                     opacity: 0.8
+          },
+          newBadge: {
+                    paddingHorizontal: 3,
+                    borderRadius: 5,
+                    position: 'absolute',
+                    top: -5,
+                    right: -5,
+                    backgroundColor: primaryColor,
+                    fontSize: 8,
+                    color: '#fff',
+                    fontWeight: 'bold'
           }
 })

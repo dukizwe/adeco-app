@@ -5,14 +5,16 @@ import { useState } from "react"
  * @param {Object} initials les donnes par défault
  * @returns {Array} un tableau contenant les [nouveaux donnees, le handleChange, le setValeur des donnés]
  */
-export const useForm = (initials) => {
-          const [data, setData] = useState(initials)
 
-          const handleChange = (name, value) => {
+
+export const useForm = <Initials>(initials: Initials): [Initials, (name: keyof  Initials, value: Initials[typeof name]) => void, (name: keyof Initials, value: string) => void] => {
+          const [data, setData] = useState<Initials>(initials)
+
+          const handleChange = (name: keyof Initials, value: Initials[typeof name]) => {
                     setData(d => ({...d, [name]: value}))
           }
 
-          const setValue = (name, value) => {
+          const setValue = (name: keyof Initials, value: string) => {
                     setData(d => ({...d, [name]: value}))
           }
           return [data, handleChange, setValue]

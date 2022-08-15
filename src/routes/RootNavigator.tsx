@@ -6,13 +6,15 @@ import { Host } from 'react-native-portalize';
 import ContributionHeader from '../components/Header/ContributionHeader';
 import UsersPaymentContext from '../context/ContributionContext';
 import DebtScreen from '../screens/ContributionTab/DebtScreen';
+import { ContributionContextInterface, QueueRecord } from '../types/ContributionContextInterface';
+import { User } from '../types/User';
 import Tabs from './Tabs';
 
 export default function RootNavigator() {
 
           const Stack = createStackNavigator()
 
-          const users = [
+          const users: User[] = [
                     {
                               firstName: 'Darcy',
                               lastName: 'Dukizwe',
@@ -55,11 +57,11 @@ export default function RootNavigator() {
                     }
           ]
           const [inSelect, setInSelect] = useState(false)
-          const [selectedBatch, setSelectedBatch] = useState([])
-          const [queueList, setQueueList] = useState({})
+          const [selectedBatch, setSelectedBatch] = useState<User[]>([])
+          const [queueList, setQueueList] = useState<QueueRecord>({})
           const [startAnimation, setStartAnimation] = useState(false)
-          const isSelected = (user) => selectedBatch.find(u => u.id == user.id)
-          const toggleSelectedBatch = (user) => {
+          const isSelected = (user: User) => selectedBatch.find(u => u.id == user.id)
+          const toggleSelectedBatch = (user: User) => {
                     if(isSelected(user)) {
                               const newSelected = selectedBatch.filter(u => u.id != user.id)
                               setSelectedBatch(newSelected)
@@ -71,12 +73,12 @@ export default function RootNavigator() {
                               setSelectedBatch(prev => ([...prev, user]))
                     }
           }
-          const onUserLongPress = (user) => {
+          const onUserLongPress = (user: User) => {
                     setInSelect(true)
                     toggleSelectedBatch(user)
                     setStartAnimation(true)
           }
-          const contextValue = {
+          const contextValue: ContributionContextInterface = {
                     users,
                     inSelect,
                     setInSelect,

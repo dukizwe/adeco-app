@@ -26,7 +26,7 @@ export default function UserPayment({ user }) {
                     }
           }
 
-          const isInQueueList = (actionName) => queueList[user.id]?.actions[actionName] ? true : false
+          const isInQueueList = (actionName) => queueList[user.id]?.actions && queueList[user.id]?.actions[actionName] ? true : false
           
           const payAction = (actionName) => {
                     if(queueList[user.id]) {

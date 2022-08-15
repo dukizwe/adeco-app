@@ -1,13 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState, memo } from 'react'
-import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity, TextStyle } from 'react-native'
 import UsersPaymentContext from '../../context/ContributionContext'
 import { MaterialIcons, FontAwesome5, AntDesign, Ionicons } from '@expo/vector-icons'; 
 import { CountUp, useCountUp } from 'use-count-up'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { ContributionContextInterface } from '../../types/ContributionContextInterface';
 
 export default memo(function ContributionHeader() {
-          const { queueList } = useContext(UsersPaymentContext)
+          const { queueList } = useContext<ContributionContextInterface>(UsersPaymentContext)
           const [total, setTotal] = useState(0)
           const [prevTotal, setPrevTotal] = useState(0)
           const navigation = useNavigation()
@@ -35,8 +36,11 @@ export default memo(function ContributionHeader() {
                     var newTotal = 0
                     for(let key in queueList) {
                               const userPay = queueList[key]
-                              const actionsAmounts = Object.values(userPay.actions)
-                              const sum = actionsAmounts.reduce((prev, current) => parseInt(prev) + parseInt(current), 0)
+                              const actionsAmounts = userPay.actions ? Object.values(userPay.actions) : 0
+                              let sum = actionsAmounts && actionsAmounts.reduce((prev, current) => prev + current, 0)
+                             /*  if(userPay.debt) {
+                                        sum += userPay.debt.montant
+                              } */
                               newTotal += sum
                     }
                     setPrevTotal(total)
@@ -44,7 +48,7 @@ export default memo(function ContributionHeader() {
           }, [queueList])
 
           const onNextPress = () => {
-                    navigation.navigate('DebtScreen')
+                    navigation.navigate("DebtScreen" as never)
           }
 
           useFocusEffect(useCallback(() => {
@@ -72,7 +76,7 @@ export default memo(function ContributionHeader() {
                     return unsubscribe
           }, [])
 
-          const MyCountUp = () => {
+          const MyCountUp = ({ style }: { style: TextStyle }) => {
                     const { value, reset } = useCountUp({
                               isCounting: true,
                               start: prevTotal,
@@ -83,25 +87,23 @@ export default memo(function ContributionHeader() {
                                         setPrevTotal(total)
                               }
                     })
-                    return `${value} Fbu`
+                    return <Text style={style}>{`${value} Fbu`}</Text>
           }
           return (
                     <View style={styles.header}>
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4')} useForeground>
+                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground>
                                         <Animated.View style={[styles.opDate, calendarAnimatedStyles]}>
                                                   <FontAwesome5 name="calendar-check" size={22} color="#189fed" style={styles.icon} />
                                         </Animated.View>
                               </TouchableNativeFeedback>
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4')} useForeground onPress={onBackPress}>
+                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onBackPress}>
                                         <Animated.View style={[styles.opDate, backBtnAnimatedStyles, { position: 'absolute' }]}>
                                                   <Ionicons name="arrow-back" size={22} color="#777" />
                                         </Animated.View>
                               </TouchableNativeFeedback>
                               <View style={styles.total}>
                                         <AntDesign name="creditcard" size={24} color="#189fed" style={styles.icon} />
-                                        <Text style={styles.headerValue}>
-                                                  <MyCountUp />
-                                        </Text>
+                                        <MyCountUp style={styles.headerValue} />
                                         {/* { total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } Fbu */}
                               </View>
                               <TouchableOpacity style={{...styles.nextBtn, opacity: total == 0 ? 0.5 : 1}} disabled={total == 0} onPress={onNextPress}>

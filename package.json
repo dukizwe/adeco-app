@@ -13,6 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/stack": "^6.2.2",
+    "@reduxjs/toolkit": "^1.8.4",
     "@types/react-native-snap-carousel": "^3.8.5",
     "deprecated-react-native-prop-types": "^2.2.0",
     "expo": "~46.0.6",

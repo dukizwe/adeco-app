@@ -18,7 +18,7 @@ export default function UserDebt({ user, onUserPress, userId }: Props) {
           const { queueList } = useContext<ContributionContextInterface>(ContributionContext)
           const isSelected: boolean = user.id === userId
           const inSelectStyles = isSelected ? { backgroundColor: '#c9c9c9' } : {}
-          const isAleadyDebted: boolean = queueList[user.id]?.debt?.montant ? true : false
+          const isAleadyDebted: boolean = queueList[user.id]?.debt?.amount ? true : false
           return (
                     <View>
                     <TouchableNativeFeedback
@@ -38,7 +38,7 @@ export default function UserDebt({ user, onUserPress, userId }: Props) {
                                                   <View style={styles.userActions}>
                                                            {isAleadyDebted &&  <View style={[styles.debtAmount, { backgroundColor: '#fff'}]}>
                                                                       <Text style={{ fontWeight: 'bold', color: '#96A5B0'}} >
-                                                                                { queueList[user.id].debt?.montant.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
+                                                                                { queueList[user.id].debt?.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
                                                                       </Text>
                                                                       <Text style={styles.newBadge}>N</Text>
                                                             </View>}

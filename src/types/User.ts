@@ -8,7 +8,7 @@ export interface User {
                     debt?: number
           },
           debt?: {
-                    montant: number,
+                    amount: number,
                     month: number,
                     comment?: string
           }

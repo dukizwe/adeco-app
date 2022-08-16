@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, { useState } from "react"
 
 /**
  * le hook pour controler les formulaires
@@ -7,7 +7,7 @@ import { useState } from "react"
  */
 
 
-export const useForm = <Initials>(initials: Initials): [Initials, (name: keyof  Initials, value: Initials[typeof name]) => void, (name: keyof Initials, value: string) => void] => {
+export const useForm = <Initials>(initials: Initials): [Initials, (name: keyof  Initials, value: Initials[typeof name]) => void, React.Dispatch<React.SetStateAction<Initials>>] => {
           const [data, setData] = useState<Initials>(initials)
 
           const handleChange = (name: keyof Initials, value: Initials[typeof name]) => {
@@ -17,5 +17,5 @@ export const useForm = <Initials>(initials: Initials): [Initials, (name: keyof  
           const setValue = (name: keyof Initials, value: string) => {
                     setData(d => ({...d, [name]: value}))
           }
-          return [data, handleChange, setValue]
+          return [data, handleChange, setData]
 }

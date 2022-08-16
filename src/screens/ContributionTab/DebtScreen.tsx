@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react'
-import { View, Text,  StyleSheet, TouchableOpacity, FlatList } from 'react-native'
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
+import React, { useCallback, useEffect, useState } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DebtScreenHeader from '../../components/ContributionTab/DebtScreenHeader';
 import { useContext } from 'react';
@@ -10,78 +10,125 @@ import UserDebt from '../../components/ContributionTab/UserDebt';
 import DebtForm from '../../components/ContributionTab/DebtForm';
 import { User } from '../../types/User';
 import { ContributionContextInterface } from '../../types/ContributionContextInterface';
+import { useForm } from '../../hooks/useForm';
+import { DataChanger, DebtFormInterface, UserDebtFormInterface } from '../../types/DebtFormInterface';
 
 export default function DebtScreen() {
           const navigation = useNavigation()
           const { users, setQueueList, queueList } = useContext<ContributionContextInterface>(ContributionContext)
-          const [showForm, setShowForm] = useState<boolean | number>(false)
+          const [selectedUserId, setSelectedUserId] = useState<null | number>(null)
 
           const onUserPress = useCallback((userId: number) => {
-                    setShowForm(userId)
+                    setSelectedUserId(userId)
           }, [])
 
-          const onSubmit = (montant: number, month: number, comment?: string) => {
-                    if(typeof showForm === 'number') {
-                              setShowForm(false)
-                              setQueueList((lastList: { [x: string]: any; }) => {
-                                        const userId: number = showForm
-                                        const user: User = lastList[userId.toString()]
-                                        if(user) {
-                                                  return {
-                                                            ...lastList,
-                                                            [userId]: {...user, debt: {
-                                                                      montant,
-                                                                      month,
-                                                                      comment
-                                                            }}
-                                                  }
-                                        } else {
-                                                  return {
-                                                            ...lastList,
-                                                            [userId]: {
-                                                                      id: userId,
-                                                                      debt: {
-                                                                                montant,
-                                                                                month,
-                                                                                comment
-                                                                      }
+          /**
+           * Check if we h've already give debt to a user
+           */
+          const debted = typeof selectedUserId === 'number' && selectedUserId && queueList[selectedUserId] ? queueList[selectedUserId].debt : undefined
+          const [data, setData] = useState<UserDebtFormInterface>({})
+
+          const onChange: DataChanger = (name, value) => {
+                    if (selectedUserId == null) return false
+                    setData(d => {
+                              const lastUserInfo = d[selectedUserId] || { amount: '', month: '', comment: ''}
+                              return {
+                                        ...d,
+                                        [selectedUserId]: {
+                                                  ...lastUserInfo,
+                                                  [name]: value
+                                        }
+                              }
+                    })
+          }
+
+          const onSubmit = () => {
+                    if (selectedUserId == null) return false
+                    setSelectedUserId(null)
+                    setData(d => ({
+                              ...d,
+                              [selectedUserId]: {
+                                        amount: '',
+                                        month: '',
+                                        comment: ''
+                              }
+                    }))
+                    setQueueList((lastList: { [x: string]: any; }) => {
+                              const user: User = lastList[selectedUserId]
+                              if (user) {
+                                        return {
+                                                  ...lastList,
+                                                  [selectedUserId]: {
+                                                            ...user, debt: {
+                                                                      amount: data[selectedUserId].amount,
+                                                                      month: data[selectedUserId].month,
+                                                                      comment: data[selectedUserId].comment
                                                             }
                                                   }
                                         }
-                              })
-                    }
+                              } else {
+                                        return {
+                                                  ...lastList,
+                                                  [selectedUserId]: {
+                                                            id: selectedUserId,
+                                                            debt: {
+                                                                      amount: data[selectedUserId].amount,
+                                                                      month: data[selectedUserId].month,
+                                                                      comment: data[selectedUserId].comment
+                                                            }
+                                                  }
+                                        }
+                              }
+                    })
           }
 
-          const onRemove= () => {
-                    if(typeof showForm === 'number') {
-                              const userId: number = showForm
-                              setShowForm(false)
-                              setQueueList(d => ({
-                                        ...d,
-                                        [userId]: {
-                                                  ...d[userId],
-                                                  debt: undefined
+          const onRemove = () => {
+                    Alert.alert('Supprimer la dette', "Voulez-vous supprimer la dette à cette personne ?",
+                              [
+                                        {
+                                                  text: "Annuler",
+                                                  style: "cancel"
+                                        },
+                                        {
+                                                  text: "Oui", onPress: async () => {
+                                                            if (typeof selectedUserId === 'number') {
+                                                                      const userId: number = selectedUserId
+                                                                      setSelectedUserId(null)
+                                                                      setQueueList(d => ({
+                                                                                ...d,
+                                                                                [userId]: {
+                                                                                          ...d[userId],
+                                                                                          debt: undefined
+                                                                                }
+                                                                      }))
+                                                            }
+                                                  }
                                         }
-                              }))
-                    }
+                              ]
+                    )
           }
+
           return (
                     <>
-                    <View style={styles.container}>
-                              <DebtScreenHeader />
-                              <FlatList
-                                        // ListHeaderComponent={() => <DebtScreenHeader />}
-                                        showsVerticalScrollIndicator={false}
-                                        data={users}
-                                        keyExtractor={(user, index) => index.toString()}
-                                        renderItem={({ item }) => <UserDebt user={item} onUserPress={onUserPress} userId={typeof showForm === 'number' ? showForm : undefined} />}
+                              <View style={styles.container}>
+                                        <DebtScreenHeader />
+                                        <FlatList
+                                                  // ListHeaderComponent={() => <DebtScreenHeader />}
+                                                  showsVerticalScrollIndicator={false}
+                                                  data={users}
+                                                  keyExtractor={(user, index) => index.toString()}
+                                                  renderItem={({ item }) => <UserDebt user={item} onUserPress={onUserPress} userId={typeof selectedUserId === 'number' ? selectedUserId : undefined} />}
+                                        />
+                              </View>
+                              {selectedUserId && <DebtForm
+                                        onClose={() => setSelectedUserId(null)}
+                                        onSubmit={onSubmit}
+                                        userId={typeof selectedUserId === 'number' ? selectedUserId : undefined}
+                                        onRemove={onRemove}
+                                        data={data[selectedUserId] || { amount: '', month: '', comment: '' }}
+                                        onChange={onChange}
                               />
-                    </View>
-                    {showForm && <DebtForm
-                              onClose={() => setShowForm(false)}
-                              onSubmit={onSubmit}
-                              userId={typeof showForm === 'number' ? showForm : undefined}
-                              onRemove={onRemove} />}
+                              }
                     </>
           )
 }

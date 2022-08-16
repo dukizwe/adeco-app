@@ -5,10 +5,14 @@ import { Portal } from 'react-native-portalize'
 import { primaryColor } from '../../styles'
 import { Feather } from '@expo/vector-icons';
 import { useForm } from '../../hooks/useForm'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, FadeIn, BaseAnimationBuilder } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, FadeIn, BaseAnimationBuilder, FadeInDown, SlideInDown, SlideInUp, SlideOutUp, SlideInRight, SlideOutDown } from 'react-native-reanimated'
 import ContributionContext from '../../context/ContributionContext'
 import { ContributionContextInterface } from '../../types/ContributionContextInterface'
+import { DataChanger, DebtFormInterface } from '../../types/DebtFormInterface'
 
+interface UserDebtInitial {
+          [key: number]: DebtFormInterface
+}
 interface Props {
           /**
            * Une fonction qui va fermer le form
@@ -19,15 +23,13 @@ interface Props {
           /**
            * Represents the selected user id
            */
-          userId?: number
+          userId?: number,
+          data: DebtFormInterface,
+          onChange: DataChanger
 }
 
-interface Initial {
-          amount: string,
-          month: string,
-          comment?: string,
-}
-export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove }: Props): JSX.Element {
+
+export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove, data, onChange }: Props): JSX.Element {
           const monthInputRef = useRef<TextInput>(null)
           const commentInputRef = useRef<TextInput>(null)
           const sendBtnOpacity = useSharedValue<number>(1)
@@ -38,12 +40,6 @@ export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove }: P
            */
           const debted = userId && queueList[userId] ? queueList[userId].debt : undefined
           const [isEditing, setIsediting] = useState(false)
-
-          const [data, onChange] = useForm<Initial>({
-                    amount: debted ? debted.montant.toString() : '',
-                    month: debted ? debted.month.toString() : '',
-                    comment: debted ? debted.comment : '',
-          })
           
           useEffect(() => {
                     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -96,7 +92,7 @@ export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove }: P
                               <TouchableWithoutFeedback onPress={onClose}>
                                         <Animated.View style={styles.modalContainer} exiting={exiting}  >
                                                   <TouchableWithoutFeedback>
-                                                            <View style={styles.formContent}>
+                                                            <Animated.View style={styles.formContent}>
                                                                       <ScrollView keyboardShouldPersistTaps="handled">
                                                                                 <View style={styles.inputs}>
                                                                                           <FormControl mr={2} flex={1}>
@@ -105,8 +101,8 @@ export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove }: P
                                                                                                               keyboardType='number-pad'
                                                                                                               placeholder="Entrez le montant"
                                                                                                               borderRadius={8}
-                                                                                                              autoFocus
-                                                                                                              value={data.amount.toString()}
+                                                                                                              autoFocus={!debted}
+                                                                                                              value={debted && !isEditing ? debted.amount.toString() : data.amount.toString()}
                                                                                                               onChangeText={n => {
                                                                                                                         onChange('amount', n)
                                                                                                                         if(debted && !isEditing) {
@@ -138,7 +134,7 @@ export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove }: P
                                                                                                                         backgroundColor: '#fff'
                                                                                                               }}
                                                                                                               ref={monthInputRef}
-                                                                                                              value={data.month.toString()}
+                                                                                                              value={debted && !isEditing ? debted.month.toString() : data.month.toString()}
                                                                                                               onChangeText={n => {
                                                                                                                         onChange('month', n)
                                                                                                                         if(debted && !isEditing) {
@@ -167,7 +163,7 @@ export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove }: P
                                                                                                               }}
                                                                                                               ref={commentInputRef}
                                                                                                               blurOnSubmit={false}
-                                                                                                              value={data.comment}
+                                                                                                              value={debted && !isEditing ? debted.comment : data.comment}
                                                                                                               onChangeText={n => {
                                                                                                                         onChange('comment', n)
                                                                                                                         if(debted && !isEditing) {
@@ -189,7 +185,7 @@ export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove }: P
                                                                                 </TouchableWithoutFeedback>}
                                                                                 </View>
                                                                       </ScrollView>
-                                                            </View>
+                                                            </Animated.View>
                                                   </TouchableWithoutFeedback>
                                         </Animated.View>
                               </TouchableWithoutFeedback>

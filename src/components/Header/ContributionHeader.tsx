@@ -47,9 +47,13 @@ export default memo(function ContributionHeader() {
                     setTotal(newTotal)
           }, [queueList])
 
-          const onNextPress = () => {
-                    navigation.navigate("DebtScreen" as never)
-          }
+          const onNextPress = useCallback(() => {
+                    if(route.name == 'Contribution') {
+                              navigation.navigate("DebtScreen" as never)
+                    } else if (route.name == 'DebtScreen') {
+                              navigation.navigate("AcitivitiesScreen" as never)
+                    }
+          }, [route.name])
 
           useFocusEffect(useCallback(() => {
                     if(route.name == 'DebtScreen') {
@@ -89,15 +93,17 @@ export default memo(function ContributionHeader() {
                     })
                     return <Text style={style}>{`${value} Fbu`}</Text>
           }
+
+          const noAnimationsRouteNames = ['AcitivitiesScreen']
           return (
                     <View style={styles.header}>
                               <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground>
-                                        <Animated.View style={[styles.opDate, calendarAnimatedStyles]}>
+                                        <Animated.View style={[styles.opDate, calendarAnimatedStyles, noAnimationsRouteNames.includes(route.name) && { transform: [{ translateX: -30 }], opacity: 0 } ]}>
                                                   <FontAwesome5 name="calendar-check" size={22} color="#189fed" style={styles.icon} />
                                         </Animated.View>
                               </TouchableNativeFeedback>
                               <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onBackPress}>
-                                        <Animated.View style={[styles.opDate, backBtnAnimatedStyles, { position: 'absolute' }]}>
+                                        <Animated.View style={[styles.opDate, !noAnimationsRouteNames.includes(route.name) && backBtnAnimatedStyles, { position: 'absolute', transform: [{ translateX: 15 }] }]}>
                                                   <Ionicons name="arrow-back" size={22} color="#777" />
                                         </Animated.View>
                               </TouchableNativeFeedback>

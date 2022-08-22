@@ -5,6 +5,7 @@ import { Text, View, StyleSheet } from 'react-native'
 import { Host } from 'react-native-portalize';
 import ContributionHeader from '../components/Header/ContributionHeader';
 import UsersPaymentContext from '../context/ContributionContext';
+import AcitivitiesScreen from '../screens/ContributionTab/AcitivitiesScreen';
 import DebtScreen from '../screens/ContributionTab/DebtScreen';
 import { ContributionContextInterface, QueueRecord } from '../types/ContributionContextInterface';
 import { User } from '../types/User';
@@ -101,6 +102,11 @@ export default function RootNavigator() {
                                                             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
                                                             header: () => <ContributionHeader />,
                                                             headerMode: 'float'
+                                                  }} />
+                                                  <Stack.Screen name="AcitivitiesScreen" component={AcitivitiesScreen} options={{
+                                                            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                                                            header: () => <ContributionHeader />,
+                                                            // headerMode: 'float'
                                                   }} />
                                         </Stack.Navigator>
                               </UsersPaymentContext.Provider>

@@ -12,6 +12,7 @@ import { userSelector } from "./store/selectors/userSelector";
 import { Text } from 'react-native'
 import { createStackNavigator } from "@react-navigation/stack";
 import { Host } from "react-native-portalize";
+import { PortalProvider } from "@gorhom/portal";
 
 const Stack = createStackNavigator()
 
@@ -21,7 +22,6 @@ export default function AppContainer() {
           useEffect(() => {
                     (async function() {
                               const user = await AsyncStorage.getItem('user')
-                              // await AsyncStorage.removeItem('user')
                               dispatch(setUserAction(JSON.parse(user)))
                               setUserLoading(false)
                     })()
@@ -32,14 +32,18 @@ export default function AppContainer() {
                     <View style={{ flex: 1, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
                               <ActivityIndicator color="#007BFF" animating={userLoading} size='large' />
                     </View> :
-                    <NavigationContainer>
-                              {user ?
-                                        <RootNavigator />:
-                              <Stack.Navigator>
-                                        <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false}}/>
-                                        <Stack.Screen name="Login" component={LoginScreen} options={{ title: '', headerShadowVisible: false, headerStyle: {backgroundColor: '#F2F5FE'}}} />
-                                        <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false}} />
-                              </Stack.Navigator>}
-                    </NavigationContainer>
+                    <PortalProvider>
+                              <NavigationContainer>
+                                        {user ?
+                                                  <Host>
+                                                            <RootNavigator />
+                                                  </Host>:
+                                        <Stack.Navigator>
+                                                  <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false}}/>
+                                                  <Stack.Screen name="Login" component={LoginScreen} options={{ title: '', headerShadowVisible: false, headerStyle: {backgroundColor: '#F2F5FE'}}} />
+                                                  <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false}} />
+                                        </Stack.Navigator>}
+                              </NavigationContainer>
+                    </PortalProvider>
           )
 }

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState, memo } from 'react'
-import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity, TextStyle } from 'react-native'
+import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity, TextStyle, SafeAreaView } from 'react-native'
 import UsersPaymentContext from '../../context/ContributionContext'
 import { MaterialIcons, FontAwesome5, AntDesign, Ionicons } from '@expo/vector-icons'; 
 import { CountUp, useCountUp } from 'use-count-up'
@@ -96,7 +96,7 @@ export default memo(function ContributionHeader() {
 
           const noAnimationsRouteNames = ['AcitivitiesScreen']
           return (
-                    <View style={styles.header}>
+                    route.name != "AcitivitiesScreen" ? <View style={styles.header}>
                               <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground>
                                         <Animated.View style={[styles.opDate, calendarAnimatedStyles, noAnimationsRouteNames.includes(route.name) && { transform: [{ translateX: -30 }], opacity: 0 } ]}>
                                                   <FontAwesome5 name="calendar-check" size={22} color="#189fed" style={styles.icon} />
@@ -116,7 +116,7 @@ export default memo(function ContributionHeader() {
                                         <Text style={styles.nextText}>Suivant</Text>
                                         <MaterialIcons name="navigate-next" size={24} color="#189fed" />
                               </TouchableOpacity>
-                    </View>
+                    </View> : null
           )
 })
 
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
                     backgroundColor: '#fff',
                     borderRadius: 10,
                     paddingHorizontal: 20,
-                    height: 60,
+                    height: 60
           },
           icon: {
                     opacity: 0.8

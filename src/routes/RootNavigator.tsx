@@ -63,10 +63,10 @@ export default function RootNavigator() {
           const [startAnimation, setStartAnimation] = useState(false)
           const isSelected = (user: User) => selectedBatch.find(u => u.id == user.id)
           const toggleSelectedBatch = (user: User) => {
-                    if(isSelected(user)) {
+                    if (isSelected(user)) {
                               const newSelected = selectedBatch.filter(u => u.id != user.id)
                               setSelectedBatch(newSelected)
-                              if(selectedBatch.length-1 === 0) {
+                              if (selectedBatch.length - 1 === 0) {
                                         setInSelect(false)
                                         setStartAnimation(false)
                               }
@@ -94,23 +94,21 @@ export default function RootNavigator() {
                     startAnimation
           }
           return (
-                    <Host>
-                              <UsersPaymentContext.Provider value={contextValue}>
-                                        <Stack.Navigator>
-                                                  <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
-                                                  <Stack.Screen name="DebtScreen" component={DebtScreen} options={{
-                                                            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-                                                            header: () => <ContributionHeader />,
-                                                            headerMode: 'float'
-                                                  }} />
-                                                  <Stack.Screen name="AcitivitiesScreen" component={AcitivitiesScreen} options={{
-                                                            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-                                                            header: () => <ContributionHeader />,
-                                                            // headerMode: 'float'
-                                                  }} />
-                                        </Stack.Navigator>
-                              </UsersPaymentContext.Provider>
-                    </Host>
+                    <UsersPaymentContext.Provider value={contextValue}>
+                              <Stack.Navigator>
+                                        <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+                                        <Stack.Screen name="DebtScreen" component={DebtScreen} options={{
+                                                  cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                                                  header: () => <ContributionHeader />,
+                                                  headerMode: 'float'
+                                        }} />
+                                        <Stack.Screen name="AcitivitiesScreen" component={AcitivitiesScreen} options={{
+                                                  cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                                                  header: () => <ContributionHeader />
+                                                  // headerMode: 'float'
+                                        }} />
+                              </Stack.Navigator>
+                    </UsersPaymentContext.Provider>
           );
 }
 

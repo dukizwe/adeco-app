@@ -13,12 +13,13 @@ import { Modalize } from 'react-native-modalize';
 export default function AcitivitiesScreen() {
           const { width, height } = useWindowDimensions()
           const top = useSharedValue(height)
-          const modalizeRef = useRef<Modalize>(null);
+          const formRef = useRef<Modalize>(null);
           const [isOpen, setIsOpen] = useState(false)
+          const [loadingForm, setLoadingForm] = useState(true)
 
           const onOpen = () => {
                     setIsOpen(true)
-                    modalizeRef.current?.open();
+                    formRef.current?.open();
           };
 
           const onCloseBottomSheet = (bool: boolean) => {
@@ -62,27 +63,26 @@ export default function AcitivitiesScreen() {
                     }
           })
 
-          const openBiottomSheet = () => {
+          const openBottomSheet = () => {
                     setIsOpen(true)
                     top.value = withSpring(
                               height / 2,
                               SPRING_CONFIG
                     )
           }
+          useEffect(() => {
+                    if(isOpen) {
+                              const timer = setTimeout(() => {
+                                        setLoadingForm(false)
+                              })
+                              return () => {
+                                        clearTimeout(timer)
+                              }
+                    }
+          }, [isOpen])
           return (
                     <>
-                              <Portal>
-                                        <GestureHandlerRootView style={{ height: isOpen ? '100%' : 0, opacity: isOpen ? 1 : 0, backgroundColor: 'rgba(0, 0, 0, 0)', position: 'absolute', width: '100%' }}>
-                                                  <Modalize
-                                                            ref={modalizeRef}
-                                                            onClosed={() => setIsOpen(false)}
-                                                            adjustToContentHeight
-                                                            handlePosition="inside"
-                                                  >
-                                                            <Text style={{ paddingVertical: 200 }}>hey there</Text>
-                                                  </Modalize>
-                                        </GestureHandlerRootView>
-                              </Portal>
+                              <ActivityForm formRef={formRef} isOpen={isOpen} setIsOpen={setIsOpen} loadingForm={loadingForm} setLoadingForm={setLoadingForm} />
                               <View style={styles.container}>
                                         <View style={styles.content}>
                                                   <Text style={styles.title}>Activités</Text>

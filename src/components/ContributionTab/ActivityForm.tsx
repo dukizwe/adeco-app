@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState, PropsWithChildren, FC } from 'react'
+import { ActivityIndicator, Keyboard, StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Modalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import { Entypo, Feather, MaterialIcons, Octicons, Ionicons } from '@expo/vector-icons';
 import { primaryColor, smallGreenWhiteColor } from '../../styles'
 import { FormControl, Input } from 'native-base'
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
+import Animated, { interpolate, useAnimatedStyle, useDerivedValue, useHandler, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 interface Props {
           formRef: React.RefObject<Modalize>,
           isOpen: boolean,
@@ -19,40 +19,41 @@ interface DropdownProps {
           showActivityCategories: boolean
 }
 
-const ActivitiyCategoriesDropdown = ({ showActivityCategories }: DropdownProps) => {
-          const dropdownTranslateY = useSharedValue<number>(0)
+export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, setLoadingForm }: Props) {
+          const sendBtnOpacity = useSharedValue<number>(1)
+          const dropdownCaretDeg = useSharedValue<number>(0)
+          const commentInputRef = useRef<TextInput>(null)
+          const [showActivityCategories, setShowActivityCategories] = useState<boolean>(false)
+
+          const opacityAnimatedstyles = useAnimatedStyle(() => ({
+                    opacity: sendBtnOpacity.value
+          }))
+          const dropdownTranslateY = useSharedValue<number>(30)
 
           const translateYAnimatedStyles = useAnimatedStyle(() => ({
                     transform: [{ translateY: dropdownTranslateY.value }]
           }))
-          const entering = () => {
-                    'worklet';
-                    const animations = {
-                              transform: [{ translateY: withTiming(5, { duration: 150 }) }]
-                    };
-                    const initialValues = {
-                              transform: [{ translateY: 0 }]
-                    };
-                    return {
-                              initialValues,
-                              animations,
-                    };
-          };
-          const exiting = () => {
-                    'worklet';
-                    const animations = {
-                              transform: [{ translateY: withTiming(0, { duration: 150 }) }]
-                    };
-                    const initialValues = {
-                              transform: [{ translateY: 5 }]
-                    };
-                    return {
-                              initialValues,
-                              animations,
-                    };
-          }
-          return (
-                    <Animated.View style={[styles.dropdownContainer]}>
+          // const caretAnimation = useDerivedValue(() => interpolate(dropdownCaretDeg.value, [0, 360], [0, 360]))
+          const dropdownCaretAnimatedStyles = useAnimatedStyle(() => ({
+                    transform: [{ rotate: `${dropdownCaretDeg.value}deg` }]
+          }))
+
+          const toggleActivityCategories = useCallback(() => {
+                    setShowActivityCategories(t => !t)
+          }, [])
+
+          useEffect(() => {
+                    if(showActivityCategories) {
+                              dropdownTranslateY.value = withSpring(0)
+                              dropdownCaretDeg.value = withSpring(-180)
+                    } else {
+                              dropdownTranslateY.value = withSpring(30)
+                              dropdownCaretDeg.value = withSpring(0)
+                    }
+          }, [showActivityCategories])
+
+          const ActivitiyCategoriesDropdown: React.ReactNode = (
+                    showActivityCategories ? <Animated.View style={[styles.dropdownContainer, translateYAnimatedStyles]}>
                               <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#fff', false)}>
                                         <View style={styles.dropdownItem}>
                                                   <View style={styles.dropdownIconTitle}>
@@ -97,27 +98,18 @@ const ActivitiyCategoriesDropdown = ({ showActivityCategories }: DropdownProps) 
                                                   </View>
                                         </View>
                               </TouchableNativeFeedback>
-                    </Animated.View>
+                    </Animated.View> : undefined
           )
-}
-
-export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, setLoadingForm }: Props) {
-          const sendBtnOpacity = useSharedValue<number>(1)
-          const commentInputRef = useRef<TextInput>(null)
-          const [showActivityCategories, setShowActivityCategories] = useState<boolean>(false)
-
-          const opacityAnimatedstyles = useAnimatedStyle(() => ({
-                    opacity: sendBtnOpacity.value
-          }))
-
-          const toggleActivityCategories = useCallback(() => {
-                    setShowActivityCategories(t => !t)
-          }, [])
+          
           return (
                     <Portal>
                               <GestureHandlerRootView style={{ height: isOpen ? '100%' : 0, opacity: isOpen ? 1 : 0, backgroundColor: 'rgba(0, 0, 0, 0)', position: 'absolute', width: '100%', zIndex: 1 }}>
                                         <Modalize
                                                   ref={formRef}
+                                                  onClose={() => {
+                                                            setShowActivityCategories(false)
+                                                            Keyboard.dismiss()
+                                                  }}
                                                   onClosed={() => {
                                                             setIsOpen(false)
                                                             setLoadingForm(true)
@@ -125,6 +117,7 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                                                   adjustToContentHeight
                                                   handlePosition="inside"
                                                   modalStyle={{ backgroundColor: '#fff', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
+                                                  FloatingComponent={ActivitiyCategoriesDropdown}
                                                   scrollViewProps={{ keyboardShouldPersistTaps: 'handled' }}
                                         >
                                                   {loadingForm ? <ActivityIndicator
@@ -133,12 +126,14 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                                                             color='#777'
                                                             style={{ alignSelf: 'center', marginBottom: 15, marginTop: 20 }}
                                                   /> : <View style={styles.formContainer}>
-                                                            {showActivityCategories && <ActivitiyCategoriesDropdown showActivityCategories={showActivityCategories} />}
+                                                            {/* {showActivityCategories && <ActivitiyCategoriesDropdown showActivityCategories={showActivityCategories} />} */}
                                                             <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#d6d6d6', false)} onPress={toggleActivityCategories}>
-                                                                      <View style={styles.activityContainer}>
+                                                                      <View style={[styles.activityContainer, showActivityCategories && { backgroundColor: '#F1F1F1' }]}>
                                                                                 <View style={styles.activity}>
                                                                                           <Text style={styles.activityLabel}>Pas d'activité</Text>
-                                                                                          <Entypo name="chevron-small-down" size={24} color="#777" />
+                                                                                          <Animated.View style={[dropdownCaretAnimatedStyles]}>
+                                                                                                    <Entypo name="chevron-small-down" size={24} color="#777" />
+                                                                                          </Animated.View>
                                                                                 </View>
                                                                                 <View style={styles.activityType}>
                                                                                           <Text style={styles.activityTypeText}>débiter</Text>
@@ -236,8 +231,6 @@ const styles = StyleSheet.create({
                     justifyContent: 'space-between',
                     paddingVertical: 8,
                     borderRadius: 5,
-                    elevation: 10,
-                    shadowColor: '#F4F4F4',
                     paddingHorizontal: 15,
           },
           activity: {
@@ -294,15 +287,17 @@ const styles = StyleSheet.create({
 
           dropdownContainer: {
                     borderRadius: 10,
-                    backgroundColor: '#EFEFEF',
+                    backgroundColor: '#FFF',
                     elevation: 10,
-                    shadowColor: '#F4F4F4',
-                    width: 300,
+                    shadowColor: '#ddd',
+                    borderColor: '#ddd',
+                    width: '85%',
                     overflow: 'hidden',
-                    zIndex: 20000,
-                    bottom: '100%',
+                    bottom: 250,
                     position: 'absolute',
-                    
+                    marginHorizontal: 20,
+                    zIndex: 2,
+                    alignSelf: 'center'
           },
           dropdownItem: {
                     flexDirection: 'row',
@@ -323,7 +318,7 @@ const styles = StyleSheet.create({
           separator: {
                     height: 1,
                     width: '100%',
-                    backgroundColor: '#ddd',
+                    backgroundColor: '#F1F1F1',
                     paddingHorizontal: 20
           }
 })

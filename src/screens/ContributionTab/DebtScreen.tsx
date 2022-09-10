@@ -4,19 +4,26 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DebtScreenHeader from '../../components/ContributionTab/DebtScreenHeader';
 import { useContext } from 'react';
-import ContributionContext from '../../context/ContributionContext';
 import UserPayment from '../../components/ContributionTab/UserPayment';
 import UserDebt from '../../components/ContributionTab/UserDebt';
 import DebtForm from '../../components/ContributionTab/DebtForm';
 import { User } from '../../types/User';
-import { ContributionContextInterface } from '../../types/ContributionContextInterface';
 import { useForm } from '../../hooks/useForm';
 import { DataChanger, DebtFormInterface, UserDebtFormInterface } from '../../types/DebtFormInterface';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { queueListSelector, usersSelector } from '../../store/selectors/contributionSelectors';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { setQueueListAction } from '../../store/actions/contributionActions';
 
 export default function DebtScreen() {
           const navigation = useNavigation()
-          const { users, setQueueList, queueList } = useContext<ContributionContextInterface>(ContributionContext)
+
+          const users = useAppSelector(usersSelector)
+          const queueList = useAppSelector(queueListSelector)
+
           const [selectedUserId, setSelectedUserId] = useState<null | number>(null)
+
+          const dispatch = useAppDispatch()
 
           const onUserPress = useCallback((userId: number) => {
                     setSelectedUserId(userId)
@@ -53,33 +60,31 @@ export default function DebtScreen() {
                                         comment: ''
                               }
                     }))
-                    setQueueList((lastList: { [x: string]: any; }) => {
-                              const user: User = lastList[selectedUserId]
-                              if (user) {
-                                        return {
-                                                  ...lastList,
-                                                  [selectedUserId]: {
-                                                            ...user, debt: {
-                                                                      amount: data[selectedUserId].amount,
-                                                                      month: data[selectedUserId].month,
-                                                                      comment: data[selectedUserId].comment
-                                                            }
+                    const user: User = queueList[selectedUserId]
+                    if (user) {
+                              dispatch(setQueueListAction({
+                                        ...queueList,
+                                        [selectedUserId]: {
+                                                  ...user, debt: {
+                                                            amount: data[selectedUserId].amount,
+                                                            month: data[selectedUserId].month,
+                                                            comment: data[selectedUserId].comment
                                                   }
                                         }
-                              } else {
-                                        return {
-                                                  ...lastList,
-                                                  [selectedUserId]: {
-                                                            id: selectedUserId,
-                                                            debt: {
-                                                                      amount: data[selectedUserId].amount,
-                                                                      month: data[selectedUserId].month,
-                                                                      comment: data[selectedUserId].comment
-                                                            }
+                              }))
+                    } else {
+                              dispatch(setQueueListAction({
+                                        ...queueList,
+                                        [selectedUserId]: {
+                                                  id: selectedUserId,
+                                                  debt: {
+                                                            amount: data[selectedUserId].amount,
+                                                            month: data[selectedUserId].month,
+                                                            comment: data[selectedUserId].comment
                                                   }
                                         }
-                              }
-                    })
+                              }))
+                    }
           }
 
           const onRemove = () => {
@@ -94,10 +99,10 @@ export default function DebtScreen() {
                                                             if (typeof selectedUserId === 'number') {
                                                                       const userId: number = selectedUserId
                                                                       setSelectedUserId(null)
-                                                                      setQueueList(d => ({
-                                                                                ...d,
+                                                                      dispatch(setQueueListAction({
+                                                                                ...queueList,
                                                                                 [userId]: {
-                                                                                          ...d[userId],
+                                                                                          ...queueList[userId],
                                                                                           debt: undefined
                                                                                 }
                                                                       }))

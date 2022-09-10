@@ -1,17 +1,22 @@
 import React, { useContext } from 'react'
 import { View, Text, StyleSheet, TouchableNativeFeedback } from 'react-native'
 import { Ionicons, Feather } from '@expo/vector-icons'; 
-import ContributionContext from '../../context/ContributionContext';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { setSelectedBatchAction, toggleInSelectAction, toggleStartAnimationAction } from '../../store/actions/contributionActions';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { inSelectSelector } from '../../store/selectors/contributionSelectors';
 
 
 export default function UserPayListHeader() {
-          const { inSelect, setInSelect, setStartAnimation, setSelectedBatch } = useContext(ContributionContext)
+          const inSelect = useAppSelector(inSelectSelector)
+
+          const dispatch = useAppDispatch()
 
           const toggleInSelect = () => {
-                    setInSelect(t => !t)
-                    setStartAnimation(t => !t)
+                    dispatch(toggleInSelectAction())
+                    dispatch(toggleStartAnimationAction())
                     if(inSelect) {
-                              setSelectedBatch([])
+                              dispatch(setSelectedBatchAction([]))
                     }
           }
           return (

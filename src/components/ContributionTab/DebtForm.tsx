@@ -6,9 +6,9 @@ import { primaryColor } from '../../styles'
 import { Feather } from '@expo/vector-icons';
 import { useForm } from '../../hooks/useForm'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, FadeIn, BaseAnimationBuilder, FadeInDown, SlideInDown, SlideInUp, SlideOutUp, SlideInRight, SlideOutDown } from 'react-native-reanimated'
-import ContributionContext from '../../context/ContributionContext'
-import { ContributionContextInterface } from '../../types/ContributionContextInterface'
 import { DataChanger, DebtFormInterface } from '../../types/DebtFormInterface'
+import { useAppSelector } from '../../hooks/useAppSelector'
+import { queueListSelector } from '../../store/selectors/contributionSelectors'
 
 interface UserDebtInitial {
           [key: number]: DebtFormInterface
@@ -33,7 +33,7 @@ export default memo(function DebtForm({ onClose, onSubmit, userId, onRemove, dat
           const monthInputRef = useRef<TextInput>(null)
           const commentInputRef = useRef<TextInput>(null)
           const sendBtnOpacity = useSharedValue<number>(1)
-          const { queueList } = useContext<ContributionContextInterface>(ContributionContext)
+          const queueList = useAppSelector(queueListSelector)
           
           /**
            * Check if we h've already give debt to a user

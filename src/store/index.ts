@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { applyMiddleware, co } from "redux";
+import { applyMiddleware } from "redux";
 // import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from "redux-thunk";
-import { affectationsReducer } from "./reducers/affectationsReducer";
+import contributionReducer from "./reducers/contributionReducer";
 import userReducer from "./reducers/userReducer";
 
 // const composedEnhancer = composeWithDevTools(applyMiddleware(thunk))
@@ -10,6 +10,9 @@ import userReducer from "./reducers/userReducer";
 export const store = configureStore({
           reducer: {
                     user: userReducer,
-                    affectations: affectationsReducer
+                    contribution: contributionReducer
           }
 })
+
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch

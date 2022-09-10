@@ -5,7 +5,8 @@ export interface User {
           actions?: {
                     action: number,
                     rate?: number,
-                    debt?: number
+                    debt?: number,
+                    both?: any
           },
           debt?: {
                     amount: number,

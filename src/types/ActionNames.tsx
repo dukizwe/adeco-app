@@ -1,0 +1,1 @@
+export type ActionNames = "debt" | "action" | "rate" | "both"

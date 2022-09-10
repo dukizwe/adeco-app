@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState, memo } from 'react'
 import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity, TextStyle, SafeAreaView } from 'react-native'
-import UsersPaymentContext from '../../context/ContributionContext'
 import { MaterialIcons, FontAwesome5, AntDesign, Ionicons } from '@expo/vector-icons'; 
 import { CountUp, useCountUp } from 'use-count-up'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { ContributionContextInterface } from '../../types/ContributionContextInterface';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { queueListSelector } from '../../store/selectors/contributionSelectors';
 
 export default memo(function ContributionHeader() {
-          const { queueList } = useContext<ContributionContextInterface>(UsersPaymentContext)
+          const queueList = useAppSelector(queueListSelector)
           const [total, setTotal] = useState(0)
           const [prevTotal, setPrevTotal] = useState(0)
           const navigation = useNavigation()
@@ -48,6 +48,7 @@ export default memo(function ContributionHeader() {
           }, [queueList])
 
           const onNextPress = useCallback(() => {
+                    // return navigation.navigate("DebtScreen" as never)
                     if(route.name == 'Contribution') {
                               navigation.navigate("DebtScreen" as never)
                     } else if (route.name == 'DebtScreen') {

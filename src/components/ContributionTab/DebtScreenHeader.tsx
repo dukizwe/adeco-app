@@ -1,11 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableNativeFeedback } from 'react-native'
 import { Ionicons, Feather } from '@expo/vector-icons'; 
-import ContributionContext from '../../context/ContributionContext';
-
 
 export default function DebtScreenHeader() {
-          const { inSelect, setInSelect, setStartAnimation, setSelectedBatch } = useContext(ContributionContext)
           const [loading, setLoading] = useState(true)
           useEffect(() => {
                     setLoading(false)

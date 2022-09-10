@@ -1,62 +1,92 @@
 import React, { useContext, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import ContributionContext from '../../context/ContributionContext'
+import { User } from '../../types/User'
+import { useAppSelector } from '../../hooks/useAppSelector'
+import { inSelectSelector, queueListSelector, selectedBatchSelector } from '../../store/selectors/contributionSelectors'
+import { useAppDispatch } from '../../hooks/useAppDispatch'
+import { setInSelectAction, setQueueListAction, setSelectedBatchAction, setStartAnimationAction } from '../../store/actions/contributionActions'
+import { ActionNames } from '../../types/ActionNames'
 
-export default function UserPayment({ user }) {
-          const [actions, setAction] = useState(user.actions)
-          const { inSelect, setInSelect, selectedBatch, onUserLongPress, toggleSelectedBatch, isSelected, queueList, setQueueList } = useContext(ContributionContext)
-          const CanITouch = (props) => {
-                    if(props.touchable == true && inSelect == false) {
-                              return (
-                                        <TouchableNativeFeedback
-                                                  accessibilityRole="button"
-                                                  background={TouchableNativeFeedback.Ripple('#cbd1d4')}
-                                                  onPress={props.onPress}
-                                        >{props.children}</TouchableNativeFeedback>
-                              )
+export default function UserPayment({ user }: { user: User }) {
+
+          const inSelect = useAppSelector(inSelectSelector)
+          const selectedBatch = useAppSelector(selectedBatchSelector)
+          const queueList = useAppSelector(queueListSelector)
+          
+          const dispatch = useAppDispatch()
+          const isSelected = (user: User) => selectedBatch.find(u => u.id == user.id)
+
+          const inSelectStyles = isSelected(user) ? { backgroundColor: '#c9c9c9' } : {}
+
+          const toggleSelectedBatch = (user: User) => {
+                    if (isSelected(user)) {
+                              const newSelected = selectedBatch.filter(u => u.id != user.id)
+                              dispatch(setSelectedBatchAction(newSelected))
+                              if (selectedBatch.length - 1 === 0) {
+                                        dispatch(setInSelectAction(false))
+                                        dispatch(setStartAnimationAction(false))
+                              }
                     } else {
-                              return props.children
+                              dispatch(setSelectedBatchAction([...selectedBatch, user]))
                     }
           }
-          const inSelectStyles = isSelected(user) ? { backgroundColor: '#c9c9c9' } : {}
+
           const onUserPress = () => {
                     if(inSelect) {
                               toggleSelectedBatch(user)
                     }
           }
 
-          const isInQueueList = (actionName) => queueList[user.id]?.actions && queueList[user.id]?.actions[actionName] ? true : false
+          const onUserLongPress = (user: User) => {
+                    dispatch(setInSelectAction(true))
+                    toggleSelectedBatch(user)
+                    dispatch(setStartAnimationAction(true))
+          }
+
+          const isInQueueList = (actionName: ActionNames) => {
+                    const actions = queueList[user.id]?.actions
+                    if(actions) {
+                              return actions[actionName] ? true : false
+                    }
+                    return false
+          }
           
-          const payAction = (actionName) => {
+          const payAction = (actionName: ActionNames) => {
                     if(queueList[user.id]) {
                               if(isInQueueList(actionName)) {
-                                        const { [actionName]: removed, ...newActions } = queueList[user.id].actions
-                                        setQueueList(lastList => ({
-                                                  ...lastList,
-                                                  [user.id]: {...user, actions: newActions}
-                                        }))
+                                        const actions = queueList[user.id].actions
+                                        if(actions) {
+                                                  const { [actionName]: removed, ...newActions } = actions
+                                                  dispatch(setQueueListAction({...queueList, [user.id]: {...user, actions: newActions}}))
+                                        }
                               } else {
-                                        setQueueList(lastList => ({
-                                                  ...lastList,
-                                                  [user.id]: {...user, actions: {...queueList[user.id].actions, [actionName]: user.actions[actionName]}}
-                                        }))
+                                        const actions = user.actions
+                                        if(actions) {
+                                                  dispatch(setQueueListAction({
+                                                            ...queueList,
+                                                            [user.id]: {...user, actions: {...queueList[user.id].actions, [actionName]: actions[actionName]}}
+                                                  }))
+                                        }
                               }
                     } else {
-                              setQueueList(lastList => ({
-                                        ...lastList,
-                                        [user.id]: {...user, actions: {[actionName]: user.actions[actionName]}}
-                              }))
+                              const actions = user.actions
+                              if(actions) {
+                                        dispatch(setQueueListAction({
+                                                  ...queueList,
+                                                  [user.id]: {...user, actions: {[actionName]: actions[actionName]}}
+                                        }))
+                              }
                     }
           }
-          const hasDebt = user.actions.debt > 0
+          const hasDebt: boolean = (user.actions?.debt  && user.actions?.debt > 0) ? true : false
           return (
                     <View>
                     <TouchableNativeFeedback
                               accessibilityRole="button"
-                              background={TouchableNativeFeedback.Ripple('#cbd1d4')}
+                              background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                               onLongPress={() => onUserLongPress(user)}
-                              delayLongPress={100}
+                              // delayLongPress={100}
                               onPress={onUserPress}
                               useForeground={true}
                     >
@@ -82,33 +112,33 @@ export default function UserPayment({ user }) {
                                                   <View style={styles.userActions}>
                                                             <TouchableNativeFeedback
                                                                       accessibilityRole="button"
-                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4')}
+                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                                                                       onPress={() => payAction('action')}>
                                                                       <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5', opacity: isInQueueList('action') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>action</Text>
                                                                                 <View style={styles.separator}></View>
-                                                                                <Text style={styles.actionAmount}>{user.actions.action}</Text>
+                                                                                <Text style={styles.actionAmount}>{user.actions?.action}</Text>
                                                                       </View>
                                                             </TouchableNativeFeedback>
                                                             <TouchableNativeFeedback
                                                                       accessibilityRole="button"
-                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4')}
+                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                                                                       onPress={() => payAction('rate')}>
                                                                       <View  style={{...styles.actionButton, backgroundColor: '#362b89ed', opacity: isInQueueList('rate') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>retard</Text>
                                                                                 <View style={styles.separator}></View>
-                                                                                <Text style={styles.actionAmount}>{user.actions.rate}</Text>
+                                                                                <Text style={styles.actionAmount}>{user.actions?.rate}</Text>
                                                                       </View>
                                                             </TouchableNativeFeedback>
                                                             {hasDebt &&
                                                             <TouchableNativeFeedback
                                                                       accessibilityRole="button"
-                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4')}
+                                                                      background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                                                                       onPress={() => payAction('debt')}>
                                                                       <View  style={{...styles.actionButton, backgroundColor: '#873475', opacity: isInQueueList('debt') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>dette</Text>
                                                                                 <View style={styles.separator}></View>
-                                                                                <Text style={styles.actionAmount}>{user.actions.debt}</Text>
+                                                                                <Text style={styles.actionAmount}>{user.actions?.debt}</Text>
                                                                       </View>
                                                             </TouchableNativeFeedback>
                                                             }

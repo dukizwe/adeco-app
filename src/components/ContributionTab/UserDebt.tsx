@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet } from 'react-native'
-import ContributionContext from '../../context/ContributionContext'
+import { useAppSelector } from '../../hooks/useAppSelector'
+import { queueListSelector } from '../../store/selectors/contributionSelectors'
 import { primaryColor } from '../../styles'
-import { ContributionContextInterface } from '../../types/ContributionContextInterface'
 import { User } from '../../types/User'
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function UserDebt({ user, onUserPress, userId }: Props) {
-          const { queueList } = useContext<ContributionContextInterface>(ContributionContext)
+          const queueList = useAppSelector(queueListSelector)
           const isSelected: boolean = user.id === userId
           const inSelectStyles = isSelected ? { backgroundColor: '#c9c9c9' } : {}
           const isAleadyDebted: boolean = queueList[user.id]?.debt?.amount ? true : false

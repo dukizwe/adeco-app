@@ -8,6 +8,8 @@ export enum CONTRIBUTION_TYPES {
           SET_QUEUE_LIST = "SET_QUEUE_LIST",
           SET_START_ANIMATION = "SET_START_ANIMATION",
           TOGGLE_START_ANIMATION = "TOGGLE_START_ANIMATION",
+          SET_PREVIOUS_TOTAL = "SET_PREVIOUS_TOTAL",
+          APPEND_ACTIVITY = "APPEND_ACTIVITY"
 }
 
 export interface ContributionAction {
@@ -80,6 +82,9 @@ export default function contributionReducer(contributionState: ContributionConte
                               return {...contributionState, startAnimation: action.payload}
                     case CONTRIBUTION_TYPES.TOGGLE_START_ANIMATION:
                               return {...contributionState, startAnimation: !contributionState.startAnimation}
+                    case CONTRIBUTION_TYPES.APPEND_ACTIVITY:
+                              const existsActivities = contributionState.queueList.activities
+                              return {...contributionState, queueList: {...contributionState.queueList, activities: existsActivities ? [...existsActivities, action.payload ] : [action.payload]}}
                     default:
                               return contributionState
           }

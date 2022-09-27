@@ -99,15 +99,6 @@ export default function AcitivitiesScreen() {
                                                   </View>
                                         </TouchableNativeFeedback>
                               </View >
-                              {/* <Portal>
-                                        <GestureHandlerRootView style={{ height: isOpen ? '100%' : 0, opacity: isOpen ? 1 : 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', position: 'absolute', width: '100%' }}>
-                                                  <PanGestureHandler onGestureEvent={gestureHandler}>
-                                                            <Animated.View style={[styles.bottomSheet, animatedTopStyles]}>
-                                                                      <Text>Sheet</Text>
-                                                            </Animated.View>
-                                                  </PanGestureHandler>
-                                        </GestureHandlerRootView>
-                              </Portal> */}
                     </>
           )
 }

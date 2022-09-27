@@ -1,3 +1,4 @@
+import { Activity } from "../../types/Activity"
 import { User } from "../../types/User"
 import { ContributionAction, CONTRIBUTION_TYPES } from "../reducers/contributionReducer"
 
@@ -37,5 +38,19 @@ export const setStartAnimationAction = (bool: boolean) => {
 export const toggleStartAnimationAction = () => {
           return {
                     type: CONTRIBUTION_TYPES.TOGGLE_START_ANIMATION
+          }
+}
+
+export const setPreviousTotalAction = (amount: number) => {
+          return {
+                    type: CONTRIBUTION_TYPES.SET_PREVIOUS_TOTAL,
+                    payload: amount
+          }
+}
+
+export const appendActivityAction = (activity: Activity) => {
+          return {
+                    type: CONTRIBUTION_TYPES.APPEND_ACTIVITY,
+                    payload: activity
           }
 }

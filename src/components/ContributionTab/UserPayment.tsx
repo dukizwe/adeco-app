@@ -44,7 +44,7 @@ export default function UserPayment({ user }: { user: User }) {
                     dispatch(setStartAnimationAction(true))
           }
 
-          const isInQueueList = (actionName: ActionNames) => {
+          const isActionInQueueList = (actionName: ActionNames) => {
                     const actions = queueList[user.id]?.actions
                     if(actions) {
                               return actions[actionName] ? true : false
@@ -54,7 +54,7 @@ export default function UserPayment({ user }: { user: User }) {
           
           const payAction = (actionName: ActionNames) => {
                     if(queueList[user.id]) {
-                              if(isInQueueList(actionName)) {
+                              if(isActionInQueueList(actionName)) {
                                         const actions = queueList[user.id].actions
                                         if(actions) {
                                                   const { [actionName]: removed, ...newActions } = actions
@@ -98,13 +98,13 @@ export default function UserPayment({ user }: { user: User }) {
                                                   <View style={styles.infoTop}>
                                                             <Text style={styles.userNames}>Dukizwe Darcy</Text>
                                                             <View style={styles.dotIndicator}>
-                                                                      {isInQueueList('action') && <View style={{...styles.selectedCheck, backgroundColor: '#40c2d7f5'}}>
+                                                                      {isActionInQueueList('action') && <View style={{...styles.selectedCheck, backgroundColor: '#40c2d7f5'}}>
                                                                                 <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
                                                                       </View>}
-                                                                      {isInQueueList('rate') && <View style={{...styles.selectedCheck, backgroundColor: '#362b89ed'}}>
+                                                                      {isActionInQueueList('rate') && <View style={{...styles.selectedCheck, backgroundColor: '#362b89ed'}}>
                                                                                 <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
                                                                       </View>}
-                                                                      {isInQueueList('debt') && <View style={{...styles.selectedCheck, backgroundColor: '#873475'}}>
+                                                                      {isActionInQueueList('debt') && <View style={{...styles.selectedCheck, backgroundColor: '#873475'}}>
                                                                                 <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
                                                                       </View>}
                                                             </View>
@@ -114,7 +114,7 @@ export default function UserPayment({ user }: { user: User }) {
                                                                       accessibilityRole="button"
                                                                       background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                                                                       onPress={() => payAction('action')}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5', opacity: isInQueueList('action') ? 0.5 : 1}}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5', opacity: isActionInQueueList('action') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>action</Text>
                                                                                 <View style={styles.separator}></View>
                                                                                 <Text style={styles.actionAmount}>{user.actions?.action}</Text>
@@ -124,7 +124,7 @@ export default function UserPayment({ user }: { user: User }) {
                                                                       accessibilityRole="button"
                                                                       background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                                                                       onPress={() => payAction('rate')}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#362b89ed', opacity: isInQueueList('rate') ? 0.5 : 1}}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#362b89ed', opacity: isActionInQueueList('rate') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>retard</Text>
                                                                                 <View style={styles.separator}></View>
                                                                                 <Text style={styles.actionAmount}>{user.actions?.rate}</Text>
@@ -135,7 +135,7 @@ export default function UserPayment({ user }: { user: User }) {
                                                                       accessibilityRole="button"
                                                                       background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                                                                       onPress={() => payAction('debt')}>
-                                                                      <View  style={{...styles.actionButton, backgroundColor: '#873475', opacity: isInQueueList('debt') ? 0.5 : 1}}>
+                                                                      <View  style={{...styles.actionButton, backgroundColor: '#873475', opacity: isActionInQueueList('debt') ? 0.5 : 1}}>
                                                                                 <Text style={styles.actionTitle}>dette</Text>
                                                                                 <View style={styles.separator}></View>
                                                                                 <Text style={styles.actionAmount}>{user.actions?.debt}</Text>

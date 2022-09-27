@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState, PropsWithChildren, FC } from 'react'
-import { ActivityIndicator, Keyboard, StyleSheet, Text, TextInput, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { ActivityIndicator, Keyboard, Platform, StyleSheet, Text, TextInput, TextStyle, TouchableNativeFeedback, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Modalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
@@ -7,6 +7,15 @@ import { Entypo, Feather, MaterialIcons, Octicons, Ionicons } from '@expo/vector
 import { primaryColor, smallGreenWhiteColor } from '../../styles'
 import { FormControl, Input } from 'native-base'
 import Animated, { interpolate, useAnimatedStyle, useDerivedValue, useHandler, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
+import { ACTIVITY_CATEGORIES } from '../../constants/ActivityCategories'
+import { ActivityCategoryInterface } from '../../types/ActivityCategoryInterface'
+import { Activity } from '../../types/Activity'
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import moment from 'moment'
+import { useAppSelector } from '../../hooks/useAppSelector'
+import { queueListSelector } from '../../store/selectors/contributionSelectors'
+import { useDispatch } from 'react-redux'
+import { appendActivityAction } from '../../store/actions/contributionActions'
 interface Props {
           formRef: React.RefObject<Modalize>,
           isOpen: boolean,
@@ -15,15 +24,23 @@ interface Props {
           setLoadingForm: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-interface DropdownProps {
-          showActivityCategories: boolean
-}
-
 export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, setLoadingForm }: Props) {
           const sendBtnOpacity = useSharedValue<number>(1)
           const dropdownCaretDeg = useSharedValue<number>(0)
           const commentInputRef = useRef<TextInput>(null)
           const [showActivityCategories, setShowActivityCategories] = useState<boolean>(false)
+          const [showCalendar, setShowCalendar] = useState<boolean>(false)
+          
+          const [peddingActivty, setPeddingActivity] = useState<Activity>({
+                    category: null,
+                    date: new Date(),
+                    amount: "",
+                    comment: ""
+          })
+
+          const queueList = useAppSelector(queueListSelector)
+
+          const dispatch = useDispatch()
 
           const opacityAnimatedstyles = useAnimatedStyle(() => ({
                     opacity: sendBtnOpacity.value
@@ -52,44 +69,52 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                     }
           }, [showActivityCategories])
 
+          /**
+           * Render icon dymanically
+           */
+          const Icons = {
+                    Ionicons: (name: any, style?: TextStyle) => <Ionicons name={name} size={24} color="#777" style={style} />,
+                    MaterialIcons: (name: any, style?: TextStyle) => <MaterialIcons name={name} size={24} color="#777" style={style} />
+          }
+
+          const onCategoryPress = (category: ActivityCategoryInterface) => {
+                    setPeddingActivity(l => ({
+                              ...l,
+                              category
+                    }))
+                    setShowActivityCategories(false)
+          }
+
+          const onChangeFromTime = (event: DateTimePickerEvent, time?: Date) => {
+                    setShowCalendar(Platform.OS === "ios");
+                    setPeddingActivity(p => ({
+                              ...p,
+                              date: time || new Date()
+                    }))
+          }
+
           const ActivitiyCategoriesDropdown: React.ReactNode = (
                     showActivityCategories ? <Animated.View style={[styles.dropdownContainer, translateYAnimatedStyles]}>
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#fff', false)}>
-                                        <View style={styles.dropdownItem}>
-                                                  <View style={styles.dropdownIconTitle}>
-                                                            <Ionicons name="ios-fast-food-outline" size={24} color="#777" />
-                                                            <Text style={styles.dropdownTitle}>Agape</Text>
+                              {ACTIVITY_CATEGORIES.map(category => {
+                                        const iconType = category.iconType
+                                        return (
+                                                  <View key={category.id}>
+                                                            <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#ddd', false)} onPress={() => onCategoryPress(category)}>
+                                                                      <View style={styles.dropdownItem}>
+                                                                                <View style={styles.dropdownIconTitle}>
+                                                                                          {iconType ? Icons[iconType](category.iconName) : Icons.MaterialIcons("monetization-on")}
+                                                                                          <Text style={styles.dropdownTitle}>{ category.name }</Text>
+                                                                                </View>
+                                                                                <View style={styles.activityType}>
+                                                                                          {category.type == "out" ? <Text style={[styles.activityTypeText, { fontSize: 12, color: '#D2001A' }]}>- débiter</Text> :
+                                                                                          <Text style={[styles.activityTypeText, { fontSize: 12, color: '#367E18' }]}>+ créditer</Text>}
+                                                                                </View>
+                                                                      </View>
+                                                            </TouchableNativeFeedback>
+                                                            <View style={styles.separator} />
                                                   </View>
-                                                  <View style={styles.activityType}>
-                                                            <Text style={[styles.activityTypeText, { fontSize: 12 }]}>débiter</Text>
-                                                  </View>
-                                        </View>
-                              </TouchableNativeFeedback>
-                              <View style={styles.separator} />
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#fff', false)}>
-                                        <View style={styles.dropdownItem}>
-                                                  <View style={styles.dropdownIconTitle}>
-                                                            <MaterialIcons name="local-hospital" size={24} color="#777" />
-                                                            <Text style={styles.dropdownTitle}>Assistance</Text>
-                                                  </View>
-                                                  <View style={styles.activityType}>
-                                                            <Text style={[styles.activityTypeText, { fontSize: 12 }]}>débiter</Text>
-                                                  </View>
-                                        </View>
-                              </TouchableNativeFeedback>
-                              <View style={styles.separator} />
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#fff', false)}>
-                                        <View style={styles.dropdownItem}>
-                                                  <View style={styles.dropdownIconTitle}>
-                                                            <MaterialIcons name="monetization-on" size={24} color="#777" />
-                                                            <Text style={styles.dropdownTitle}>Don</Text>
-                                                  </View>
-                                                  <View style={styles.activityType}>
-                                                            <Text style={[styles.activityTypeText, { fontSize: 12 }]}>débiter</Text>
-                                                  </View>
-                                        </View>
-                              </TouchableNativeFeedback>
-                              <View style={styles.separator} />
+                                        )
+                              })}
                               <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#fff', false)}>
                                         <View style={styles.dropdownItem}>
                                                   <View style={styles.dropdownIconTitle}>
@@ -100,8 +125,27 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                               </TouchableNativeFeedback>
                     </Animated.View> : undefined
           )
+
+          const onSave = () => {
+                    dispatch(appendActivityAction({...peddingActivty, date: peddingActivty.date.toString()}))
+                    formRef.current?.close()
+                    setPeddingActivity({
+                              category: null,
+                              date: new Date(),
+                              amount: "",
+                              comment: ""
+                    })
+          }
+
+          const isValid = peddingActivty.category && parseInt(peddingActivty.amount) > 0 && peddingActivty.date ? true : false
+          useEffect(() => {
+                    sendBtnOpacity.value = withTiming(isValid ? 1 : 0.5, {
+                              duration: 200
+                    })
+          }, [isValid])
           
           return (
+                    <>
                     <Portal>
                               <GestureHandlerRootView style={{ height: isOpen ? '100%' : 0, opacity: isOpen ? 1 : 0, backgroundColor: 'rgba(0, 0, 0, 0)', position: 'absolute', width: '100%', zIndex: 1 }}>
                                         <Modalize
@@ -130,14 +174,20 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                                                             <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#d6d6d6', false)} onPress={toggleActivityCategories}>
                                                                       <View style={[styles.activityContainer, showActivityCategories && { backgroundColor: '#F1F1F1' }]}>
                                                                                 <View style={styles.activity}>
-                                                                                          <Text style={styles.activityLabel}>Pas d'activité</Text>
+                                                                                          {peddingActivty.category ?
+                                                                                          <FormControl.Label style={{ marginBottom: 2, flexDirection: 'row', alignItems: 'center' }}>
+                                                                                                    {peddingActivty.category.iconType ? Icons[peddingActivty.category.iconType](peddingActivty.category.iconName, { marginRight: 5 }) : Icons.MaterialIcons("monetization-on")}
+                                                                                                    {peddingActivty.category.name}
+                                                                                          </FormControl.Label> :
+                                                                                          <Text style={styles.activityLabel}>Pas d'activité</Text>}
                                                                                           <Animated.View style={[dropdownCaretAnimatedStyles]}>
                                                                                                     <Entypo name="chevron-small-down" size={24} color="#777" />
                                                                                           </Animated.View>
                                                                                 </View>
-                                                                                <View style={styles.activityType}>
-                                                                                          <Text style={styles.activityTypeText}>débiter</Text>
-                                                                                </View>
+                                                                                {peddingActivty.category ? <View style={styles.activityType}>
+                                                                                          {peddingActivty.category.type == "out" ? <Text style={[styles.activityTypeText, { fontSize: 12, color: '#D2001A' }]}>- débiter</Text> :
+                                                                                          <Text style={[styles.activityTypeText, { fontSize: 12, color: '#367E18' }]}>+ créditer</Text>}
+                                                                                </View> : null}
                                                                       </View>
                                                             </TouchableNativeFeedback>
                                                             <View style={styles.inputs}>
@@ -146,9 +196,11 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                                                                                           <Feather name="calendar" size={20} color="#777" style={{ marginRight: 5 }} />
                                                                                           Date
                                                                                 </FormControl.Label>
-                                                                                <TouchableOpacity activeOpacity={0.5}>
+                                                                                <TouchableOpacity activeOpacity={0.5} onPress={() => setShowCalendar(true)}>
                                                                                           <View style={styles.calendarOpener}>
-                                                                                                    <Text style={styles.calendarValue}>26-08-2022 à 14h:00</Text>
+                                                                                                    <Text style={styles.calendarValue}>
+                                                                                                              { moment(peddingActivty.date).format("DD-MM-YYYY")}
+                                                                                                    </Text>
                                                                                           </View>
                                                                                 </TouchableOpacity>
                                                                       </FormControl>
@@ -165,14 +217,13 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                                                                                                     borderColor: primaryColor,
                                                                                                     backgroundColor: '#fff'
                                                                                           }}
-                                                                                          // ref={monthInputRef}
-                                                                                          // value={debted && !isEditing ? debted.month.toString() : data.month.toString()}
-                                                                                          // onChangeText={n => {
-                                                                                          //           onChange('month', n)
-                                                                                          //           if(debted && !isEditing) {
-                                                                                          //                     setIsediting(true)
-                                                                                          //           }
-                                                                                          // }}
+                                                                                          value={peddingActivty.amount}
+                                                                                          onChangeText={newAmount => {
+                                                                                                    setPeddingActivity(t => ({
+                                                                                                              ...t,
+                                                                                                              amount: newAmount
+                                                                                                    }))
+                                                                                          }}
                                                                                           returnKeyType="next"
                                                                                           blurOnSubmit={false}
                                                                                           onSubmitEditing={() => {
@@ -197,18 +248,18 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                                                                                                     backgroundColor: '#fff'
                                                                                           }}
                                                                                           ref={commentInputRef}
-                                                                                          // blurOnSubmit={false}
-                                                                                          // value={debted && !isEditing ? debted.comment : data.comment}
-                                                                                          // onChangeText={n => {
-                                                                                          //           onChange('comment', n)
-                                                                                          //           if(debted && !isEditing) {
-                                                                                          //                     setIsediting(true)
-                                                                                          //           }
-                                                                                          // }}
+                                                                                          blurOnSubmit={false}
+                                                                                          value={peddingActivty.comment}
+                                                                                          onChangeText={newComment => {
+                                                                                                    setPeddingActivity(l => ({
+                                                                                                              ...l,
+                                                                                                              comment: newComment
+                                                                                                    }))
+                                                                                          }}
                                                                                           maxHeight={100}
                                                                                 />
                                                                       </FormControl>
-                                                                      <TouchableWithoutFeedback>
+                                                                      <TouchableWithoutFeedback disabled={!isValid} onPress={onSave}>
                                                                                 <Animated.View style={[styles.sendBtn, opacityAnimatedstyles]}>
                                                                                           <Feather name="save" size={24} color="#fff" />
                                                                                 </Animated.View>
@@ -218,6 +269,18 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
                                         </Modalize>
                               </GestureHandlerRootView>
                     </Portal>
+                    {showCalendar && (
+                              <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={peddingActivty.date ? new Date(peddingActivty.date) : new Date()}
+                                        mode='date'
+                                        is24Hour={true}
+                                        display="default"
+                                        onChange={onChangeFromTime}
+                                        maximumDate={new Date()}
+                              />
+                    )}
+                    </>
           )
 }
 
@@ -244,12 +307,14 @@ const styles = StyleSheet.create({
                     backgroundColor: smallGreenWhiteColor,
                     paddingHorizontal: 10,
                     paddingVertical: 5,
-                    borderRadius: 10
+                    borderRadius: 5,
+                    minWidth: 90
           },
           activityTypeText: {
                     color: '#1e294f',
-                    fontWeight: 'bold',
-                    opacity: 0.7
+                    // fontWeight: 'bold',
+                    opacity: 0.7,
+                    textAlign: 'center'
           },
           calendarOpener: {
                     borderWidth: 1,

@@ -88,7 +88,7 @@ export default function DebtScreen() {
           }
 
           const onRemove = () => {
-                    Alert.alert('Supprimer la dette', "Voulez-vous supprimer la dette à cette personne ?",
+                    Alert.alert('Enlever la dette', "Voulez-vous enlever la dette à cette personne ?",
                               [
                                         {
                                                   text: "Annuler",

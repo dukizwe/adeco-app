@@ -1,8 +1,10 @@
 import React from "react";
+import { Activity } from "./Activity";
 import type { User } from "./User";
 
 export interface QueueRecord {
-          [key: number]: User
+          [key: number]: User,
+          activities?: Activity[]
 }
 
 export interface ContributionContextInterface {

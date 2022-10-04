@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Dimensions, Image, Modal, StyleSheet, Text, TouchableHighlight, TouchableNativeFeedback, useWindowDimensions, View } from "react-native";
+import { Dimensions, FlatList, Image, Modal, StatusBar, StyleSheet, Text, TouchableHighlight, TouchableNativeFeedback, useWindowDimensions, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 import { Ionicons } from '@expo/vector-icons';
 import { smallGreenWhiteColor } from "../../styles";
@@ -8,7 +8,11 @@ import { gestureHandlerRootHOC, GestureHandlerRootView, PanGestureHandler } from
 import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, WithSpringConfig, runOnJS } from "react-native-reanimated";
 import { Portal } from "@gorhom/portal";
 import { Modalize } from 'react-native-modalize';
-
+import { useSelector } from "react-redux";
+import { queueActivitiesSelector } from "../../store/selectors/contributionSelectors";
+import Activity from "../../components/Activities/Activity";
+import ActivitiesScreenHeader from "../../components/ContributionTab/ActivitiesScreenHeader";
+import { Activity as ActivityInterface } from "../../types/Activity";
 
 export default function AcitivitiesScreen() {
           const { width, height } = useWindowDimensions()
@@ -16,6 +20,26 @@ export default function AcitivitiesScreen() {
           const formRef = useRef<Modalize>(null);
           const [isOpen, setIsOpen] = useState(false)
           const [loadingForm, setLoadingForm] = useState(true)
+
+          const [isInSelect, setIsInSelect] = useState<boolean>(false)
+          const [selectedActivites, setSelectedActivities] = useState<ActivityInterface[]>([])
+
+          const activities = useSelector(queueActivitiesSelector)
+
+          const handleRemove = () => {
+                    const newActivities = activities.filter((activity) => selectedActivites.filter(selActivity => activity.category?.id != selActivity.category?.id))
+                    setSelectedActivities(newActivities)
+          }
+
+          const onLongPress = (activity: ActivityInterface) => {
+                    if(isInSelect) return false
+                    setIsInSelect(true)
+                    setSelectedActivities(t => [...t, activity])
+          }
+
+          const isSelected = (index: number) => {
+                    return selectedActivites.find((t, i) => i == index) ? true : false
+          }
 
           const onOpen = () => {
                     setIsOpen(true)
@@ -62,14 +86,7 @@ export default function AcitivitiesScreen() {
                               }
                     }
           })
-
-          const openBottomSheet = () => {
-                    setIsOpen(true)
-                    top.value = withSpring(
-                              height / 2,
-                              SPRING_CONFIG
-                    )
-          }
+          
           useEffect(() => {
                     if(isOpen) {
                               const timer = setTimeout(() => {
@@ -84,15 +101,39 @@ export default function AcitivitiesScreen() {
                     <>
                               <ActivityForm formRef={formRef} isOpen={isOpen} setIsOpen={setIsOpen} loadingForm={loadingForm} setLoadingForm={setLoadingForm} />
                               <View style={styles.container}>
-                                        <View style={styles.content}>
+                                        {activities.length == 0 ? <View style={styles.content}>
                                                   <Text style={styles.title}>Activités</Text>
                                                   <Image source={require('../../../assets/images/note_list_2.png')} style={styles.emptyImageFeedBack} />
                                                   <Text style={styles.emptyTextFeedback}>
                                                             Cliquer sur le bouton <Ionicons name="add-circle-sharp" size={24} color={smallGreenWhiteColor} /> pour ajouter une activité
                                                   </Text>
-                                        </View>
+                                        </View> :
+                                                  <View style={styles.activitiesList}>
+                                                            <ActivitiesScreenHeader isInSelect={isInSelect} handleRemove={handleRemove} />
+                                                            <FlatList
+                                                                      data={activities}
+                                                                      renderItem={({item: activity, index}) => {
+                                                                                return (
+                                                                                          <Activity
+                                                                                                    activity={activity}
+                                                                                                    onLongPress={onLongPress}
+                                                                                                    index={index}
+                                                                                                    isSelected={isSelected(index)}
+                                                                                                    isInSelect={isInSelect}
+                                                                                                    setIsInSelect={setIsInSelect}
+                                                                                                    selectedActivites={selectedActivites}
+                                                                                                    setSelectedActivities={setSelectedActivities}
+                                                                                          />
+                                                                                )
+                                                                      }}
+                                                                      style={styles.activities}
+                                                                      showsVerticalScrollIndicator={false}
+                                                                      keyExtractor={(item, index) => index.toString()}
+                                                            />
+                                                  </View>
+                                        }
                                         <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', true)} onPress={onOpen}>
-                                                  <View style={styles.addButton}>
+                                                  <View style={[styles.addButton]}>
                                                             <View style={styles.addButtonContent}>
                                                                       <Ionicons name="add" size={24} color="black" />
                                                             </View>
@@ -126,10 +167,11 @@ const styles = StyleSheet.create({
                     borderColor: '#000',
                     position: 'absolute',
                     alignSelf: 'center',
-                    bottom: 100,
+                    bottom: 30,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    zIndex: 30
           },
           addButtonContent: {
                     width: '70%',
@@ -173,5 +215,11 @@ const styles = StyleSheet.create({
                     padding: 20,
                     justifyContent: 'center',
                     alignItems: 'center'
+          },
+          activitiesList: {
+                    marginTop: 60,
+                    paddingHorizontal: 20
+          },
+          activities: {
           }
 })

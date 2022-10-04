@@ -69,7 +69,7 @@ export default function Activities({ loading, setLoading }) {
                               </View>
                               <ActivitiesCategories />
                               <Text style={styles.transanctionDate}>Today</Text>
-                              {entries.map((activity, i) =><Activity activity={activity} key={i.toString()} />)}
+                              {/* {entries.map((activity, i) =><Activity activity={activity} key={i.toString()} />)} */}
                     </View>}
                     </>
           )

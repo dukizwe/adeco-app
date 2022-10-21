@@ -8,25 +8,29 @@ import Validation from "../class/Validation"
  * @param {Object} customMessages les messages personnalisés pour les erreurs
  * @returns {Object} un objet contenant les fonctions
  */
-export const useFormErrorsHandle = (data, rules, customMessages) => {
-          const [errors, setErrors] = useState({})
+export const useFormErrorsHandle = <Data>(data: Data, rules: { [key in keyof Data]: any}, customMessages: { [key in keyof Data]: any }) => {
+          type Errors = {
+                    [key in keyof Data]: string[]
+          }
+          const initials: any = {}
+          const [errors, setErrors] = useState<Errors>(initials)
 
           const validation = new Validation(data, rules, customMessages)
 
-          const setError = (key, errors) => {
+          const setError = (key: keyof  Data, errors: string[]): void => {
                     setErrors(err =>( {...err, [key]: errors}))
           }
 
-          const checkFieldData = (name) => {
+          const checkFieldData = (name: keyof  Data) => {
                     const errors = validation.getError(name)
                     if(errors?.length !== 0) {
                               setError(name, errors)
                     }
           }
 
-          const hasError = name => errors[name] ? true : false
+          const hasError: (name: keyof  Data) => boolean = name => errors[name] ? true : false
 
-          const getError = name => errors[name][0]
+          const getError: (name: keyof  Data) => string = name => errors[name][0]
 
           const getErrors = () => validation.getErrors()
 

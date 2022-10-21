@@ -12,9 +12,11 @@ export default function App() {
                     <>
                     <StatusBar backgroundColor={"#fff"} barStyle="dark-content" />
                     <Provider store={store}>
-                              <NativeBaseProvider>
-                                        <AppContainer />
-                              </NativeBaseProvider>
+                              <Host>
+                                        <NativeBaseProvider>
+                                                  <AppContainer />
+                                        </NativeBaseProvider>
+                              </Host>
                     </Provider>
                     </>
           );

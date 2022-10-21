@@ -32,8 +32,8 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                                         };
 
                                         const Icon = () => {
-                                                  if(route.name === 'Contribution') {
-                                                            return <FontAwesome5 name="tasks" size={20} color={isFocused ? primaryColor : '#777'} />
+                                                  if(route.name === 'ContributionScreen') {
+                                                            return <Image source={require('../../../assets/icons/contribution.png')} style={styles.icon} />
                                                   }else if(route.name === 'Comp2') {
                                                             return <Entypo name="list" size={24} color={isFocused ? primaryColor : '#777'} />
                                                   } else if(route.name === 'Home')  {
@@ -118,5 +118,9 @@ const styles = StyleSheet.create({
                     borderRadius: 50,
                     backgroundColor: '#b2d4db',
                     padding: 5
+          },
+          icon: {
+                    width: 40,
+                    height: 40
           }
 })

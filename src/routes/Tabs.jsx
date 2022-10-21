@@ -10,12 +10,14 @@ import Header from '../components/Header/Header';
 import ContributionHeader from '../components/Header/ContributionHeader';
 import HomeScreen from '../screens/HomeScreen';
 import ContributionTab from '../screens/ContributionTab/ContributionTab';
+import ContributionScreen from '../screens/ContributionTab/ContributionScreen';
 
 export default function Tabs() {
           const BottomTab = createBottomTabNavigator()
           return (
                     <BottomTab.Navigator initialRouteName="Home" tabBar={props => <BottomTabBar {...props} />} screenOptions={{header: () => <Header />}}>
-                              <BottomTab.Screen name="Contribution" component={ContributionTab} options={{ header: () => <ContributionHeader /> }} />
+                              <BottomTab.Screen name="ContributionScreen" component={ContributionScreen} options={{ headerShown: false }}/>
+                              {/* <BottomTab.Screen name="ContributionTab" component={ContributionTab} options={{ header: () => <ContributionHeader /> }} /> */}
                               <BottomTab.Screen name="Comp2" component={Comp2} />
                               <BottomTab.Screen name="Home" component={HomeScreen} />
                               <BottomTab.Screen name="Comp3" component={Comp3} />

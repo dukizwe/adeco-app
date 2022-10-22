@@ -1,13 +1,31 @@
-import React from 'react'
-import { Dimensions, Image, StyleSheet, Text, TouchableNativeFeedback, View } from 'react-native';
+import React, { useEffect } from 'react'
+import { Dimensions, Image, StyleSheet, Text, TouchableNativeFeedback, useWindowDimensions, View } from 'react-native';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons'; 
 import { primaryColor } from '../../styles';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-export default function BottomTabBar({ state, descriptors, navigation }) {
+export default function BottomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+          const { width } = useWindowDimensions()
+          const MARGIN = 16
+          const TAB_WIDTH = width - 20
+          const TAB_BAR_WIDTH = TAB_WIDTH / state.routes.length
+
+          const translateX = useSharedValue(0)
+
+          const animatedStyles = useAnimatedStyle(() => ({
+                    transform: [{ translateX: translateX.value }]
+          }))
+
+          useEffect(() => {
+                    translateX.value = withSpring(state.index * TAB_BAR_WIDTH)
+          }, [state.index])
+
           return (
-                    <View style={styles.tabBar}>
+                    <View style={[styles.tabBar, { width: TAB_WIDTH }]}>
+                              <Animated.View style={[styles.tabSlider, { width: TAB_BAR_WIDTH }, animatedStyles]} />
                               {state.routes.map((route, index) => {
                                         const { options } = descriptors[route.key];
                                         const isFocused = state.index === index;
@@ -20,7 +38,7 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                                                   });
                                                   if (!isFocused && !event.defaultPrevented) {
                                                             // The `merge: true` option makes sure that the params inside the tab screen are preserved
-                                                            navigation.navigate({ name: route.name, merge: true });
+                                                            navigation.navigate(route.name);
                                                   }
                                         };
                                         
@@ -35,13 +53,13 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                                                   if(route.name === 'ContributionScreen') {
                                                             return <Image source={require('../../../assets/icons/contribution.png')} style={styles.icon} />
                                                   }else if(route.name === 'Comp2') {
-                                                            return <Entypo name="list" size={24} color={isFocused ? primaryColor : '#777'} />
+                                                            return <Image source={require('../../../assets/icons/debt.png')} style={styles.icon} />
                                                   } else if(route.name === 'Home')  {
-                                                            return  <Entypo name="home" size={24} color={isFocused ? primaryColor : '#777'} />
+                                                            return <Image source={require('../../../assets/icons/home.png')} style={styles.icon} />
                                                   }else if(route.name === 'Comp3')  {
-                                                            return <AntDesign name="barschart" size={24} color="#777" />
-                                                  }else if(route.name === 'Comp4') {
-                                                            return <Entypo name="list" size={24} color={isFocused ? primaryColor : '#777'} />
+                                                            return <Image source={require('../../../assets/icons/activity.png')} style={styles.icon} />
+                                                  }else {
+                                                            return <Image source={require('../../../assets/icons/user.png')} style={styles.icon} />
                                                   }
                                         }
 
@@ -60,7 +78,7 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                                                             background={TouchableNativeFeedback.Ripple('#c9c5c5', true)}
                                                             key={route.key}
                                                   >
-                                                            <View style={styles.tab}>
+                                                            <View style={[styles.tab, { width: TAB_BAR_WIDTH }]}>
                                                                       <View>
                                                                                 <Icon />
                                                                                 {route.name === 'UsersPayment' && <Badge />}
@@ -72,7 +90,6 @@ export default function BottomTabBar({ state, descriptors, navigation }) {
                     </View>
           );
 }
-const { width } = Dimensions.get('window')
 const styles = StyleSheet.create({
           container: {
                     flex: 1
@@ -80,17 +97,19 @@ const styles = StyleSheet.create({
           tabBar: {
                     backgroundColor: '#fff',
                     height: 80,
-                    width: '100%',
+                    width: '95%',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     alignContent: 'center',
                     paddingVertical: 0,
-                    elevation: 1
+                    // borderRadius: 10,
+                    alignSelf: "center",
+                    marginBottom: 5,
+                    overflow: "hidden",
           },
           tab: {
                     flex: 1,
-                    width: width / 3,
                     alignItems: 'center',
                     justifyContent: 'center',
                     paddingVertical: 20
@@ -112,15 +131,20 @@ const styles = StyleSheet.create({
                     fontWeight: 'bold',
                     fontSize: 11
           },
-          image: {
-                    width: 50,
-                    height: 50,
-                    borderRadius: 50,
-                    backgroundColor: '#b2d4db',
-                    padding: 5
-          },
           icon: {
-                    width: 40,
-                    height: 40
+                    width: 24,
+                    height: 24
+          },
+          title: {
+                    fontSize: 10,
+                    textAlign: "center"
+          },
+          tabSlider: {
+                    position: "absolute",
+                    height: 3,
+                    width: 100,
+                    backgroundColor: primaryColor,
+                    bottom: 0,
+                    borderRadius: 10
           }
 })

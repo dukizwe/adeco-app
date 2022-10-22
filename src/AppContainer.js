@@ -32,7 +32,7 @@ export default function AppContainer() {
                               <ActivityIndicator color="#007BFF" animating={userLoading} size='large' />
                     </View> :
                     <PortalProvider>
-                              <NavigationContainer>
+                              <NavigationContainer theme={{ colors: { background: "#fff", }}}>
                                         {user ?
                                                   <Host>
                                                             <RootNavigator />

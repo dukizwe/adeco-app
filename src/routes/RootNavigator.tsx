@@ -6,6 +6,7 @@ import { Host } from 'react-native-portalize';
 import ContributionHeader from '../components/Header/ContributionHeader';
 import AcitivitiesScreen from '../screens/ContributionTab/AcitivitiesScreen';
 import DebtScreen from '../screens/ContributionTab/DebtScreen';
+import NewContributionScreen from '../screens/ContributionTab/NewContributionScreen';
 import { User } from '../types/User';
 import Tabs from './Tabs';
 
@@ -14,6 +15,10 @@ export default function RootNavigator() {
           return (
                     <Stack.Navigator>
                               <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+                              <Stack.Screen name="NewContributionScreen" component={NewContributionScreen} options={{
+                                        header: () => <ContributionHeader />,
+                                        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                              }} />
                               <Stack.Screen name="DebtScreen" component={DebtScreen} options={{
                                         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
                                         header: () => <ContributionHeader />,

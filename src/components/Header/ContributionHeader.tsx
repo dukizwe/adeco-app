@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
                     alignItems: 'center',
                     backgroundColor: '#fff',
                     borderRadius: 10,
-                    paddingHorizontal: 20,
+                    paddingHorizontal: 10,
                     height: 60
           },
           icon: {

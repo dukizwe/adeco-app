@@ -21,7 +21,7 @@ export default function UserPayListHeader() {
           }
           return (
                     <View style={styles.header}>
-                              <Text style={styles.title}>Contributions</Text>
+                              <Text style={styles.title}>Contribuables</Text>
                               <View style={styles.actions}>
                                         <TouchableNativeFeedback useForeground={true}>
                                                   <View style={styles.actionBtn}>

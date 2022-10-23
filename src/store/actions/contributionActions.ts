@@ -1,4 +1,6 @@
+import { ContributorInterface } from "../../interfaces/ContributorInterface"
 import { Activity } from "../../types/Activity"
+import { QueueRecord } from "../../types/ContributionContextInterface"
 import { User } from "../../types/User"
 import { ContributionAction, CONTRIBUTION_TYPES } from "../reducers/contributionReducer"
 
@@ -14,14 +16,14 @@ export const toggleInSelectAction = () => {
           }
 }
 
-export const setSelectedBatchAction = (users: User[]) => {
+export const setSelectedBatchAction = (users: ContributorInterface[]) => {
           return {
                    type: CONTRIBUTION_TYPES.SET_SELECTED_BATCH,
                    payload: users
           }
 }
 
-export const setQueueListAction = (queueList: {}) => {
+export const setQueueListAction = (queueList: QueueRecord) => {
           return {
                     type: CONTRIBUTION_TYPES.SET_QUEUE_LIST,
                     payload: queueList

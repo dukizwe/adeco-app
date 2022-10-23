@@ -3,8 +3,10 @@ import { StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } fro
 import { Entypo, Feather, MaterialIcons, Octicons, Ionicons } from '@expo/vector-icons';
 import { primaryColor } from "../../styles";
 import Contributions from "../../components/ContributionTab/ContributionScreen/Contributions";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ContributionScreen() {
+          const navigation = useNavigation()
           return (
                     <View style={styles.container}>
                               <View style={styles.header}>
@@ -12,7 +14,7 @@ export default function ContributionScreen() {
                                                   Contribution
                                         </Text>
                                         <View style={styles.contributionRightSide}>
-                                                  <TouchableNativeFeedback useForeground>
+                                                  <TouchableNativeFeedback useForeground onPress={() => navigation.navigate('NewContributionScreen' as never)}>
                                                             <View style={{ overflow: "hidden", borderRadius: 10 }}>
                                                                       <View style={styles.dropdownIconTitle}>
                                                                                 <Ionicons name="ios-add-circle" size={24} color={primaryColor} />

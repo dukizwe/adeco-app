@@ -26,7 +26,7 @@ export default function Contribution() {
 
 const styles = StyleSheet.create({
           contribution: {
-                    backgroundColor: '#F1F1F1',
+                    backgroundColor: '#f2f6f7',
                     borderRadius: 8,
                     marginTop: 10,
                     flexDirection: "row",

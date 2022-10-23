@@ -1,17 +1,17 @@
 import React from "react";
+import { ContributorInterface } from "../interfaces/ContributorInterface";
 import { Activity } from "./Activity";
 import type { User } from "./User";
 
 export interface QueueRecord {
-          [key: number]: User,
+          contributions: User[],
           activities?: Activity[]
 }
 
 export interface ContributionContextInterface {
-          users: User[],
           inSelect: boolean,
           // setInSelect: React.Dispatch<React.SetStateAction<boolean>>,
-          selectedBatch: User[],
+          selectedBatch: ContributorInterface[],
           // setSelectedBatch: React.Dispatch<React.SetStateAction<User[]>>,
           // isSelected: (user: User) => User | undefined,
           // toggleSelectedBatch: (user: User) => void,

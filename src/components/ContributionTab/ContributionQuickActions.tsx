@@ -1,13 +1,18 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Animated, BackHandler, Easing, Text, TouchableNativeFeedback, StyleSheet, View } from 'react-native'
-import { Feather } from '@expo/vector-icons'; 
+import { Animated, BackHandler, Easing, Text, TouchableNativeFeedback, StyleSheet, View, Image } from 'react-native'
+import { Feather, FontAwesome } from '@expo/vector-icons'; 
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { queueListSelector, selectedBatchSelector, usersSelector } from '../../store/selectors/contributionSelectors';
 import { ActionNames } from '../../types/ActionNames';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { setInSelectAction, setQueueListAction, setSelectedBatchAction, setStartAnimationAction } from '../../store/actions/contributionActions';
+import { ContributorInterface } from '../../interfaces/ContributorInterface';
+import { User } from '../../types/User';
 
-export default function ContributionQuickActions() {
+interface Props {
+          contributors: ContributorInterface[]
+}
+export default function ContributionQuickActions({ contributors }: Props) {
 
           const users = useAppSelector(usersSelector)
           const selectedBatch = useAppSelector(selectedBatchSelector)
@@ -19,8 +24,8 @@ export default function ContributionQuickActions() {
           const bottomAnim = useRef(new Animated.Value(-50)).current
 
           const toggleSelectAll = () => {
-                    if(selectedBatch.length != users.length) {
-                              dispatch(setSelectedBatchAction(users))
+                    if(selectedBatch.length != contributors.length) {
+                              dispatch(setSelectedBatchAction(contributors))
                     } else {
                               exitBatchSelect()
                     }
@@ -34,60 +39,53 @@ export default function ContributionQuickActions() {
           }
 
           const payBatch = (actionName: ActionNames) => {
-                    var newQList = {}
+                    const newContributions: User[] = []
                     selectedBatch.forEach(user => {
-                              if(queueList[user.id]) {
+                              const myContribution = queueList.contributions.find(c => c._id == user._id)
+                              if(myContribution) {
                                         if(actionName === 'both') {
-                                                  const queue = {
-                                                            ...user,
+                                                  const newContribution: User = {
+                                                            ...myContribution,
                                                             actions: {
-                                                                      ...queueList[user.id].actions,
-                                                                      action: user.actions?.action,
-                                                                      debt: user.actions?.debt
+                                                                      ...myContribution.actions,
+                                                                      action: user.contributionAmount,
+                                                                      debt: 0
                                                             }
                                                   }
-                                                  newQList = {...newQList, [user.id]: queue}
+                                                  newContributions.push(newContribution)
                                         } else {
-                                                  const actions = user.actions
-                                                  if(actions) {
-                                                            const queue = {
-                                                                      ...user,
-                                                                      actions: {
-                                                                                ...queueList[user.id].actions,
-                                                                                [actionName]: actions[actionName] 
-                                                                      }
+                                                  const newContribution: User = {
+                                                            ...myContribution,
+                                                            actions: {
+                                                                      ...myContribution.actions,
+                                                                      [actionName]: actionName == "action" ? user.contributionAmount : 0
                                                             }
-                                                            newQList = {...newQList, [user.id]: queue}
                                                   }
+                                                  newContributions.push(newContribution)
                                         }
                               } else {
                                         if(actionName === 'both') {
-                                                  const actions = user.actions
-                                                  if(actions) {
-                                                            const queue = {
-                                                                      ...user,
-                                                                      actions: {
-                                                                                action: actions.rate,
-                                                                                debt: actions.debt
-                                                                      }
+                                                  const newContribution: User = {
+                                                            _id: user._id,
+                                                            actions: {
+                                                                      action: user.contributionAmount,
+                                                                      debt: 0
                                                             }
-                                                            newQList = {...newQList, [user.id]: queue}
                                                   }
+                                                  newContributions.push(newContribution)
                                         } else {
-                                                  const actions = user.actions
-                                                  if(actions) {
-                                                            const queue = {
-                                                                      ...user,
-                                                                      actions: {
-                                                                                [actionName]: actions[actionName]
-                                                                      }
+                                                  const newContribution: User = {
+                                                            _id: user._id,
+                                                            actions: {
+                                                                      [actionName]: actionName == "action" ? user.contributionAmount : 0
                                                             }
-                                                            newQList = {...newQList, [user.id]: queue}
                                                   }
+                                                  newContributions.push(newContribution)
                                         }
                               }
                     })
-                    dispatch(setQueueListAction({...queueList, ...newQList}))
+                    dispatch(setQueueListAction({...queueList, contributions: newContributions}))
+                    exitBatchSelect()
           }
 
           const handleBackButtonClick = () => {
@@ -104,7 +102,7 @@ export default function ContributionQuickActions() {
                               useNativeDriver: false
                     }).start()
                     Animated.timing(bottomAnim, {
-                              toValue: 0,
+                              toValue: 10,
                               duration: 100,
                               easing: Easing.elastic(0),
                               useNativeDriver: false
@@ -148,26 +146,38 @@ export default function ContributionQuickActions() {
                                         <TouchableNativeFeedback
                                                   accessibilityRole="button"
                                                   background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
+                                                  useForeground
                                                   onPress={() => payBatch('action')}>
-                                                  <View style={{...styles.quickActionButton, backgroundColor: '#40c2d7f5'}}>
-                                                            <Text style={styles.actionButtonText}>action</Text>
-                                                  </View>
+                                                            <View style={styles.quickActionButtonWrapper}>
+                                                                      <View style={{...styles.quickActionButton}}>
+                                                                                <Image source={require('../../../assets/icons/contribution.png')} style={styles.actionImage} />
+                                                                                <Text style={styles.actionButtonText}>action</Text>
+                                                                      </View>
+                                                            </View>
                                         </TouchableNativeFeedback>
                                         <TouchableNativeFeedback
                                                   accessibilityRole="button"
                                                   background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
+                                                  useForeground
                                                   onPress={() => payBatch('debt')}>
-                                                  <View style={{...styles.quickActionButton, backgroundColor: '#873475'}}>
-                                                            <Text style={styles.actionButtonText}>dette</Text>
-                                                  </View>
+                                                            <View style={styles.quickActionButtonWrapper}>
+                                                                      <View style={{...styles.quickActionButton}}>
+                                                                                <Image source={require('../../../assets/icons/debt.png')} style={styles.actionImage} />
+                                                                                <Text style={styles.actionButtonText}>dette</Text>
+                                                                      </View>
+                                                            </View>
                                         </TouchableNativeFeedback>
                                         <TouchableNativeFeedback
                                                   accessibilityRole="button"
                                                   background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
+                                                  useForeground
                                                   onPress={() => payBatch('both')}>
-                                                  <View style={{...styles.quickActionButton, backgroundColor: '#547360'}}>
-                                                            <Text style={styles.actionButtonText}>les deux</Text>
-                                                  </View>
+                                                            <View style={styles.quickActionButtonWrapper}>
+                                                                      <View style={{...styles.quickActionButton}}>
+                                                                                <FontAwesome name="dollar" size={20} color="#777" />
+                                                                                <Text style={styles.actionButtonText}>les deux</Text>
+                                                                      </View>
+                                                            </View>
                                         </TouchableNativeFeedback>
                               </View>
                               <TouchableNativeFeedback
@@ -186,11 +196,10 @@ export default function ContributionQuickActions() {
 }
 const styles = StyleSheet.create({
           quickActions: {
-                    backgroundColor: '#f2f6f7',
                     borderRadius: 5,
                     position: 'absolute',
                     bottom: 0,
-                    marginHorizontal: 20,
+                    marginHorizontal: 10,
                     width: '100%',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -199,31 +208,33 @@ const styles = StyleSheet.create({
                     overflow: 'hidden'
           },
           exitButton: {
-                    width: 40,
-                    height: 40,
                     justifyContent: 'center',
                     alignContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    minWidth: 40,
+                    minHeight: 55
           },
           actions: {
                     flexDirection: 'row',
                     flex: 1,
           },
-          quickActionButton: {
-                    height: 40,
-                    flex: 1,
-                    margin: 2,
+          quickActionButtonWrapper: {
                     borderRadius: 5,
-                    justifyContent: 'center',
-                    alignContent: 'center',
-                    alignItems: 'center'
+                    overflow: "hidden",
+                    marginHorizontal: 2,
+                    flex: 1
+          },
+          quickActionButton: {
+                    backgroundColor: '#f2f6f7',
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingVertical: 5
           },
           selectAllCircle: {
-                    width: 40,
-                    height: 40,
                     justifyContent: 'center',
-                    alignContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    minWidth: 40,
+                    minHeight: 55
           },
           circle: {
                     width: 25,
@@ -241,9 +252,13 @@ const styles = StyleSheet.create({
                     opacity: 0.6,
                     fontWeight: 'bold'
           },
+          actionImage: {
+                    width: 20,
+                    height: 20
+          },
           actionButtonText: {
-                    color: '#fff',
-                    fontWeight: 'bold',
+                    color: '#000',
                     opacity: 0.8,
+                    textAlign: "center"
           }
 })

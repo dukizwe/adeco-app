@@ -9,7 +9,7 @@ import Comp4 from '../components/Comp4';
 import Header from '../components/Header/Header';
 import ContributionHeader from '../components/Header/ContributionHeader';
 import HomeScreen from '../screens/HomeScreen';
-import ContributionTab from '../screens/ContributionTab/ContributionTab';
+import NewContributionScreen from '../screens/ContributionTab/NewContributionScreen';
 import ContributionScreen from '../screens/ContributionTab/ContributionScreen';
 
 export default function Tabs() {
@@ -17,7 +17,6 @@ export default function Tabs() {
           return (
                     <BottomTab.Navigator initialRouteName="Home" tabBar={props => <BottomTabBar {...props} />} screenOptions={{header: () => <Header />}}>
                               <BottomTab.Screen name="ContributionScreen" component={ContributionScreen} options={{ headerShown: false }}/>
-                              {/* <BottomTab.Screen name="ContributionTab" component={ContributionTab} options={{ header: () => <ContributionHeader /> }} /> */}
                               <BottomTab.Screen name="Comp2" component={Comp2} />
                               <BottomTab.Screen name="Home" component={HomeScreen} />
                               <BottomTab.Screen name="Comp3" component={Comp3} />

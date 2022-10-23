@@ -16,15 +16,15 @@ interface Props {
 
 export default function UserDebt({ user, onUserPress, userId }: Props) {
           const queueList = useAppSelector(queueListSelector)
-          const isSelected: boolean = user.id === userId
+          const isSelected: boolean = user._id === userId
           const inSelectStyles = isSelected ? { backgroundColor: '#c9c9c9' } : {}
-          const isAleadyDebted: boolean = queueList[user.id]?.debt?.amount ? true : false
+          const isAleadyDebted: boolean = queueList[user._id]?.debt?.amount ? true : false
           return (
                     <View>
                     <TouchableNativeFeedback
                               accessibilityRole="button"
                               background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
-                              onPress={() => onUserPress(user.id)}
+                              onPress={() => onUserPress(user._id)}
                               useForeground={true}
                     >
                               <View style={{...styles.user, ...inSelectStyles}}>
@@ -38,7 +38,7 @@ export default function UserDebt({ user, onUserPress, userId }: Props) {
                                                   <View style={styles.userActions}>
                                                            {isAleadyDebted &&  <View style={[styles.debtAmount, { backgroundColor: '#fff'}]}>
                                                                       <Text style={{ fontWeight: 'bold', color: '#96A5B0'}} >
-                                                                                { queueList[user.id].debt?.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
+                                                                                { queueList[user._id].debt?.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
                                                                       </Text>
                                                                       <Text style={styles.newBadge}>N</Text>
                                                             </View>}

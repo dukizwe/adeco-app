@@ -17,54 +17,13 @@ export interface ContributionAction {
           payload?: any
 }
 
-const users: User[] = [
-          {
-                    firstName: 'Darcy',
-                    lastName: 'Dukizwe',
-                    id: 1,
-                    actions: {
-                              action: 6000,
-                              rate: 2000,
-                              debt: 60000
-                    }
-          },
-          {
-                    firstName: 'Darcy',
-                    lastName: 'Dukizwe',
-                    id: 2,
-                    actions: {
-                              action: 6000,
-                              rate: 2000,
-                              debt: 0
-                    }
-          },
-          {
-                    firstName: 'Darcy',
-                    lastName: 'Dukizwe',
-                    id: 3,
-                    actions: {
-                              action: 6000,
-                              rate: 2000,
-                              debt: 0
-                    }
-          },
-          {
-                    firstName: 'Darcy',
-                    lastName: 'Dukizwe',
-                    id: 4,
-                    actions: {
-                              action: 6000,
-                              rate: 2000,
-                              debt: 100000
-                    }
-          }
-]
-
 const initial: ContributionContextInterface = {
-          users,
           inSelect: false,
           selectedBatch: [],
-          queueList: {},
+          queueList: {
+                    contributions: [],
+                    activities: []
+          },
           startAnimation: false
 }
 

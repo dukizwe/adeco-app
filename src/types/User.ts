@@ -1,9 +1,9 @@
 export interface User {
           firstName?: string,
           lastName?: string,
-          id: number,
+          _id: string,
           actions?: {
-                    action: number,
+                    action?: number,
                     rate?: number,
                     debt?: number,
                     both?: any

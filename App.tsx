@@ -10,14 +10,14 @@ import { Host } from 'react-native-portalize';
 export default function App() {
           return (
                     <>
-                    <StatusBar backgroundColor={"#fff"} barStyle="dark-content" />
-                    <Provider store={store}>
-                              <Host>
+                              <StatusBar backgroundColor={"#fff"} barStyle="dark-content" />
+                              <Provider store={store}>
                                         <NativeBaseProvider>
-                                                  <AppContainer />
+                                                  <Host>
+                                                            <AppContainer />
+                                                  </Host>
                                         </NativeBaseProvider>
-                              </Host>
-                    </Provider>
+                              </Provider>
                     </>
           );
 }

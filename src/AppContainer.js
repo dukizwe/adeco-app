@@ -33,10 +33,7 @@ export default function AppContainer() {
                     </View> :
                     <PortalProvider>
                               <NavigationContainer theme={{ colors: { background: "#fff", }}}>
-                                        {user ?
-                                                  <Host>
-                                                            <RootNavigator />
-                                                  </Host>:
+                                        {user ? <RootNavigator /> :
                                         <Stack.Navigator>
                                                   <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false}}/>
                                         </Stack.Navigator>}

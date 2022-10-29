@@ -13,6 +13,8 @@ import { queueActivitiesSelector } from "../../store/selectors/contributionSelec
 import Activity from "../../components/Activities/Activity";
 import ActivitiesScreenHeader from "../../components/ContributionTab/ActivitiesScreenHeader";
 import { Activity as ActivityInterface } from "../../types/Activity";
+import { ActivityCategoryInterface } from "../../types/ActivityCategoryInterface";
+import fetchApi from "../../utils/fetchApi";
 
 export default function AcitivitiesScreen() {
           const { width, height } = useWindowDimensions()
@@ -24,10 +26,12 @@ export default function AcitivitiesScreen() {
           const [isInSelect, setIsInSelect] = useState<boolean>(false)
           const [selectedActivites, setSelectedActivities] = useState<ActivityInterface[]>([])
 
+          const [categories, setCategories] = useState<ActivityCategoryInterface[]>([])
+
           const activities = useSelector(queueActivitiesSelector)
 
           const handleRemove = () => {
-                    const newActivities = activities.filter((activity) => selectedActivites.filter(selActivity => activity.category?.id != selActivity.category?.id))
+                    const newActivities = activities.filter((activity) => selectedActivites.filter(selActivity => activity.category?._id != selActivity.category?._id))
                     setSelectedActivities(newActivities)
           }
 
@@ -97,9 +101,17 @@ export default function AcitivitiesScreen() {
                               }
                     }
           }, [isOpen])
+
+          useEffect(() => {
+                    (async() => {
+                              const res = await fetchApi('/activities/categories')
+                              const cats: ActivityCategoryInterface[] = res.data
+                              setCategories(cats)
+                    })()
+          }, [])
           return (
                     <>
-                              <ActivityForm formRef={formRef} isOpen={isOpen} setIsOpen={setIsOpen} loadingForm={loadingForm} setLoadingForm={setLoadingForm} />
+                              <ActivityForm formRef={formRef} isOpen={isOpen} setIsOpen={setIsOpen} loadingForm={loadingForm} setLoadingForm={setLoadingForm} categories={categories} />
                               <View style={styles.container}>
                                         {activities.length == 0 ? <View style={styles.content}>
                                                   <Text style={styles.title}>Activités</Text>

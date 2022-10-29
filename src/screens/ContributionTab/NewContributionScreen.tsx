@@ -10,11 +10,13 @@ import { queueListSelector, startAnimationSelector, usersSelector } from '../../
 import { useSelector } from 'react-redux'
 import fetchApi from '../../utils/fetchApi'
 import { ContributorInterface } from '../../interfaces/ContributorInterface'
+import { RateTypeInterface } from '../../interfaces/RateTypeInterface'
 
 export default function NewContributionScreen() {
           const users = useSelector(usersSelector)
           const startAnimation = useSelector(startAnimationSelector)
           const [contributors, setContributors] = useState<ContributorInterface[]>([])
+          const [rateTypes, setRateTypes] = useState<RateTypeInterface[]>([])
           const [isLoading, setIsLoading] = useState(true)
           useEffect(() => {
                     (async () => {
@@ -28,13 +30,24 @@ export default function NewContributionScreen() {
                               }
                     })()
           }, [])
+          useEffect(() => {
+                    (async () => {
+                              try {
+                                        const res = await fetchApi("/rates/types")
+                                        setRateTypes(res.data)
+                              } catch (error) {
+                                        console.log(error)
+                              } finally {
+                              }
+                    })()
+          }, [])
           return (
                     <View style={{backgroundColor: '#fff', paddingHorizontal: 10, flex: 1}}>
                               <FlatList
                                         ListHeaderComponent={() => <UserPayListHeader />}
                                         showsVerticalScrollIndicator={false}
                                         data={contributors}
-                                        keyExtractor={(user, index) => index.toString()} renderItem={({ item: contributor }) => <Contributor contributor={contributor} />}
+                                        keyExtractor={(user, index) => index.toString()} renderItem={({ item: contributor }) => <Contributor contributor={contributor} rateTypes={rateTypes} />}
                               />
                               {startAnimation && <ContributionQuickActions contributors={contributors} />}
                     </View>

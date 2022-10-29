@@ -1,18 +1,25 @@
 import React, { useCallback, useContext, useEffect, useState, memo } from 'react'
-import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity, TextStyle, SafeAreaView } from 'react-native'
+import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity, TextStyle, SafeAreaView, Platform } from 'react-native'
 import { MaterialIcons, FontAwesome5, AntDesign, Ionicons } from '@expo/vector-icons'; 
 import { CountUp, useCountUp } from 'use-count-up'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { queueListSelector } from '../../store/selectors/contributionSelectors';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { useDispatch } from 'react-redux';
+import { setQueueListAction } from '../../store/actions/contributionActions';
 
 export default memo(function ContributionHeader() {
           const queueList = useAppSelector(queueListSelector)
           const [total, setTotal] = useState(0)
           const [prevTotal, setPrevTotal] = useState(0)
+
           const navigation = useNavigation()
           const route = useRoute()
+          const dispatch = useDispatch()
+
+          const [showCalendar, setShowCalendar] = useState(false)
 
           const calendarTranslateX = useSharedValue(0)
           const calendarOpacity = useSharedValue(1)
@@ -32,24 +39,35 @@ export default memo(function ContributionHeader() {
                     opacity: backBtnOpacity.value
           }))
 
+          const onCalendaPress = () => {
+                    setShowCalendar(true)
+          }
+
+          const onChangeDate = (event: DateTimePickerEvent, time?: Date) => {
+                    setShowCalendar(Platform.OS === "ios");
+                    const date =  time || new Date()
+                    dispatch(setQueueListAction({...queueList, date: date.toDateString()}))
+          }
+
           useEffect(() => {
                     var newTotal = 0
-                    for(let key in queueList) {
-                              const userPay = queueList[key]
-                              const actionsAmounts = userPay.actions ? Object.values(userPay.actions) : 0
-                              let sum = actionsAmounts && actionsAmounts.reduce((prev, current) => prev + current, 0)
-                             /*  if(userPay.debt) {
-                                        sum += userPay.debt.montant
-                              } */
-                              newTotal += sum
-                    }
+                    queueList.contributions.forEach(contribution => {
+                              newTotal += contribution.actions?.action ? contribution.actions?.action : 0
+                              newTotal += contribution.actions?.debt ? contribution.actions?.debt : 0
+                              var ratesTotal = 0
+                              if(contribution.actions?.rates && contribution.actions?.rates?.length > 0) {
+                                        contribution.actions?.rates.forEach(rate => {
+                                                  newTotal += rate.amount 
+                                        })
+                              }
+                    })
                     setPrevTotal(total)
                     setTotal(newTotal)
           }, [queueList])
 
           const onNextPress = useCallback(() => {
                     // return navigation.navigate("DebtScreen" as never)
-                    if(route.name == 'Contribution') {
+                    if(route.name == 'NewContributionScreen') {
                               navigation.navigate("DebtScreen" as never)
                     } else if (route.name == 'DebtScreen') {
                               navigation.navigate("AcitivitiesScreen" as never)
@@ -98,12 +116,12 @@ export default memo(function ContributionHeader() {
           const noAnimationsRouteNames = ['AcitivitiesScreen']
           return (
                     route.name != "AcitivitiesScreen" ? <View style={styles.header}>
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground>
+                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onCalendaPress}>
                                         <Animated.View style={[styles.opDate, calendarAnimatedStyles, noAnimationsRouteNames.includes(route.name) && { transform: [{ translateX: -30 }], opacity: 0 } ]}>
                                                   <FontAwesome5 name="calendar-check" size={22} color="#189fed" style={styles.icon} />
                                         </Animated.View>
                               </TouchableNativeFeedback>
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onBackPress}>
+                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onBackPress} disabled={route.name == 'NewContributionScreen'}>
                                         <Animated.View style={[styles.opDate, !noAnimationsRouteNames.includes(route.name) && backBtnAnimatedStyles, { position: 'absolute', transform: [{ translateX: 15 }] }]}>
                                                   <Ionicons name="arrow-back" size={22} color="#777" />
                                         </Animated.View>
@@ -117,6 +135,17 @@ export default memo(function ContributionHeader() {
                                         <Text style={styles.nextText}>Suivant</Text>
                                         <MaterialIcons name="navigate-next" size={24} color="#189fed" />
                               </TouchableOpacity>
+                              {showCalendar && (
+                                        <DateTimePicker
+                                                  testID="dateTimePicker"
+                                                  value={queueList.date ? new Date(queueList.date) : new Date()}
+                                                  mode='date'
+                                                  is24Hour={true}
+                                                  display="default"
+                                                  onChange={onChangeDate}
+                                                  maximumDate={new Date()}
+                                        />
+                              )}
                     </View> : null
           )
 })

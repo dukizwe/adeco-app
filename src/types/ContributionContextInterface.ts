@@ -4,6 +4,7 @@ import { Activity } from "./Activity";
 import type { User } from "./User";
 
 export interface QueueRecord {
+          date?: string,
           contributions: User[],
           activities?: Activity[]
 }

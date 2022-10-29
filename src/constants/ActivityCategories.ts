@@ -1,19 +1,19 @@
 import { ActivityCategoryInterface } from "../types/ActivityCategoryInterface";
 
 export const ACTIVITY_CATEGORIES: ActivityCategoryInterface[] = [{
-          id: 1,
+          _id: 1,
           name: "Agape",
           type: 'out',
           iconType: "Ionicons",
           iconName: "ios-fast-food-outline"
 }, {
-          id: 2,
+          _id: 2,
           name: "Assistance",
           type: 'out',
           iconType: "MaterialIcons",
           iconName: "local-hospital"
 },{
-          id: 3,
+          _id: 3,
           name: "Don",
           type: 'in',
           iconType: "MaterialIcons",

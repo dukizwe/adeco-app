@@ -13,8 +13,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Modalize } from 'react-native-modalize'
 import ContibutorActionsModalize from './NewContributionScreen/ContibutorActionsModalize'
 import { primaryColor } from '../../styles'
+import { RateTypeInterface } from '../../interfaces/RateTypeInterface'
 
-export default function Contributor({ contributor }: { contributor: ContributorInterface }) {
+export default function Contributor({ contributor, rateTypes }: { contributor: ContributorInterface, rateTypes: RateTypeInterface[] }) {
 
           const inSelect = useAppSelector(inSelectSelector)
           const selectedBatch = useAppSelector(selectedBatchSelector)
@@ -65,6 +66,14 @@ export default function Contributor({ contributor }: { contributor: ContributorI
                     return contributor.contributionAmount
           }, [contributor])
 
+          const getRateAmount: () => number = useCallback(() => {
+                    var total = 0
+                    myContibution?.actions?.rates?.forEach(r => {
+                              total += r.amount
+                    })
+                    return total
+          }, [myContibution])
+
           useEffect(() => {
                     if(isOpen) {
                               const timer = setTimeout(() => {
@@ -84,6 +93,7 @@ export default function Contributor({ contributor }: { contributor: ContributorI
                               setIsOpen={setIsOpen}
                               loadingForm={loadingForm}
                               setLoadingForm={setLoadingForm}
+                              rateTypes={rateTypes}
                     />
                     <View>
                               <TouchableNativeFeedback
@@ -106,51 +116,8 @@ export default function Contributor({ contributor }: { contributor: ContributorI
                                                                       {(myContibution && myContibution.actions?.action) ? <View style={[styles.checkCircle]}>
                                                                                 <Ionicons name="md-checkmark-outline" size={18} color="#fff" />
                                                                       </View> : null}
-                                                                      {/* <View style={styles.dotIndicator}>
-                                                                                {isActionInQueueList('action') && <View style={{...styles.selectedCheck, backgroundColor: '#40c2d7f5'}}>
-                                                                                          <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
-                                                                                </View>}
-                                                                                {isActionInQueueList('rate') && <View style={{...styles.selectedCheck, backgroundColor: '#362b89ed'}}>
-                                                                                          <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
-                                                                                </View>}
-                                                                                {isActionInQueueList('debt') && <View style={{...styles.selectedCheck, backgroundColor: '#873475'}}>
-                                                                                          <Feather name="check" size={19} color="#fff" style={{marginTop: -1, marginLeft: -2}} />
-                                                                                </View>}
-                                                                      </View> */}
                                                             </View>
                                                             <View style={styles.userActions}>
-                                                                      {/* <TouchableNativeFeedback
-                                                                                accessibilityRole="button"
-                                                                                background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
-                                                                                onPress={() => payAction('action')}>
-                                                                                <View  style={{...styles.actionButton, backgroundColor: '#40c2d7f5', opacity: isActionInQueueList('action') ? 0.5 : 1}}>
-                                                                                          <Text style={styles.actionTitle}>action</Text>
-                                                                                          <View style={styles.separator}></View>
-                                                                                          <Text style={styles.actionAmount}>{contributor.actions?.action}</Text>
-                                                                                </View>
-                                                                      </TouchableNativeFeedback>
-                                                                      <TouchableNativeFeedback
-                                                                                accessibilityRole="button"
-                                                                                background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
-                                                                                onPress={() => payAction('rate')}>
-                                                                                <View  style={{...styles.actionButton, backgroundColor: '#362b89ed', opacity: isActionInQueueList('rate') ? 0.5 : 1}}>
-                                                                                          <Text style={styles.actionTitle}>retard</Text>
-                                                                                          <View style={styles.separator}></View>
-                                                                                          <Text style={styles.actionAmount}>{contributor.actions?.rate}</Text>
-                                                                                </View>
-                                                                      </TouchableNativeFeedback>
-                                                                      {hasDebt &&
-                                                                      <TouchableNativeFeedback
-                                                                                accessibilityRole="button"
-                                                                                background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
-                                                                                onPress={() => payAction('debt')}>
-                                                                                <View  style={{...styles.actionButton, backgroundColor: '#873475', opacity: isActionInQueueList('debt') ? 0.5 : 1}}>
-                                                                                          <Text style={styles.actionTitle}>dette</Text>
-                                                                                          <View style={styles.separator}></View>
-                                                                                          <Text style={styles.actionAmount}>{contributor.actions?.debt}</Text>
-                                                                                </View>
-                                                                      </TouchableNativeFeedback>
-                                                                      } */}
                                                                       <View style={styles.actionsDetails}>
                                                                                 <View style={styles.action}>
                                                                                           <Image source={require('../../../assets/icons/contribution.png')} style={styles.actionIcon} />
@@ -164,6 +131,12 @@ export default function Contributor({ contributor }: { contributor: ContributorI
                                                                                                     { contributor.contributionAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
                                                                                           </Text>
                                                                                 </View>
+                                                                                {(myContibution?.actions?.rates && myContibution?.actions?.rates?.length > 0) ? <View style={[styles.action, { marginLeft: 10 }]}>
+                                                                                          <Image source={require('../../../assets/icons/contribution.png')} style={styles.actionIcon} />
+                                                                                          <Text style={[styles.actionAmount, { color: primaryColor }]}>
+                                                                                                    { getRateAmount().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
+                                                                                          </Text>
+                                                                                </View> : null}
                                                                       </View>
                                                                       <Text style={styles.contributorTotal}>{ getTotal().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") } BIF</Text>
                                                             </View>
@@ -193,7 +166,7 @@ const styles = StyleSheet.create({
                     borderRadius: 50
           },
           userInfo: {
-                    marginLeft: 20,
+                    marginLeft: 10,
                     flex: 1
           },
           infoTop: {

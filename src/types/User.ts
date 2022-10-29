@@ -1,10 +1,12 @@
+import { RateTypeInterface } from "../interfaces/RateTypeInterface"
+
 export interface User {
           firstName?: string,
           lastName?: string,
           _id: string,
           actions?: {
                     action?: number,
-                    rate?: number,
+                    rates?: RateTypeInterface[],
                     debt?: number,
                     both?: any
           },

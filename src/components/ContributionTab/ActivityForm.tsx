@@ -22,6 +22,7 @@ interface Props {
           setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
           loadingForm: boolean,
           setLoadingForm: React.Dispatch<React.SetStateAction<boolean>>,
+          categories: ActivityCategoryInterface[]
 }
 
 /**
@@ -31,7 +32,7 @@ export const ActivitiesIcons = {
           Ionicons: (name: any, style?: TextStyle) => <Ionicons name={name} size={24} color="#777" style={style} />,
           MaterialIcons: (name: any, style?: TextStyle) => <MaterialIcons name={name} size={24} color="#777" style={style} />
 }
-export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, setLoadingForm }: Props) {
+export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, setLoadingForm, categories }: Props) {
           const sendBtnOpacity = useSharedValue<number>(1)
           const dropdownCaretDeg = useSharedValue<number>(0)
           const commentInputRef = useRef<TextInput>(null)
@@ -94,10 +95,10 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
 
           const ActivitiyCategoriesDropdown: React.ReactNode = (
                     showActivityCategories ? <Animated.View style={[styles.dropdownContainer, translateYAnimatedStyles]}>
-                              {ACTIVITY_CATEGORIES.map(category => {
+                              {categories.map(category => {
                                         const iconType = category.iconType
                                         return (
-                                                  <View key={category.id}>
+                                                  <View key={category._id}>
                                                             <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#ddd', false)} onPress={() => onCategoryPress(category)}>
                                                                       <View style={styles.dropdownItem}>
                                                                                 <View style={styles.dropdownIconTitle}>

@@ -49,7 +49,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                             actions: {
                                                                       ...myContribution.actions,
                                                                       action: user.contributionAmount,
-                                                                      debt: 0
+                                                                      debts: 0
                                                             }
                                                   }
                                                   newContributions.push(newContribution)
@@ -69,7 +69,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                             _id: user._id,
                                                             actions: {
                                                                       action: user.contributionAmount,
-                                                                      debt: 0
+                                                                      debts: 0
                                                             }
                                                   }
                                                   newContributions.push(newContribution)

@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { applyMiddleware } from "redux";
 // import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from "redux-thunk";
+import appReducer from "./reducers/appReducer";
 import contributionReducer from "./reducers/contributionReducer";
 import userReducer from "./reducers/userReducer";
 
@@ -10,7 +11,8 @@ import userReducer from "./reducers/userReducer";
 export const store = configureStore({
           reducer: {
                     user: userReducer,
-                    contribution: contributionReducer
+                    contribution: contributionReducer,
+                    app: appReducer
           }
 })
 

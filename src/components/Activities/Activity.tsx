@@ -8,37 +8,17 @@ import moment from 'moment';
 
 interface Props {
           activity: ActivityInterface,
-          onLongPress: (activity: ActivityInterface) => void,
+          onLongPress?: (activity: ActivityInterface) => void,
           index: number,
-          isSelected: boolean,
-          isInSelect: boolean,
-          setIsInSelect: React.Dispatch<React.SetStateAction<boolean>>,
-          selectedActivites: ActivityInterface[],
-          setSelectedActivities: React.Dispatch<React.SetStateAction<ActivityInterface[]>>
+          isSelected?: boolean,
+          isInSelect?: boolean,
+          setIsInSelect?: React.Dispatch<React.SetStateAction<boolean>>,
+          selectedActivites?: ActivityInterface[],
+          setSelectedActivities?: React.Dispatch<React.SetStateAction<ActivityInterface[]>>
 }
 
 export default function Activity({ activity, onLongPress, index, isSelected, isInSelect, setIsInSelect, selectedActivites, setSelectedActivities }: Props) {
           const [bodyShown, setBodyShown] = useState(false)
-          /* const [activityPosition, setActivityPosition] = useState({
-                    Width: 100
-          })
-          const heightAnim = useRef(new Animated.Value(0)).current
-          
-          const startAnimation = () => {
-                    setBodyShown(t => !t)
-                    activityRef.current.measureLayout(ReactNative.findNodeHandle(containerRef.current), (xPos, yPos, Width, Height) => {
-                              setActivityPosition({ x: xPos, y: yPos, width: Width, height: Height });
-                              console.log(Height)
-                              Animated.timing(
-                                        heightAnim,
-                                        {
-                                                  toValue: Height,
-                                                  duration: 100,
-                                                  useNativeDriver: false
-                                        }
-                              ).start()
-                    });
-          }*/
           
           const activityRef = useRef(null)
           const containerRef = useRef(null)
@@ -48,16 +28,16 @@ export default function Activity({ activity, onLongPress, index, isSelected, isI
           const onPress = () => {
                     if(!isInSelect) return setBodyShown(t => !t)
                     if(isSelected) {
-                              const newSelected = selectedActivites.filter((_, i) => i != index)
-                              setSelectedActivities(newSelected)
+                              const newSelected = selectedActivites ? selectedActivites.filter((act, i) => act.id != activity.id) : []
+                              setSelectedActivities && setSelectedActivities(newSelected)
                     } else {
-                              setSelectedActivities(t => [...t, activity])
+                              setSelectedActivities && setSelectedActivities(t => [...t, activity])
                     }
           }
 
           useEffect(() => {
-                    if(selectedActivites.length == 0) {
-                              setIsInSelect(false)
+                    if(selectedActivites && selectedActivites.length == 0) {
+                              setIsInSelect && setIsInSelect(false)
                     }
           }, [selectedActivites])
           return (
@@ -66,7 +46,7 @@ export default function Activity({ activity, onLongPress, index, isSelected, isI
                               accessibilityRole="button"
                               background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
                               onPress={onPress}
-                              onLongPress={() => onLongPress(activity)}
+                              onLongPress={() => onLongPress && onLongPress(activity)}
                               ref={containerRef}
                               useForeground={true}
                               style={{ backgroundColor: 'red'}}

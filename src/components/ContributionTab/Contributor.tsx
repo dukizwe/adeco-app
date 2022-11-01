@@ -15,7 +15,7 @@ import ContibutorActionsModalize from './NewContributionScreen/ContibutorActions
 import { primaryColor } from '../../styles'
 import { RateTypeInterface } from '../../interfaces/RateTypeInterface'
 
-export default function Contributor({ contributor, rateTypes }: { contributor: ContributorInterface, rateTypes: RateTypeInterface[] }) {
+export default function Contributor({ contributor, rateTypes, noBatch = false }: { contributor: ContributorInterface, rateTypes: RateTypeInterface[], noBatch?: boolean }) {
 
           const inSelect = useAppSelector(inSelectSelector)
           const selectedBatch = useAppSelector(selectedBatchSelector)
@@ -53,6 +53,9 @@ export default function Contributor({ contributor, rateTypes }: { contributor: C
           }
 
           const onUserLongPress = () => {
+                    if(noBatch) {
+                              return false
+                    }
                     dispatch(setInSelectAction(true))
                     toggleSelectedBatch()
                     dispatch(setStartAnimationAction(true))

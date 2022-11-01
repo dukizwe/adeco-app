@@ -15,10 +15,12 @@ import ActivitiesScreenHeader from "../../components/ContributionTab/ActivitiesS
 import { Activity as ActivityInterface } from "../../types/Activity";
 import { ActivityCategoryInterface } from "../../types/ActivityCategoryInterface";
 import fetchApi from "../../utils/fetchApi";
+import { setActivitiesAction } from "../../store/actions/contributionActions";
+import { useDispatch } from "react-redux";
 
 export default function AcitivitiesScreen() {
           const { width, height } = useWindowDimensions()
-          const top = useSharedValue(height)
+          
           const formRef = useRef<Modalize>(null);
           const [isOpen, setIsOpen] = useState(false)
           const [loadingForm, setLoadingForm] = useState(true)
@@ -29,10 +31,13 @@ export default function AcitivitiesScreen() {
           const [categories, setCategories] = useState<ActivityCategoryInterface[]>([])
 
           const activities = useSelector(queueActivitiesSelector)
+          const dispatch = useDispatch()
 
           const handleRemove = () => {
-                    const newActivities = activities.filter((activity) => selectedActivites.filter(selActivity => activity.category?._id != selActivity.category?._id))
-                    setSelectedActivities(newActivities)
+                    const ids = selectedActivites.map(a => a.id)
+                    const newActivities = activities.filter((activity) => !ids.includes(activity.id))
+                    dispatch(setActivitiesAction(newActivities))
+                    setIsInSelect(false)
           }
 
           const onLongPress = (activity: ActivityInterface) => {
@@ -41,55 +46,14 @@ export default function AcitivitiesScreen() {
                     setSelectedActivities(t => [...t, activity])
           }
 
-          const isSelected = (index: number) => {
-                    return selectedActivites.find((t, i) => i == index) ? true : false
+          const isSelected = (id: string) => {
+                    return selectedActivites.find((t, i) => t.id == id) ? true : false
           }
 
           const onOpen = () => {
                     setIsOpen(true)
                     formRef.current?.open();
           };
-
-          const onCloseBottomSheet = (bool: boolean) => {
-                    setIsOpen(bool)
-          }
-
-          // variables
-          const snapPoints = useMemo(() => ['25%', '50%'], []);
-
-          // callbacks
-          const handleSheetChanges = useCallback((index: number) => {
-                    console.log('handleSheetChanges', index);
-          }, []);
-
-          const SPRING_CONFIG: WithSpringConfig = {
-                    damping: 80,
-                    overshootClamping: true,
-                    restDisplacementThreshold: 0.1,
-                    restSpeedThreshold: 0.1,
-                    stiffness: 500
-          }
-
-
-          const animatedTopStyles = useAnimatedStyle(() => ({
-                    top: withSpring(top.value, SPRING_CONFIG)
-          }))
-          const gestureHandler = useAnimatedGestureHandler({
-                    onStart(_, context: { startTop: number }) {
-                              context.startTop = top.value
-                    },
-                    onActive(event, context) {
-                              top.value = context.startTop + event.translationY
-                    },
-                    onEnd(event) {
-                              if (top.value > height / 2 + 150) {
-                                        runOnJS(onCloseBottomSheet)(false)
-                                        top.value = height
-                              } else {
-                                        top.value = height / 2
-                              }
-                    }
-          })
           
           useEffect(() => {
                     if(isOpen) {
@@ -130,7 +94,7 @@ export default function AcitivitiesScreen() {
                                                                                                     activity={activity}
                                                                                                     onLongPress={onLongPress}
                                                                                                     index={index}
-                                                                                                    isSelected={isSelected(index)}
+                                                                                                    isSelected={activity.id ? isSelected(activity.id) : false}
                                                                                                     isInSelect={isInSelect}
                                                                                                     setIsInSelect={setIsInSelect}
                                                                                                     selectedActivites={selectedActivites}
@@ -230,7 +194,7 @@ const styles = StyleSheet.create({
           },
           activitiesList: {
                     marginTop: 60,
-                    paddingHorizontal: 20
+                    paddingHorizontal: 10
           },
           activities: {
           }

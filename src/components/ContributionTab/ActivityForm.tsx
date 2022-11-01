@@ -127,7 +127,8 @@ export default function ActivityForm({ formRef, isOpen, setIsOpen, loadingForm, 
           )
 
           const onSave = () => {
-                    dispatch(appendActivityAction({ ...peddingActivty, date: peddingActivty.date.toString() }))
+                    const id = new Date()
+                    dispatch(appendActivityAction({ ...peddingActivty, date: peddingActivty.date.toString(), id: id.toString() }))
                     formRef.current?.close()
                     setPeddingActivity({
                               category: null,

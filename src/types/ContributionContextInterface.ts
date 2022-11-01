@@ -1,5 +1,6 @@
 import React from "react";
 import { ContributorInterface } from "../interfaces/ContributorInterface";
+import { RateTypeInterface } from "../interfaces/RateTypeInterface";
 import { Activity } from "./Activity";
 import type { User } from "./User";
 
@@ -13,6 +14,8 @@ export interface ContributionContextInterface {
           inSelect: boolean,
           // setInSelect: React.Dispatch<React.SetStateAction<boolean>>,
           selectedBatch: ContributorInterface[],
+          contributors: ContributorInterface[],
+          rateTypes: RateTypeInterface[],
           // setSelectedBatch: React.Dispatch<React.SetStateAction<User[]>>,
           // isSelected: (user: User) => User | undefined,
           // toggleSelectedBatch: (user: User) => void,

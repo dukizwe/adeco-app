@@ -1,4 +1,5 @@
 import { ContributorInterface } from "../../interfaces/ContributorInterface"
+import { RateTypeInterface } from "../../interfaces/RateTypeInterface"
 import { Activity } from "../../types/Activity"
 import { QueueRecord } from "../../types/ContributionContextInterface"
 import { User } from "../../types/User"
@@ -50,9 +51,29 @@ export const setPreviousTotalAction = (amount: number) => {
           }
 }
 
+export const setActivitiesAction = (activities: Activity[]) => {
+          return {
+                    type: CONTRIBUTION_TYPES.SET_ACTIVITIES,
+                    payload: activities
+          }
+}
+
 export const appendActivityAction = (activity: Activity) => {
           return {
                     type: CONTRIBUTION_TYPES.APPEND_ACTIVITY,
                     payload: activity
+          }
+}
+
+export const setContributorsAction = (contributors: ContributorInterface[]) => {
+          return {
+                    type: CONTRIBUTION_TYPES.SET_CONTRIBUTORS,
+                    payload: contributors
+          }
+}
+export const setRateTypesAction = (rateTypes: RateTypeInterface[]) => {
+          return {
+                    type: CONTRIBUTION_TYPES.SET_RATE_TYPES,
+                    payload: rateTypes
           }
 }

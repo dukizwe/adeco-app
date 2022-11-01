@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux'
 import fetchApi from '../../utils/fetchApi'
 import { ContributorInterface } from '../../interfaces/ContributorInterface'
 import { RateTypeInterface } from '../../interfaces/RateTypeInterface'
+import { useDispatch } from 'react-redux'
+import { setContributorsAction, setRateTypesAction } from '../../store/actions/contributionActions'
 
 export default function NewContributionScreen() {
           const users = useSelector(usersSelector)
@@ -18,11 +20,14 @@ export default function NewContributionScreen() {
           const [contributors, setContributors] = useState<ContributorInterface[]>([])
           const [rateTypes, setRateTypes] = useState<RateTypeInterface[]>([])
           const [isLoading, setIsLoading] = useState(true)
+          
+          const dispacth = useDispatch()
           useEffect(() => {
                     (async () => {
                               try {
                                         const res = await fetchApi('/contributions/contribuables')
                                         setContributors(res.data)
+                                        dispacth(setContributorsAction(res.data))
                               } catch (error) {
                                         console.log(error)
                               } finally {
@@ -35,6 +40,7 @@ export default function NewContributionScreen() {
                               try {
                                         const res = await fetchApi("/rates/types")
                                         setRateTypes(res.data)
+                                        dispacth(setRateTypesAction(res.data))
                               } catch (error) {
                                         console.log(error)
                               } finally {

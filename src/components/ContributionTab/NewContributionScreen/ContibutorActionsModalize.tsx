@@ -161,8 +161,8 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
                                                   handlePosition="inside"
                                                   modalStyle={{ backgroundColor: '#fff', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
                                                   scrollViewProps={{ keyboardShouldPersistTaps: 'handled' }}
-                                                  modalHeight={showRateTypes ? 500 : 340}
-                                                  snapPoint={350}
+                                                  modalHeight={showRateTypes ? 500 : 410}
+                                                  snapPoint={400}
                                                   closeSnapPointStraightEnabled={true}
                                         >
                                                   {loadingForm ? <ActivityIndicator
@@ -171,7 +171,12 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
                                                             color='#777'
                                                             style={{ alignSelf: 'center', marginBottom: 15, marginTop: 20 }}
                                                   /> : <View style={styles.modalContainer}>
-                                                                      <Text style={styles.title}>Confirmer la contribution</Text>
+                                                                      <View style={styles.userImage}>
+                                                                                <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../../assets/girl.jpg')} />
+                                                                      </View>
+                                                                      <Text style={styles.title}>
+                                                                                { contributor.firstName } { contributor.lastName }
+                                                                      </Text>
                                                                       <View style={styles.actions}>
                                                                                 <TouchableNativeFeedback onPress={() => setSelectContribution(t => !t)}>
                                                                                           <View style={styles.action}>
@@ -264,14 +269,22 @@ const styles = StyleSheet.create({
           modalContainer: {
                     paddingVertical: 10
           },
+          userImage: {
+                    width: 50,
+                    height: 50,
+                    borderRadius: 50,
+                    alignSelf: "center",
+                    marginVertical: 15,
+                    marginBottom: 10
+          },
           title: {
                     color: '#000',
                     fontWeight: "bold",
-                    marginVertical: 15,
                     paddingHorizontal: 10,
                     fontSize: 18,
                     textAlign: "center",
-                    opacity: 0.6
+                    opacity: 0.6,
+                    marginBottom: 10
           },
           actions: {
 

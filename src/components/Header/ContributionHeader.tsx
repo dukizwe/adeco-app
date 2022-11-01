@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState, memo } from 'react'
 import { StyleSheet, View, Text, TouchableNativeFeedback, TouchableOpacity, TextStyle, SafeAreaView, Platform } from 'react-native'
-import { MaterialIcons, FontAwesome5, AntDesign, Ionicons } from '@expo/vector-icons'; 
+import { MaterialIcons, FontAwesome5, AntDesign, Ionicons, Feather } from '@expo/vector-icons';
 import { CountUp, useCountUp } from 'use-count-up'
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -9,6 +9,12 @@ import { queueListSelector } from '../../store/selectors/contributionSelectors';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useDispatch } from 'react-redux';
 import { setQueueListAction } from '../../store/actions/contributionActions';
+import moment from 'moment';
+import { COLORS } from '../../styles/COLORS';
+import Loading from '../app/Loading';
+import { setIsLoadingAction } from '../../store/actions/appActions';
+import wait from '../../helpers/wait';
+import fetchApi from '../../utils/fetchApi';
 
 export default memo(function ContributionHeader() {
           const queueList = useAppSelector(queueListSelector)
@@ -45,8 +51,8 @@ export default memo(function ContributionHeader() {
 
           const onChangeDate = (event: DateTimePickerEvent, time?: Date) => {
                     setShowCalendar(Platform.OS === "ios");
-                    const date =  time || new Date()
-                    dispatch(setQueueListAction({...queueList, date: date.toDateString()}))
+                    const date = time || new Date()
+                    dispatch(setQueueListAction({ ...queueList, date: date.toDateString() }))
           }
 
           useEffect(() => {
@@ -55,9 +61,9 @@ export default memo(function ContributionHeader() {
                               newTotal += contribution.actions?.action ? contribution.actions?.action : 0
                               newTotal += contribution.actions?.debt ? contribution.actions?.debt : 0
                               var ratesTotal = 0
-                              if(contribution.actions?.rates && contribution.actions?.rates?.length > 0) {
+                              if (contribution.actions?.rates && contribution.actions?.rates?.length > 0) {
                                         contribution.actions?.rates.forEach(rate => {
-                                                  newTotal += rate.amount 
+                                                  newTotal += rate.amount
                                         })
                               }
                     })
@@ -65,20 +71,65 @@ export default memo(function ContributionHeader() {
                     setTotal(newTotal)
           }, [queueList])
 
+          const onConfirm = useCallback(() => {
+                    (async () => {
+                              const contributions = queueList.contributions.map(contribution =>{
+                                        return {
+                                                  contributedBy: contribution._id,
+                                                  actions: {
+                                                            action: contribution.actions?.action,
+                                                            debt: contribution.actions?.debt,
+                                                            rates: contribution.actions?.rates
+                                                  }
+                                        }
+                              })
+                              var activities: any[] = []
+                              if(queueList.activities && queueList.activities.length > 0) {
+                                        activities = queueList.activities.map(activity => {
+                                                  return {
+                                                            categoryId: activity.category?._id,
+                                                            amount: activity.amount,
+                                                            description: activity.comment,
+                                                            activityDate: activity.date,
+                                                  }
+                                        })
+                              }
+                              try {
+                                        dispatch(setIsLoadingAction(true))
+                                        const newContribution = await fetchApi('/contributions', {
+                                                  method: "POST",
+                                                  body: JSON.stringify({
+                                                            contributions,
+                                                            activities
+                                                  }),
+                                                  headers: { "Content-Type": "application/json" },
+                                        })
+                                        console.log(newContribution)
+                              } catch (error) {
+                                        console.log(error)
+                              } finally {
+                                        dispatch(setIsLoadingAction(false))
+                              }
+                    })()
+          }, [queueList])
+
           const onNextPress = useCallback(() => {
-                    // return navigation.navigate("DebtScreen" as never)
-                    if(route.name == 'NewContributionScreen') {
+                    if (route.name == 'NewContributionScreen') {
                               navigation.navigate("DebtScreen" as never)
                     } else if (route.name == 'DebtScreen') {
                               navigation.navigate("AcitivitiesScreen" as never)
+                    } else if (route.name == "AcitivitiesScreen") {
+                              navigation.navigate('ConfirmContributionScreen' as never)
+                    } else if(route.name == "ConfirmContributionScreen") {
+                              onConfirm()
                     }
           }, [route.name])
 
           useFocusEffect(useCallback(() => {
-                    if(route.name == 'DebtScreen') {
+                    if (route.name == 'DebtScreen') {
                               calendarTranslateX.value = withSpring(-30)
                               calendarOpacity.value = withSpring(0)
-          
+
                               backBtnTranslateX.value = withSpring(15)
                               backBtnOpacity.value = withSpring(1)
                     }
@@ -92,7 +143,7 @@ export default memo(function ContributionHeader() {
                     const unsubscribe = navigation.addListener('beforeRemove', () => {
                               calendarTranslateX.value = withSpring(0)
                               calendarOpacity.value = withSpring(1)
-          
+
                               backBtnTranslateX.value = withSpring(30)
                               backBtnOpacity.value = withSpring(0)
                     })
@@ -113,11 +164,12 @@ export default memo(function ContributionHeader() {
                     return <Text style={style}>{`${value} Fbu`}</Text>
           }
 
-          const noAnimationsRouteNames = ['AcitivitiesScreen']
+          const noAnimationsRouteNames = ['AcitivitiesScreen', 'ConfirmContributionScreen']
           return (
-                    route.name != "AcitivitiesScreen" ? <View style={styles.header}>
+                    <>
+                    <View style={styles.header}>
                               <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onCalendaPress}>
-                                        <Animated.View style={[styles.opDate, calendarAnimatedStyles, noAnimationsRouteNames.includes(route.name) && { transform: [{ translateX: -30 }], opacity: 0 } ]}>
+                                        <Animated.View style={[styles.opDate, calendarAnimatedStyles, noAnimationsRouteNames.includes(route.name) && { transform: [{ translateX: -30 }], opacity: 0 }]}>
                                                   <FontAwesome5 name="calendar-check" size={22} color="#189fed" style={styles.icon} />
                                         </Animated.View>
                               </TouchableNativeFeedback>
@@ -126,14 +178,22 @@ export default memo(function ContributionHeader() {
                                                   <Ionicons name="arrow-back" size={22} color="#777" />
                                         </Animated.View>
                               </TouchableNativeFeedback>
-                              <View style={styles.total}>
-                                        <AntDesign name="creditcard" size={24} color="#189fed" style={styles.icon} />
-                                        <MyCountUp style={styles.headerValue} />
-                                        {/* { total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } Fbu */}
-                              </View>
-                              <TouchableOpacity style={{...styles.nextBtn, opacity: total == 0 ? 0.5 : 1}} disabled={total == 0} onPress={onNextPress}>
-                                        <Text style={styles.nextText}>Suivant</Text>
-                                        <MaterialIcons name="navigate-next" size={24} color="#189fed" />
+                              {route.name == "ConfirmContributionScreen" ?
+                                        <Text style={{ color: '#777', marginLeft: 20 }}>{queueList.date ? moment(new Date(queueList.date)).format("DD-MM-YYYY") : moment(new Date()).format("DD-MM-YYYY")}</Text> :
+                                        <>
+                                                  <View style={styles.total}>
+                                                            <AntDesign name="creditcard" size={24} color="#189fed" style={styles.icon} />
+                                                            <MyCountUp style={styles.headerValue} />
+                                                            {/* { total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } Fbu */}
+                                                  </View>
+                                        </>}
+                              <TouchableOpacity style={[styles.nextBtn, total == 0 && {opacity: 0.5} ]} disabled={total == 0} onPress={onNextPress}>
+                                        <Text style={styles.nextText}>
+                                                  {route.name == "ConfirmContributionScreen" ? 'Envoyer' : 'Suivant'}
+                                        </Text>
+                                        {route.name == "ConfirmContributionScreen" ?
+                                                  <Feather name="send" size={22} color={COLORS.primary} /> :
+                                                  <MaterialIcons name="navigate-next" size={24} color={COLORS.primary} />}
                               </TouchableOpacity>
                               {showCalendar && (
                                         <DateTimePicker
@@ -146,7 +206,8 @@ export default memo(function ContributionHeader() {
                                                   maximumDate={new Date()}
                                         />
                               )}
-                    </View> : null
+                    </View>
+                    </>
           )
 })
 
@@ -191,6 +252,7 @@ const styles = StyleSheet.create({
                     paddingVertical: 10,
           },
           nextText: {
-                    color: '#189fed'
+                    color: '#189fed',
+                    marginRight: 5
           }
 })

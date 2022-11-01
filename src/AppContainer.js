@@ -11,6 +11,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { Host } from "react-native-portalize";
 import { PortalProvider } from "@gorhom/portal";
 import LoginScreen from "./screens/welcome/LoginScreen";
+import Loading from "./components/app/Loading";
+import { isLoadingSelector } from "./store/selectors/appSelectors";
 
 const Stack = createStackNavigator()
 
@@ -26,18 +28,20 @@ export default function AppContainer() {
                     })()
           }, [dispatch])
           const user = useSelector(userSelector)
+          const isLoading = useSelector(isLoadingSelector)
           return (
-                    userLoading ?
+                    <>
+                    {isLoading && <Loading />}
+                    {userLoading ?
                     <View style={{ flex: 1, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
                               <ActivityIndicator color="#007BFF" animating={userLoading} size='large' />
                     </View> :
-                    <PortalProvider>
                               <NavigationContainer theme={{ colors: { background: "#fff", }}}>
                                         {user ? <RootNavigator /> :
                                         <Stack.Navigator>
                                                   <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false}}/>
                                         </Stack.Navigator>}
-                              </NavigationContainer>
-                    </PortalProvider>
+                              </NavigationContainer>}
+                    </>
           )
 }

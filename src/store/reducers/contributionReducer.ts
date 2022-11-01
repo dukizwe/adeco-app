@@ -9,7 +9,10 @@ export enum CONTRIBUTION_TYPES {
           SET_START_ANIMATION = "SET_START_ANIMATION",
           TOGGLE_START_ANIMATION = "TOGGLE_START_ANIMATION",
           SET_PREVIOUS_TOTAL = "SET_PREVIOUS_TOTAL",
-          APPEND_ACTIVITY = "APPEND_ACTIVITY"
+          SET_ACTIVITIES = "SET_ACTIVITIES",
+          APPEND_ACTIVITY = "APPEND_ACTIVITY",
+          SET_CONTRIBUTORS = "SET_CONTRIBUTORS",
+          SET_RATE_TYPES = "SET_RATE_TYPES"
 }
 
 export interface ContributionAction {
@@ -20,6 +23,8 @@ export interface ContributionAction {
 const initial: ContributionContextInterface = {
           inSelect: false,
           selectedBatch: [],
+          contributors: [],
+          rateTypes: [],
           queueList: {
                     contributions: [],
                     activities: []
@@ -41,9 +46,15 @@ export default function contributionReducer(contributionState: ContributionConte
                               return {...contributionState, startAnimation: action.payload}
                     case CONTRIBUTION_TYPES.TOGGLE_START_ANIMATION:
                               return {...contributionState, startAnimation: !contributionState.startAnimation}
+                    case CONTRIBUTION_TYPES.SET_ACTIVITIES:
+                              return {...contributionState, queueList: {...contributionState.queueList, activities: action.payload}}
                     case CONTRIBUTION_TYPES.APPEND_ACTIVITY:
                               const existsActivities = contributionState.queueList.activities
                               return {...contributionState, queueList: {...contributionState.queueList, activities: existsActivities ? [...existsActivities, action.payload ] : [action.payload]}}
+                    case CONTRIBUTION_TYPES.SET_CONTRIBUTORS:
+                              return {...contributionState, contributors: action.payload}
+                    case CONTRIBUTION_TYPES.SET_RATE_TYPES:
+                              return {...contributionState, rateTypes: action.payload}
                     default:
                               return contributionState
           }

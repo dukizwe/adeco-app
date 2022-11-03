@@ -12,7 +12,8 @@ export enum CONTRIBUTION_TYPES {
           SET_ACTIVITIES = "SET_ACTIVITIES",
           APPEND_ACTIVITY = "APPEND_ACTIVITY",
           SET_CONTRIBUTORS = "SET_CONTRIBUTORS",
-          SET_RATE_TYPES = "SET_RATE_TYPES"
+          SET_RATE_TYPES = "SET_RATE_TYPES",
+          RESET_NEW_CONTRIBUTION = "RESET_NEW_CONTRIBUTION"
 }
 
 export interface ContributionAction {
@@ -55,6 +56,8 @@ export default function contributionReducer(contributionState: ContributionConte
                               return {...contributionState, contributors: action.payload}
                     case CONTRIBUTION_TYPES.SET_RATE_TYPES:
                               return {...contributionState, rateTypes: action.payload}
+                    case CONTRIBUTION_TYPES.RESET_NEW_CONTRIBUTION:
+                              return initial
                     default:
                               return contributionState
           }

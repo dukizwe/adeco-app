@@ -8,7 +8,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { queueListSelector } from '../../store/selectors/contributionSelectors';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useDispatch } from 'react-redux';
-import { setQueueListAction } from '../../store/actions/contributionActions';
+import { resetNewContributionAcion, setQueueListAction } from '../../store/actions/contributionActions';
 import moment from 'moment';
 import { COLORS } from '../../styles/COLORS';
 import Loading from '../app/Loading';
@@ -104,7 +104,7 @@ export default memo(function ContributionHeader() {
                                                   }),
                                                   headers: { "Content-Type": "application/json" },
                                         })
-                                        console.log(newContribution)
+                                        navigation.navigate('ContributionSuccessScreen' as never)
                               } catch (error) {
                                         console.log(error)
                               } finally {
@@ -114,6 +114,10 @@ export default memo(function ContributionHeader() {
           }, [queueList])
 
           const onNextPress = useCallback(() => {
+                    if(route.name == 'ContributionSuccessScreen') {
+                              dispatch(resetNewContributionAcion())
+                              return navigation.navigate('ContributionScreen' as never)
+                    }
                     if (route.name == 'NewContributionScreen') {
                               navigation.navigate("DebtScreen" as never)
                     } else if (route.name == 'DebtScreen') {
@@ -122,6 +126,8 @@ export default memo(function ContributionHeader() {
                               navigation.navigate('ConfirmContributionScreen' as never)
                     } else if(route.name == "ConfirmContributionScreen") {
                               onConfirm()
+                    } else if(route.name == "ContributionSuccessScreen") {
+                              navigation.navigate('NewContributionScreen' as never)
                     }
           }, [route.name])
 
@@ -135,9 +141,13 @@ export default memo(function ContributionHeader() {
                     }
           }, [route.name]))
 
-          const onBackPress = () => {
+          const onBackPress = useCallback(() => {
+                    if(route.name == "ContributionSuccessScreen") {
+                              dispatch(resetNewContributionAcion())
+                              return navigation.navigate('ContributionScreen' as never)
+                    }
                     navigation.goBack()
-          }
+          }, [route.name])
 
           useEffect(() => {
                     const unsubscribe = navigation.addListener('beforeRemove', () => {
@@ -164,7 +174,7 @@ export default memo(function ContributionHeader() {
                     return <Text style={style}>{`${value} Fbu`}</Text>
           }
 
-          const noAnimationsRouteNames = ['AcitivitiesScreen', 'ConfirmContributionScreen']
+          const noAnimationsRouteNames = ['AcitivitiesScreen', 'ConfirmContributionScreen', 'ContributionSuccessScreen']
           return (
                     <>
                     <View style={styles.header}>
@@ -175,24 +185,24 @@ export default memo(function ContributionHeader() {
                               </TouchableNativeFeedback>
                               <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onBackPress} disabled={route.name == 'NewContributionScreen'}>
                                         <Animated.View style={[styles.opDate, !noAnimationsRouteNames.includes(route.name) && backBtnAnimatedStyles, { position: 'absolute', transform: [{ translateX: 15 }] }]}>
-                                                  <Ionicons name="arrow-back" size={22} color="#777" />
+                                                  {route.name == "ContributionSuccessScreen" ? <AntDesign name="close" size={24} color="#777" /> : <Ionicons name="arrow-back" size={22} color="#777" />}
                                         </Animated.View>
                               </TouchableNativeFeedback>
                               {route.name == "ConfirmContributionScreen" ?
                                         <Text style={{ color: '#777', marginLeft: 20 }}>{queueList.date ? moment(new Date(queueList.date)).format("DD-MM-YYYY") : moment(new Date()).format("DD-MM-YYYY")}</Text> :
-                                        <>
+                                        route.name != "ContributionSuccessScreen" ? <>
                                                   <View style={styles.total}>
                                                             <AntDesign name="creditcard" size={24} color="#189fed" style={styles.icon} />
                                                             <MyCountUp style={styles.headerValue} />
                                                             {/* { total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } Fbu */}
                                                   </View>
-                                        </>}
+                                        </> : null}
                               <TouchableOpacity style={[styles.nextBtn, total == 0 && {opacity: 0.5} ]} disabled={total == 0} onPress={onNextPress}>
                                         <Text style={styles.nextText}>
-                                                  {route.name == "ConfirmContributionScreen" ? 'Envoyer' : 'Suivant'}
+                                                  {route.name == "ConfirmContributionScreen" ? 'Envoyer' : (route.name == "ContributionSuccessScreen" ? "Liste" : 'Suivant')}
                                         </Text>
                                         {route.name == "ConfirmContributionScreen" ?
-                                                  <Feather name="send" size={22} color={COLORS.primary} /> :
+                                        <Ionicons name="send-outline" size={22} color={COLORS.primary} />:
                                                   <MaterialIcons name="navigate-next" size={24} color={COLORS.primary} />}
                               </TouchableOpacity>
                               {showCalendar && (

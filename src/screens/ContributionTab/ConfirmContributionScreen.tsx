@@ -7,6 +7,7 @@ import { COLORS } from "../../styles/COLORS";
 import { AntDesign } from '@expo/vector-icons';
 import Activity from "../../components/Activities/Activity";
 import Loading from "../../components/app/Loading";
+import { useAppSelector } from "../../hooks/useAppSelector";
 
 export default function ConfirmContributionScreen() {
           const { width } = useWindowDimensions()
@@ -16,7 +17,7 @@ export default function ConfirmContributionScreen() {
           const rateTypes = useSelector(rateTypesSelector)
           const activities = useSelector(queueActivitiesSelector)
 
-          const queueList = useSelector(queueListSelector)
+          const queueList = useAppSelector(queueListSelector)
 
           const getTotals = useCallback(() => {
                     var action = {

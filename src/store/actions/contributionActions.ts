@@ -77,3 +77,9 @@ export const setRateTypesAction = (rateTypes: RateTypeInterface[]) => {
                     payload: rateTypes
           }
 }
+
+export const resetNewContributionAcion = () => {
+          return {
+                    type: CONTRIBUTION_TYPES.RESET_NEW_CONTRIBUTION
+          }
+}

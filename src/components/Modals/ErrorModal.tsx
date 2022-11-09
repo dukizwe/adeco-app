@@ -5,9 +5,12 @@ import Animated, { withSpring, withTiming } from "react-native-reanimated"
 import { primaryColor } from "../../styles"
 
 interface Props {
-          onClose: () => void
+          onClose: () => void,
+          title?: string,
+          body?: string,
+          handleTitle?: string
 }
-export default function ErrorModal({ onClose }: Props) {
+export default function ErrorModal({ onClose, title = "Erreur", body = "Identifiants incorrects", handleTitle = "Réessayer" }: Props) {
           const entering = () => {
                     'worklet';
                     const animations = {
@@ -81,13 +84,17 @@ export default function ErrorModal({ onClose }: Props) {
                                         <Animated.View  style={styles.modalContainer} entering={enteringContainer} exiting={exitingContainer}>
                                                   <TouchableWithoutFeedback>
                                                             <Animated.View style={{...styles.modalContent}} entering={entering} exiting={exiting}>
-                                                                      <Text style={styles.title}>Erreur</Text>
+                                                                      <Text style={styles.title}>
+                                                                                { title }
+                                                                      </Text>
                                                                       <Text style={styles.errorDescription}>
-                                                                                Identifiants incorrect
+                                                                                { body }
                                                                       </Text>
                                                                       <TouchableNativeFeedback onPress={onClose}>
                                                                                 <View style={styles.handleBtn}>
-                                                                                          <Text style={styles.handleBtnText}>Réessayer</Text>
+                                                                                          <Text style={styles.handleBtnText}>
+                                                                                                    { handleTitle }
+                                                                                          </Text>
                                                                                 </View>
                                                                       </TouchableNativeFeedback>
                                                             </Animated.View>

@@ -16,9 +16,9 @@ export default function ContributionScreen() {
                                         <View style={styles.contributionRightSide}>
                                                   <TouchableNativeFeedback useForeground onPress={() => navigation.navigate('NewContributionScreen' as never)}>
                                                             <View style={{ overflow: "hidden", borderRadius: 10 }}>
-                                                                      <View style={styles.dropdownIconTitle}>
+                                                                      <View style={styles.headerIconTitle}>
                                                                                 <Ionicons name="ios-add-circle" size={24} color={primaryColor} />
-                                                                                <Text style={[styles.dropdownTitle, { color: primaryColor }]}>Nouvelle</Text>
+                                                                                <Text style={[styles.headerBtnTitle, { color: primaryColor }]}>Nouvelle</Text>
                                                                       </View>
                                                             </View>
                                                   </TouchableNativeFeedback>
@@ -80,14 +80,14 @@ const styles = StyleSheet.create({
           contributionRightSide: {
 
           },
-          dropdownIconTitle: {
+          headerIconTitle: {
                     flexDirection: 'row',
                     alignItems: 'center',
                     backgroundColor: '#F1F1F1',
                     paddingHorizontal: 10,
                     paddingVertical: 5
           },
-          dropdownTitle: {
+          headerBtnTitle: {
                     color: '#777',
                     marginLeft: 5,
                     fontWeight: 'bold',

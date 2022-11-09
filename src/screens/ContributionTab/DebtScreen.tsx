@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, Image } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DebtScreenHeader from '../../components/ContributionTab/DebtScreenHeader';
 import { useContext } from 'react';
-import UserPayment from '../../components/ContributionTab/UserPayment';
 import UserDebt from '../../components/ContributionTab/UserDebt';
 import DebtForm from '../../components/ContributionTab/DebtForm';
 import { User } from '../../types/User';
@@ -14,9 +13,12 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { queueListSelector, usersSelector } from '../../store/selectors/contributionSelectors';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { setQueueListAction } from '../../store/actions/contributionActions';
+import { UserDebtInterface } from '../../interfaces/UserDebtInterface';
+import fetchApi from '../../utils/fetchApi';
 
 export default function DebtScreen() {
           const navigation = useNavigation()
+          const [debts, setDebts] = useState<UserDebtInterface[]>([])
 
           const users = useAppSelector(usersSelector)
           const queueList = useAppSelector(queueListSelector)
@@ -38,7 +40,7 @@ export default function DebtScreen() {
           const onChange: DataChanger = (name, value) => {
                     if (selectedUserId == null) return false
                     setData(d => {
-                              const lastUserInfo = d[selectedUserId] || { amount: '', month: '', comment: ''}
+                              const lastUserInfo = d[selectedUserId] || { amount: '', month: '', comment: '' }
                               return {
                                         ...d,
                                         [selectedUserId]: {
@@ -113,27 +115,39 @@ export default function DebtScreen() {
                     )
           }
 
+          useEffect(() => {
+                    (async () => {
+                              try {
+                                        const result = await fetchApi('/debts/accepted')
+                                        setDebts(result.data)
+                              } catch (error) {
+                                        console.log(error)
+                              } finally {
+
+                              }
+                    })()
+          }, [])
           return (
                     <>
                               <View style={styles.container}>
-                                        <DebtScreenHeader />
-                                        <FlatList
-                                                  // ListHeaderComponent={() => <DebtScreenHeader />}
-                                                  showsVerticalScrollIndicator={false}
-                                                  data={users}
-                                                  keyExtractor={(user, index) => index.toString()}
-                                                  renderItem={({ item }) => <UserDebt user={item} onUserPress={onUserPress} userId={typeof selectedUserId === 'number' ? selectedUserId : undefined} />}
-                                        />
+                                        {debts.length == 0 ? <View style={styles.content}>
+                                                  <Text style={styles.title}>Dettes</Text>
+                                                  <Image source={require('../../../assets/images/empty-debt.png')} style={styles.emptyImageFeedBack} />
+                                                  <Text style={styles.emptyTextFeedback}>
+                                                            Les dettes acceptées en ettente de distribution seront affichées ici
+                                                  </Text>
+                                        </View> :
+                                                  <>
+                                                            <DebtScreenHeader />
+                                                            <FlatList
+                                                                      // ListHeaderComponent={() => <DebtScreenHeader />}
+                                                                      showsVerticalScrollIndicator={false}
+                                                                      data={debts}
+                                                                      keyExtractor={(user, index) => index.toString()}
+                                                                      renderItem={({ item }) => <UserDebt userDebt={item} />}
+                                                            />
+                                                  </>}
                               </View>
-                              {selectedUserId && <DebtForm
-                                        onClose={() => setSelectedUserId(null)}
-                                        onSubmit={onSubmit}
-                                        userId={typeof selectedUserId === 'number' ? selectedUserId : undefined}
-                                        onRemove={onRemove}
-                                        data={data[selectedUserId] || { amount: '', month: '', comment: '' }}
-                                        onChange={onChange}
-                              />
-                              }
                     </>
           )
 }
@@ -141,8 +155,11 @@ export default function DebtScreen() {
 const styles = StyleSheet.create({
           container: {
                     flex: 1,
-                    paddingHorizontal: 20,
                     backgroundColor: '#fff'
+          },
+          content: {
+                    alignItems: 'center',
+                    paddingHorizontal: 20
           },
           header: {
                     flexDirection: 'row',
@@ -176,5 +193,25 @@ const styles = StyleSheet.create({
           },
           nextText: {
                     color: '#189fed'
-          }
+          },
+          title: {
+                    color: '#777',
+                    fontWeight: 'bold',
+                    fontSize: 16,
+                    marginTop: 80
+          },
+          emptyImageFeedBack: {
+                    maxWidth: '80%',
+                    maxHeight: '30%',
+                    marginVertical: 30,
+                    resizeMode: "contain",
+                    marginLeft: 20
+          },
+          emptyTextFeedback: {
+                    textAlign: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    lineHeight: 22,
+                    color: '#5E5E5E'
+          },
 })

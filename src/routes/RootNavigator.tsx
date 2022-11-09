@@ -11,13 +11,13 @@ import DebtScreen from '../screens/ContributionTab/DebtScreen';
 import NewContributionScreen from '../screens/ContributionTab/NewContributionScreen';
 import { User } from '../types/User';
 import Tabs from './Tabs';
-import TopTabs from './TopTabs';
+import BottomTabs from './BottomTabs';
 
 export default function RootNavigator() {
           const Stack = createStackNavigator()
           return (
                     <Stack.Navigator>
-                              <Stack.Screen name="Tabs" component={TopTabs} options={{ headerShown: false }} />
+                              <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ headerShown: false }} />
                               <Stack.Screen name="NewContributionScreen" component={NewContributionScreen} options={{
                                         header: () => <ContributionHeader />,
                                         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,

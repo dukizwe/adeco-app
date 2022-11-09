@@ -1,56 +1,59 @@
+import moment from 'moment'
 import React, { useContext, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet } from 'react-native'
 import { useAppSelector } from '../../hooks/useAppSelector'
+import { UserDebtInterface } from '../../interfaces/UserDebtInterface'
 import { queueListSelector } from '../../store/selectors/contributionSelectors'
 import { primaryColor } from '../../styles'
 import { User } from '../../types/User'
 
 interface Props {
-          user: User,
-          onUserPress: (userId: number) => void,
-          /**
-           * Represents the selected user id
-           */
-          userId?: number
+          userDebt: UserDebtInterface
 }
 
-export default function UserDebt({ user, onUserPress, userId }: Props) {
-          const queueList = useAppSelector(queueListSelector)
-          const isSelected: boolean = user._id === userId
-          const inSelectStyles = isSelected ? { backgroundColor: '#c9c9c9' } : {}
-          const isAleadyDebted: boolean = queueList[user._id]?.debt?.amount ? true : false
+export default function UserDebt({ userDebt }: Props) {
+          const StatusBubble = () => {
+                    if(userDebt.statusId.code == "PEDDING") {
+
+                    }
+                    return <View style={styles.statusBubble}>
+
+                    </View>
+          }
           return (
                     <View>
-                    <TouchableNativeFeedback
-                              accessibilityRole="button"
-                              background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
-                              onPress={() => onUserPress(user._id)}
-                              useForeground={true}
-                    >
-                              <View style={{...styles.user, ...inSelectStyles}}>
-                                        <View style={styles.userImage}>
-                                                  <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../assets/girl.jpg')} />
-                                        </View>
-                                        <View style={styles.userInfo}>
-                                                  <View style={{}}>
-                                                            <Text style={styles.userNames}>Dukizwe Darcy</Text>
+                              <TouchableNativeFeedback
+                                        accessibilityRole="button"
+                                        background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
+                                        useForeground={true}
+                              >
+                                        <View style={{ ...styles.user }}>
+                                                  <View style={styles.userImage}>
+                                                            <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../assets/girl.jpg')} />
                                                   </View>
-                                                  <View style={styles.userActions}>
-                                                           {isAleadyDebted &&  <View style={[styles.debtAmount, { backgroundColor: '#fff'}]}>
-                                                                      <Text style={{ fontWeight: 'bold', color: '#96A5B0'}} >
-                                                                                { queueList[user._id].debt?.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
+                                                  <View style={styles.userInfo}>
+                                                            <View style={styles.userTop}>
+                                                                      <Text style={styles.userNames}>
+                                                                                {userDebt.assignedTo.firstName} {userDebt.assignedTo.lastName}
                                                                       </Text>
-                                                                      <Text style={styles.newBadge}>N</Text>
-                                                            </View>}
-                                                            <Text style={[styles.debtAmount, { marginLeft: 5 }]}>320 000</Text>
-                                                            <Text style={[styles.debtAmount, { marginLeft: 5 }]}>320 000</Text>
-                                                           {/*  <View style={styles.debtCountContainer}>
-                                                                      <Text style={ styles.debtCount}>+2</Text>
-                                                            </View> */}
+                                                                      <Text style={styles.price}>
+                                                                                {userDebt.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                      </Text>
+                                                            </View>
+                                                            <View style={styles.userBottom}>
+                                                                      <Text style={styles.debtDate}>
+                                                                                { moment(userDebt.createdAt).format('DD/MM/YYYY')}
+                                                                      </Text>
+                                                                      <View style={styles.status}>
+                                                                                <StatusBubble />
+                                                                                <Text style={styles.statusTitle}>
+                                                                                          { userDebt.statusId.title }
+                                                                                </Text>
+                                                                      </View>
+                                                            </View>
                                                   </View>
                                         </View>
-                              </View>
-                    </TouchableNativeFeedback>
+                              </TouchableNativeFeedback>
                     </View>
           )
 }
@@ -73,8 +76,17 @@ const styles = StyleSheet.create({
                     borderRadius: 50
           },
           userInfo: {
-                    marginLeft: 20,
+                    marginLeft: 10,
                     flex: 1
+          },
+          userTop: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+          },
+          price: {
+                    fontWeight: "bold",
+                    opacity: 0.7
           },
           userNames: {
                     fontWeight: 'bold',
@@ -83,10 +95,15 @@ const styles = StyleSheet.create({
                     opacity: 0.8,
                     marginBottom: 5
           },
-          userActions: {
+          userBottom: {
                     flexDirection: 'row',
                     alignContent: 'center',
                     alignItems: 'center',
+                    justifyContent: "space-between"
+          },
+          debtDate: {
+                    fontSize: 12,
+                    color: '#777'
           },
           debtAmount: {
                     backgroundColor: '#D1E4F1',
@@ -125,5 +142,22 @@ const styles = StyleSheet.create({
                     fontSize: 8,
                     color: '#fff',
                     fontWeight: 'bold'
+          },
+          status: {
+                    flexDirection: "row",
+                    alignItems: "center"
+          },
+          statusTitle: {
+                    fontSize: 12,
+                    color: '#777',
+                    marginLeft: 3,
+                    textTransform: "lowercase"
+          },
+          statusBubble: {
+                    width: 13,
+                    height: 13,
+                    borderWidth: 1,
+                    borderColor: '#777',
+                    borderRadius: 30
           }
 })

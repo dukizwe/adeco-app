@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Dimensions, ScrollView } from 'react-native'
 import CardsCarousel, { entries } from '../components/CardsCarousel/CardsCarousel';
 import Activities from '../components/Activities/Activities';
+import Header from '../components/Header/Header';
 
 export default function HomeScreen() {
           useEffect(() => {
@@ -11,10 +12,13 @@ export default function HomeScreen() {
           }, [])
           const [loading, setLoading] = useState(true)
           return (
+                    <>
+                    <Header />
                     <ScrollView style={styles.home}>
                               <CardsCarousel setLoading={setLoading} />
                               <Activities loading={loading} setLoading={setLoading}/>
                     </ScrollView>
+                    </>
           )
 }
 

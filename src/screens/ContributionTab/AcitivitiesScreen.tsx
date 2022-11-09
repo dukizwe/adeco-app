@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
           },
 
           content: {
-                    alignItems: 'center',
+                    alignItems: 'center'
           },
           title: {
                     color: '#777',

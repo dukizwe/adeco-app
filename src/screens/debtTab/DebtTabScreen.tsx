@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { findNodeHandle, FlatList, Keyboard, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
 import { Entypo, Feather, MaterialIcons, Octicons, Ionicons } from '@expo/vector-icons';
 import { COLORS } from "../../styles/COLORS";
@@ -60,6 +60,17 @@ export default function DebtTabScreen() {
                               }
                     })()
           }, [])
+
+          const onUserDebtUpdate = useCallback((newUserDebt: UserDebtInterface) => {
+                    const newDebts = debts.map(ud => {
+                              if(ud._id == newUserDebt._id) {
+                                        return newUserDebt
+                              } else {
+                                        return ud
+                              }
+                    })
+                    setDebts(newDebts)
+          }, [debts])
           return (
                     <>
                     {error && <ErrorModal onClose={() => setError(null)} body={error} handleTitle="Ok" />}
@@ -108,6 +119,7 @@ export default function DebtTabScreen() {
                                                   return (
                                                             <UserDebt
                                                                       userDebt={item}
+                                                                      onUserDebtUpdate={onUserDebtUpdate}
                                                             />
                                                   )
                                         }}

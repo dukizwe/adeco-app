@@ -1,60 +1,96 @@
 import moment from 'moment'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet } from 'react-native'
+import { Modalize } from 'react-native-modalize'
+import { DebtStatusCodes } from '../../enum/debtStatusCodes.enum'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { UserDebtInterface } from '../../interfaces/UserDebtInterface'
 import { queueListSelector } from '../../store/selectors/contributionSelectors'
 import { primaryColor } from '../../styles'
 import { User } from '../../types/User'
+import UserDebtModalize from '../debtTab/UserDebtModalize'
+import { Ionicons } from '@expo/vector-icons'; 
+import { COLORS } from '../../styles/COLORS'
 
 interface Props {
-          userDebt: UserDebtInterface
+          userDebt: UserDebtInterface,
+          onUserDebtUpdate: (newUserDebt: UserDebtInterface) => void
 }
 
-export default function UserDebt({ userDebt }: Props) {
+export default function UserDebt({ userDebt, onUserDebtUpdate }: Props) {
+          const modalizeRef = useRef<Modalize>(null)
+          const [isOpen, setIsOpen] = useState(false)
+          const [loadingForm, setLoadingForm] = useState(false)
           const StatusBubble = () => {
-                    if(userDebt.statusId.code == "PEDDING") {
-
+                    if (userDebt.statusId.code == DebtStatusCodes.ACCEPTED) {
+                              return <Ionicons name="checkmark-circle-outline" size={18} color={COLORS.primary} />
                     }
                     return <View style={styles.statusBubble}>
 
                     </View>
           }
+
+          const onUserPress = () => {
+                    setIsOpen(true)
+                    modalizeRef.current?.open();
+          }
+          useEffect(() => {
+                    if (isOpen) {
+                              const timer = setTimeout(() => {
+                                        setLoadingForm(false)
+                              })
+                              return () => {
+                                        clearTimeout(timer)
+                              }
+                    }
+          }, [isOpen])
           return (
-                    <View>
-                              <TouchableNativeFeedback
-                                        accessibilityRole="button"
-                                        background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
-                                        useForeground={true}
-                              >
-                                        <View style={{ ...styles.user }}>
-                                                  <View style={styles.userImage}>
-                                                            <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../assets/girl.jpg')} />
-                                                  </View>
-                                                  <View style={styles.userInfo}>
-                                                            <View style={styles.userTop}>
-                                                                      <Text style={styles.userNames}>
-                                                                                {userDebt.assignedTo.firstName} {userDebt.assignedTo.lastName}
-                                                                      </Text>
-                                                                      <Text style={styles.price}>
-                                                                                {userDebt.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
-                                                                      </Text>
+                    <>
+                              <UserDebtModalize
+                                        userDebt={userDebt}
+                                        modalizeRef={modalizeRef}
+                                        isOpen={isOpen}
+                                        setIsOpen={setIsOpen}
+                                        loadingForm={loadingForm}
+                                        setLoadingForm={setLoadingForm}
+                                        onUserDebtUpdate={onUserDebtUpdate}
+                              />
+                              <View>
+                                        <TouchableNativeFeedback
+                                                  accessibilityRole="button"
+                                                  background={TouchableNativeFeedback.Ripple('#cbd1d4', false)}
+                                                  useForeground={true}
+                                                  onPress={onUserPress}
+                                        >
+                                                  <View style={{ ...styles.user }}>
+                                                            <View style={styles.userImage}>
+                                                                      <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../assets/girl.jpg')} />
                                                             </View>
-                                                            <View style={styles.userBottom}>
-                                                                      <Text style={styles.debtDate}>
-                                                                                { moment(userDebt.createdAt).format('DD/MM/YYYY')}
-                                                                      </Text>
-                                                                      <View style={styles.status}>
-                                                                                <StatusBubble />
-                                                                                <Text style={styles.statusTitle}>
-                                                                                          { userDebt.statusId.title }
+                                                            <View style={styles.userInfo}>
+                                                                      <View style={styles.userTop}>
+                                                                                <Text style={styles.userNames}>
+                                                                                          {userDebt.assignedTo.firstName} {userDebt.assignedTo.lastName}
                                                                                 </Text>
+                                                                                <Text style={styles.price}>
+                                                                                          {userDebt.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                </Text>
+                                                                      </View>
+                                                                      <View style={styles.userBottom}>
+                                                                                <Text style={styles.debtDate}>
+                                                                                          {moment(userDebt.createdAt).format('DD MMM[.] YYYY')}
+                                                                                </Text>
+                                                                                <View style={styles.status}>
+                                                                                          <StatusBubble />
+                                                                                          <Text style={[styles.statusTitle, userDebt.statusId.code != DebtStatusCodes.PEDDING && { color: COLORS.primary }]}>
+                                                                                                    {userDebt.statusId.title}
+                                                                                          </Text>
+                                                                                </View>
                                                                       </View>
                                                             </View>
                                                   </View>
-                                        </View>
-                              </TouchableNativeFeedback>
-                    </View>
+                                        </TouchableNativeFeedback>
+                              </View>
+                    </>
           )
 }
 

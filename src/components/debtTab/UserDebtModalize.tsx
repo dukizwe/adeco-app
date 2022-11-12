@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ActivityIndicator, Image, Keyboard, StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Modalize } from "react-native-modalize";
@@ -11,6 +11,10 @@ import fetchApi from "../../utils/fetchApi";
 import Loading from "../app/Loading";
 import wait from "../../helpers/wait";
 import { DebtStatusCodes } from "../../enum/debtStatusCodes.enum";
+import { useAppSelector } from "../../hooks/useAppSelector";
+import { queueListSelector } from "../../store/selectors/contributionSelectors";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { setQueueListAction } from "../../store/actions/contributionActions";
 
 
 interface Props {
@@ -20,16 +24,23 @@ interface Props {
           setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
           loadingForm: boolean,
           setLoadingForm: React.Dispatch<React.SetStateAction<boolean>>,
-          onUserDebtUpdate: (newUserDebt: UserDebtInterface) => void
+          onUserDebtUpdate?: (newUserDebt: UserDebtInterface) => void,
+          isContribution?: boolean,
 }
 
 type ActionType = "REJECT" | "ACCEPT"
 type Bubbles = {
           [key in DebtStatusCodes]: JSX.Element
 }
-export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsOpen, loadingForm, setLoadingForm, onUserDebtUpdate }: Props) {
+export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsOpen, loadingForm, setLoadingForm, onUserDebtUpdate, isContribution = false }: Props) {
           const [isAccepting, setIsaccepting] = useState(false)
+          const queueList = useAppSelector(queueListSelector)
+          const dispacth = useAppDispatch()
 
+          /**
+           * Handle REJECT or ACCEPT press
+           * @param {ActionType} type Le type d'action
+           */
           const onActionPress = async (type: ActionType) => {
                     try {
                               var url = ""
@@ -43,8 +54,11 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                         method: "PUT"
                               })
                               const newUserDebt: UserDebtInterface = res.data
-                              onUserDebtUpdate(newUserDebt)
+                              if(onUserDebtUpdate) {
+                                        onUserDebtUpdate(newUserDebt)
+                              }
                               modalizeRef.current?.close()
+                              setIsOpen(false)
                     } catch (error) {
                               console.log(error)
                     } finally {
@@ -63,7 +77,52 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                     return bubbles[userDebt.statusId.code as DebtStatusCodes]
           }
 
-          const canMakeDecision = () => {
+          /**
+           * Determine if current debt is accepted and debited in queuList
+           */
+           const isDebited = useCallback(() => {
+                    const debts = queueList.debts
+                    if(!debts) {
+                              return false
+                    }
+                    return debts.find(u => u._id == userDebt._id) ? true : false
+          }, [queueList])
+
+          /**
+           * Mark the debt as debited (only callable when isContribution == true)
+           */
+          const onDistribute = () => {
+                    const debts = queueList.debts
+                    let newDebts: UserDebtInterface[] = []
+                    if(isDebited()) {
+                              // if debt is in queuList, we remove it
+                              if(!debts) return
+                              newDebts = debts?.filter(d => d._id != userDebt._id)
+                    } else {
+                              // otherwise, we add it
+                              if(debts) {
+                                        newDebts = [...debts, userDebt]
+                              } else {
+                                        newDebts = [userDebt]
+                              }
+                    }
+                    const newQueuList = {
+                              ...queueList,
+                              debts: newDebts
+                    }
+                    dispacth(setQueueListAction(newQueuList))
+                    modalizeRef.current?.close()
+                    setIsOpen(false)
+          }
+
+          /**
+           * Determine if can display actions buttons
+           * @returns { Boolean }
+           */
+          const canMakeDecision = (): boolean => {
+                    if(isContribution) {
+                              return true
+                    }
                     if(userDebt.statusId.code != DebtStatusCodes.PEDDING) {
                               return false
                     }
@@ -143,7 +202,7 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                                                                           </Text>
                                                                                 </View>
                                                                       </View>
-                                                                      <View style={styles.detail}>
+                                                                      {!canMakeDecision() ? <View style={styles.detail}>
                                                                                 <View style={styles.detailIcon}>
                                                                                           <StatusBubble />
                                                                                 </View>
@@ -155,16 +214,24 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                                                                                     {userDebt.statusId.title}
                                                                                           </Text>
                                                                                 </View>
-                                                                      </View>
+                                                                      </View> : null}
                                                             </View>
                                                             {canMakeDecision() && <View style={styles.actions}>
-                                                                      <TouchableNativeFeedback onPress={() => onActionPress('REJECT')}>
-                                                                                <View style={[styles.actionBtn]}>
+                                                                      <TouchableNativeFeedback onPress={() => onActionPress('REJECT')} disabled={isContribution}>
+                                                                                <View style={[styles.actionBtn, isContribution && { opacity: 0.5 }]}>
                                                                                           <Text style={[styles.actionLabel, { color: COLORS.minusAmount }]}>
                                                                                                     Rejeter
                                                                                           </Text>
                                                                                 </View>
                                                                       </TouchableNativeFeedback>
+                                                                      {isContribution ? <TouchableNativeFeedback onPress={onDistribute}>
+                                                                                <View style={[styles.actionBtn,  { borderLeftWidth: 1, borderLeftColor: '#F1F1F1'}]}>
+                                                                                          {isAccepting ? <ActivityIndicator size="small" color={COLORS.primary}  /> :
+                                                                                          <Text style={styles.actionLabel}>
+                                                                                                    {isDebited() ? "Surprendre" : 'Distribuer'}
+                                                                                          </Text>}
+                                                                                </View>
+                                                                      </TouchableNativeFeedback> :
                                                                       <TouchableNativeFeedback onPress={() => onActionPress('ACCEPT')}>
                                                                                 <View style={[styles.actionBtn,  { borderLeftWidth: 1, borderLeftColor: '#F1F1F1'}]}>
                                                                                           {isAccepting ? <ActivityIndicator size="small" color={COLORS.primary}  /> :
@@ -172,7 +239,7 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                                                                                     Accepter
                                                                                           </Text>}
                                                                                 </View>
-                                                                      </TouchableNativeFeedback>
+                                                                      </TouchableNativeFeedback>}
                                                             </View>}
                                                   </View>}
                                         </Modalize>

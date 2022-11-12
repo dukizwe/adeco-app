@@ -32,6 +32,10 @@ export default function ConfirmContributionScreen() {
                               length: 0,
                               total: 0
                     }
+                    var debts = {
+                              length: 0,
+                              total: 0
+                    }
                     queueList.contributions.forEach(contribution => {
                               if (contribution.actions?.action) {
                                         action.total += contribution.actions.action
@@ -48,10 +52,17 @@ export default function ConfirmContributionScreen() {
                                         })
                               }
                     })
+                    if(queueList.debts) {
+                              queueList.debts.forEach(debt => {
+                                        debts.total += debt.amount
+                                        debts.length += 1
+                              })
+                    }
                     return {
                               action,
                               late,
-                              debt
+                              debt,
+                              debts
                     }
           }, [queueList])
 
@@ -87,7 +98,7 @@ export default function ConfirmContributionScreen() {
           }, [getTotals])
 
           const getOutsTotal = useCallback(() => {
-                    const totalActivities = getActivitiesTotal().crediter.total
+                    const totalActivities = getActivitiesTotal().crediter.total + getTotals().debts.total
                     return totalActivities
           }, [getActivitiesTotal])
           return (
@@ -186,13 +197,13 @@ export default function ConfirmContributionScreen() {
                                                                                           Dettes rendus
                                                                                 </Text>
                                                                                 <Text style={styles.cardSubTitle}>
-                                                                                          2 nouveaux dettes
+                                                                                          {getTotals().debts.length} nouveau{getTotals().late.length > 1 && 'x'}
                                                                                 </Text>
                                                                       </View>
                                                             </View>
                                                             <View style={styles.cardBody}>
                                                                       <Text style={[styles.cardTotal, { color: COLORS.minusAmount }]}>
-                                                                                -300 000 BIF
+                                                                                -{getTotals().debts.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
                                                                       </Text>
                                                             </View>
                                                   </View>

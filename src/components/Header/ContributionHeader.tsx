@@ -100,7 +100,8 @@ export default memo(function ContributionHeader() {
                                                   method: "POST",
                                                   body: JSON.stringify({
                                                             contributions,
-                                                            activities
+                                                            activities,
+                                                            debts: queueList.debts?.map(d => d._id)
                                                   }),
                                                   headers: { "Content-Type": "application/json" },
                                         })

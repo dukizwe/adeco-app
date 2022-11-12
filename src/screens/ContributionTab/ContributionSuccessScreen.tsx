@@ -28,6 +28,10 @@ export default function ContributionSuccessScreen() {
                               length: 0,
                               total: 0
                     }
+                    var debts = {
+                              length: 0,
+                              total: 0
+                    }
                     queueList.contributions.forEach(contribution => {
                               if (contribution.actions?.action) {
                                         action.total += contribution.actions.action
@@ -44,10 +48,17 @@ export default function ContributionSuccessScreen() {
                                         })
                               }
                     })
+                    if(queueList.debts) {
+                              queueList.debts.forEach(debt => {
+                                        debts.total += debt.amount
+                                        debts.length += 1
+                              })
+                    }
                     return {
                               action,
                               late,
-                              debt
+                              debt,
+                              debts
                     }
           }, [queueList])
 
@@ -83,7 +94,7 @@ export default function ContributionSuccessScreen() {
           }, [getTotals])
 
           const getOutsTotal = useCallback(() => {
-                    const totalActivities = getActivitiesTotal().crediter.total
+                    const totalActivities = getActivitiesTotal().crediter.total + getTotals().debts.total
                     return totalActivities
           }, [getActivitiesTotal])
 

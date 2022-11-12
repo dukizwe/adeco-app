@@ -4,12 +4,13 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { UserDebtInterface } from "../../interfaces/UserDebtInterface";
-import { Feather, AntDesign, FontAwesome } from '@expo/vector-icons';
+import { Feather, AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { COLORS } from "../../styles/COLORS";
 import moment from "moment";
 import fetchApi from "../../utils/fetchApi";
 import Loading from "../app/Loading";
 import wait from "../../helpers/wait";
+import { DebtStatusCodes } from "../../enum/debtStatusCodes.enum";
 
 
 interface Props {
@@ -21,13 +22,24 @@ interface Props {
           setLoadingForm: React.Dispatch<React.SetStateAction<boolean>>,
           onUserDebtUpdate: (newUserDebt: UserDebtInterface) => void
 }
+
+type ActionType = "REJECT" | "ACCEPT"
+type Bubbles = {
+          [key in DebtStatusCodes]: JSX.Element
+}
 export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsOpen, loadingForm, setLoadingForm, onUserDebtUpdate }: Props) {
           const [isAccepting, setIsaccepting] = useState(false)
 
-          const onConfirm = async () => {
+          const onActionPress = async (type: ActionType) => {
                     try {
+                              var url = ""
+                              if(type == "ACCEPT") {
+                                        url = `/debts/action_accept/${userDebt._id}`
+                              } else if(type == "REJECT") {
+                                        url = `/debts/action_reject/${userDebt._id}`
+                              }
                               setIsaccepting(true)
-                              const res = await fetchApi(`/debts/action_accept/${userDebt._id}`, {
+                              const res = await fetchApi(url, {
                                         method: "PUT"
                               })
                               const newUserDebt: UserDebtInterface = res.data
@@ -38,6 +50,24 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                     } finally {
                               setIsaccepting(false)
                     }
+          }
+
+          const StatusBubble = () => {
+                    const bubbles: Bubbles = {
+                              [DebtStatusCodes.PEDDING]: <View style={styles.statusBubble} />,
+                              [DebtStatusCodes.ACCEPTED]: <Ionicons name="checkmark-circle-outline" size={24} color={COLORS.primary} />,
+                              [DebtStatusCodes.CANCELLED]: <Ionicons name="close-circle-sharp" size={24} color={COLORS.minusAmount} />,
+                              [DebtStatusCodes.GIVEN]: <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} />,
+                              [DebtStatusCodes.SETTLED]: <Ionicons name="checkmark-done-circle-sharp" size={24} color={COLORS.primary} />,
+                    }
+                    return bubbles[userDebt.statusId.code as DebtStatusCodes]
+          }
+
+          const canMakeDecision = () => {
+                    if(userDebt.statusId.code != DebtStatusCodes.PEDDING) {
+                              return false
+                    }
+                    return true
           }
           return (
                     <>
@@ -57,8 +87,8 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                                   handlePosition="inside"
                                                   modalStyle={{ backgroundColor: '#fff', borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
                                                   scrollViewProps={{ keyboardShouldPersistTaps: 'handled' }}
-                                                  modalHeight={410}
-                                                  snapPoint={400}
+                                                  modalHeight={415}
+                                                  snapPoint={405}
                                                   closeSnapPointStraightEnabled={true}
                                         >
                                                   {loadingForm ? <ActivityIndicator
@@ -113,16 +143,29 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                                                                           </Text>
                                                                                 </View>
                                                                       </View>
+                                                                      <View style={styles.detail}>
+                                                                                <View style={styles.detailIcon}>
+                                                                                          <StatusBubble />
+                                                                                </View>
+                                                                                <View style={[styles.detailsDescrption, { borderBottomWidth: 0 }]}>
+                                                                                          <Text style={styles.detailLabel}>
+                                                                                                    Status
+                                                                                          </Text>
+                                                                                          <Text style={styles.detailValue}>
+                                                                                                    {userDebt.statusId.title}
+                                                                                          </Text>
+                                                                                </View>
+                                                                      </View>
                                                             </View>
-                                                            <View style={styles.actions}>
-                                                                      <TouchableNativeFeedback>
+                                                            {canMakeDecision() && <View style={styles.actions}>
+                                                                      <TouchableNativeFeedback onPress={() => onActionPress('REJECT')}>
                                                                                 <View style={[styles.actionBtn]}>
                                                                                           <Text style={[styles.actionLabel, { color: COLORS.minusAmount }]}>
                                                                                                     Rejeter
                                                                                           </Text>
                                                                                 </View>
                                                                       </TouchableNativeFeedback>
-                                                                      <TouchableNativeFeedback onPress={onConfirm}>
+                                                                      <TouchableNativeFeedback onPress={() => onActionPress('ACCEPT')}>
                                                                                 <View style={[styles.actionBtn,  { borderLeftWidth: 1, borderLeftColor: '#F1F1F1'}]}>
                                                                                           {isAccepting ? <ActivityIndicator size="small" color={COLORS.primary}  /> :
                                                                                           <Text style={styles.actionLabel}>
@@ -130,7 +173,7 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                                                                           </Text>}
                                                                                 </View>
                                                                       </TouchableNativeFeedback>
-                                                            </View>
+                                                            </View>}
                                                   </View>}
                                         </Modalize>
                               </GestureHandlerRootView>
@@ -200,5 +243,12 @@ const styles = StyleSheet.create({
                     textAlign: "center",
                     color: COLORS.primary,
                     fontWeight: "bold"
+          },
+          statusBubble: {
+                    width: 18,
+                    height: 18,
+                    borderWidth: 2,
+                    borderColor: COLORS.primary,
+                    borderRadius: 30
           }
 })

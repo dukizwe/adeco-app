@@ -16,20 +16,25 @@ interface Props {
           userDebt: UserDebtInterface,
           onUserDebtUpdate: (newUserDebt: UserDebtInterface) => void
 }
+type Bubbles = {
+          [key in DebtStatusCodes]: JSX.Element
+}
 
 export default function UserDebt({ userDebt, onUserDebtUpdate }: Props) {
           const modalizeRef = useRef<Modalize>(null)
           const [isOpen, setIsOpen] = useState(false)
           const [loadingForm, setLoadingForm] = useState(false)
+
           const StatusBubble = () => {
-                    if (userDebt.statusId.code == DebtStatusCodes.ACCEPTED) {
-                              return <Ionicons name="checkmark-circle-outline" size={18} color={COLORS.primary} />
+                    const bubbles: Bubbles = {
+                              [DebtStatusCodes.PEDDING]: <View style={styles.statusBubble} />,
+                              [DebtStatusCodes.ACCEPTED]: <Ionicons name="checkmark-circle-outline" size={18} color={COLORS.primary} />,
+                              [DebtStatusCodes.CANCELLED]: <Ionicons name="close-circle-sharp" size={18} color={COLORS.minusAmount} />,
+                              [DebtStatusCodes.GIVEN]: <Ionicons name="checkmark-circle" size={18} color={COLORS.primary} />,
+                              [DebtStatusCodes.SETTLED]: <Ionicons name="checkmark-done-circle-sharp" size={18} color={COLORS.primary} />,
                     }
-                    return <View style={styles.statusBubble}>
-
-                    </View>
+                    return bubbles[userDebt.statusId.code as DebtStatusCodes]
           }
-
           const onUserPress = () => {
                     setIsOpen(true)
                     modalizeRef.current?.open();
@@ -44,6 +49,15 @@ export default function UserDebt({ userDebt, onUserDebtUpdate }: Props) {
                               }
                     }
           }, [isOpen])
+
+          const getColor = () => {
+                    if(userDebt.statusId.code == DebtStatusCodes.CANCELLED) {
+                              return COLORS.minusAmount
+                    } if(userDebt.statusId.code != DebtStatusCodes.PEDDING && userDebt.statusId.code != DebtStatusCodes.CANCELLED) {
+                              return COLORS.primary
+                    }
+                    return '#777'
+          }
           return (
                     <>
                               <UserDebtModalize
@@ -81,7 +95,7 @@ export default function UserDebt({ userDebt, onUserDebtUpdate }: Props) {
                                                                                 </Text>
                                                                                 <View style={styles.status}>
                                                                                           <StatusBubble />
-                                                                                          <Text style={[styles.statusTitle, userDebt.statusId.code != DebtStatusCodes.PEDDING && { color: COLORS.primary }]}>
+                                                                                          <Text style={[styles.statusTitle, { color: getColor() }]}>
                                                                                                     {userDebt.statusId.title}
                                                                                           </Text>
                                                                                 </View>

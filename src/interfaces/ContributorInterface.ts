@@ -1,3 +1,5 @@
+import { DebtHistory } from "./UserDebtInterface"
+
 export interface ContributorInterface {
           _id: string,
           firstName: string,
@@ -17,7 +19,8 @@ export interface ContributorInterface {
                     monthlyRestrain: number,
                     hasPayed: boolean,
                     statusId: string,
-                    createdAt: string
+                    createdAt: string,
+                    histories?: DebtHistory[]
           },
           contributionAmount: number
 }

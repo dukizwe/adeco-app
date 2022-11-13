@@ -28,6 +28,10 @@ export default function ConfirmContributionScreen() {
                               length: 0,
                               total: 0
                     }
+                    var payedDebt = {
+                              length: 0,
+                              total: 0
+                    }
                     var late = {
                               length: 0,
                               total: 0
@@ -44,6 +48,10 @@ export default function ConfirmContributionScreen() {
                               if (contribution.actions?.debt) {
                                         debt.total += contribution.actions.debt
                                         debt.length += 1
+                              }
+                              if (contribution.actions?.payedDebt) {
+                                        payedDebt.total += contribution.actions.payedDebt
+                                        payedDebt.length += 1
                               }
                               if (contribution.actions?.rates) {
                                         contribution.actions.rates.forEach(rate => {
@@ -62,6 +70,7 @@ export default function ConfirmContributionScreen() {
                               action,
                               late,
                               debt,
+                              payedDebt,
                               debts
                     }
           }, [queueList])
@@ -94,7 +103,7 @@ export default function ConfirmContributionScreen() {
 
           const getInsAmount = useCallback(() => {
                     const total = getTotals()
-                    return total.action.total + total.debt.total + total.late.total + getActivitiesTotal().debiter.total
+                    return total.action.total + total.debt.total + total.late.total + total.payedDebt.total + getActivitiesTotal().debiter.total
           }, [getTotals])
 
           const getOutsTotal = useCallback(() => {
@@ -118,11 +127,11 @@ export default function ConfirmContributionScreen() {
                                                   </Text>
                                                   <View style={styles.amountBenefits}>
                                                             <Text style={styles.benefit}>
-                                                                      +{getInsAmount().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                      {getInsAmount() > 0 && '+'}{getInsAmount().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
                                                             </Text>
                                                             <View style={styles.benefitSeparator} />
                                                             <Text style={[styles.benefit, { color: COLORS.minusAmount }]}>
-                                                                      -{getOutsTotal().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                      {getOutsTotal() > 0 && '-'}{getOutsTotal().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
                                                             </Text>
                                                   </View>
                                         </View>
@@ -143,7 +152,7 @@ export default function ConfirmContributionScreen() {
                                                             </View>
                                                             <View style={styles.cardBody}>
                                                                       <Text style={[styles.cardTotal, { color: COLORS.plusAmount }]}>
-                                                                                +{getTotals().action.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                {getTotals().action.total > 0 && '+'}{getTotals().action.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
                                                                       </Text>
                                                             </View>
                                                   </View>
@@ -177,33 +186,33 @@ export default function ConfirmContributionScreen() {
                                                                                           Retard
                                                                                 </Text>
                                                                                 <Text style={styles.cardSubTitle}>
-                                                                                          {getTotals().late.length} retard{getTotals().late.length > 1 && 's'}
+                                                                                          {getTotals().late.length > 0 ? `${getTotals().late.length} retard{getTotals().late.length > 1 && 's'}` : 'Pas de retard'}
                                                                                 </Text>
                                                                       </View>
                                                             </View>
                                                             <View style={styles.cardBody}>
                                                                       <Text style={[styles.cardTotal, { color: COLORS.plusAmount }]}>
-                                                                                +{getTotals().late.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                {getTotals().late.total > 0 && '+'}{getTotals().late.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
                                                                       </Text>
                                                             </View>
                                                   </View>
-                                                  <View style={[styles.card, { width: CARD_WIDTH, height: CARD_WIDTH / 1.5, marginTop: 20 }]}>
+                                                  <View style={[styles.card, { width: CARD_WIDTH, height: CARD_WIDTH / 1.5, marginTop: 5 }]}>
                                                             <View style={styles.cardHeader}>
                                                                       <View style={styles.cardIconContainer}>
                                                                                 <Image source={require('../../../assets/icons/borrow.png')} style={styles.cardIcon} />
                                                                       </View>
                                                                       <View style={styles.cardLabels}>
                                                                                 <Text style={styles.cardTitle}>
-                                                                                          Dettes rendus
+                                                                                          Dettes reglées
                                                                                 </Text>
                                                                                 <Text style={styles.cardSubTitle}>
-                                                                                          {getTotals().debts.length} nouveau{getTotals().late.length > 1 && 'x'}
+                                                                                          {getTotals().payedDebt.length} dette{getTotals().late.length > 1 && 's'}
                                                                                 </Text>
                                                                       </View>
                                                             </View>
                                                             <View style={styles.cardBody}>
-                                                                      <Text style={[styles.cardTotal, { color: COLORS.minusAmount }]}>
-                                                                                -{getTotals().debts.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                      <Text style={[styles.cardTotal, { color: COLORS.plusAmount }]}>
+                                                                                {getTotals().payedDebt.total > 0 && '+'}{getTotals().payedDebt.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
                                                                       </Text>
                                                             </View>
                                                   </View>
@@ -236,13 +245,28 @@ export default function ConfirmContributionScreen() {
                                                             </View>
                                                             <View style={styles.cardBody}>
                                                                       <Text style={[styles.cardTotal, { color: getActivitiesTotal().debiter.total >= getActivitiesTotal().crediter.total ? COLORS.plusAmount: COLORS.minusAmount }]}>
-                                                                                {getActivitiesTotal().debiter.total >= getActivitiesTotal().crediter.total ? '+' : ''}{getActivitiesTotal().total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                {(getActivitiesTotal().debiter.total >= getActivitiesTotal().crediter.total && getActivitiesTotal().total > 0) ? '+' : ''}{getActivitiesTotal().total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
                                                                       </Text>
                                                             </View>
                                                   </View>
                                                   <View style={[styles.card, { width: CARD_WIDTH, height: CARD_WIDTH / 1.5, marginTop: 5 }]}>
-                                                            <View style={styles.emptyCard}>
-                                                                      <AntDesign name="plus" size={24} color="#777" />
+                                                            <View style={styles.cardHeader}>
+                                                                      <View style={styles.cardIconContainer}>
+                                                                                <Image source={require('../../../assets/icons/borrow.png')} style={styles.cardIcon} />
+                                                                      </View>
+                                                                      <View style={styles.cardLabels}>
+                                                                                <Text style={styles.cardTitle}>
+                                                                                          Dettes rendus
+                                                                                </Text>
+                                                                                <Text style={styles.cardSubTitle}>
+                                                                                          {getTotals().debts.length > 0 ? `${getTotals().debts.length} dette${getTotals().late.length > 1 && 's'}` : 'Pas de demande'}
+                                                                                </Text>
+                                                                      </View>
+                                                            </View>
+                                                            <View style={styles.cardBody}>
+                                                                      <Text style={[styles.cardTotal, { color: COLORS.minusAmount }]}>
+                                                                                {getTotals().debts.total > 0 && '-'}{getTotals().debts.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                      </Text>
                                                             </View>
                                                   </View>
                                         </View>

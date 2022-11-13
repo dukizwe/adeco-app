@@ -1,6 +1,6 @@
 import { RateTypeInterface } from "../interfaces/RateTypeInterface"
 
-export interface User {
+export interface QueuedUser {
           firstName?: string,
           lastName?: string,
           _id: string,
@@ -8,11 +8,7 @@ export interface User {
                     action?: number,
                     rates?: RateTypeInterface[],
                     debt?: number,
+                    payedDebt?: number,
                     both?: any
-          },
-          debt?: {
-                    amount: number,
-                    month: number,
-                    comment?: string
           }
 }

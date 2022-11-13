@@ -12,10 +12,11 @@ import { useSelector } from 'react-redux'
 import { queueListSelector } from '../../../store/selectors/contributionSelectors'
 import { setQueueListAction } from '../../../store/actions/contributionActions'
 import { ActionNames } from '../../../types/ActionNames'
-import { User } from '../../../types/User'
+import { QueuedUser } from '../../../types/QueuedUser'
 import { RateTypeInterface } from '../../../interfaces/RateTypeInterface'
 import Animated, { withTiming } from 'react-native-reanimated'
 import { COLORS } from '../../../styles/COLORS'
+import * as Haptics from 'expo-haptics';
 
 interface Props {
           contributor: ContributorInterface,
@@ -34,22 +35,24 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
 
           const contributions = queueList.contributions
           const myContibution = contributions.find(c => c._id == contributor._id)
-          
+
           const [selectContribution, setSelectContribution] = useState<boolean>(false)
           const [selectDebt, setSelectDebt] = useState<boolean>(false)
+          const [selectPayedDebt, setSelectPayedDebt] = useState<boolean>(false)
           const [selectedRateTypes, setSelectedRateTypes] = useState<RateTypeInterface[]>([])
 
           const [showRateTypes, setShowRateTypes] = useState(false)
 
           const handleConfirm = useCallback(() => {
-                    if(myContibution) {
+                    if (myContibution) {
                               const newContributions = queueList.contributions.map(c => {
-                                        if(c._id === myContibution._id) {
+                                        if (c._id === myContibution._id) {
                                                   return {
                                                             ...c,
                                                             actions: {
                                                                       action: selectContribution ? contributor.contributionAmount : undefined,
                                                                       debt: selectDebt ? contributor.debt?.monthlyRestrain : undefined,
+                                                                      payedDebt: selectPayedDebt ? contributor.debt?.amount : undefined,
                                                                       rates: selectedRateTypes
                                                             }
                                                   }
@@ -57,20 +60,21 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
                                                   return c
                                         }
                               })
-                              dispatch(setQueueListAction({...queueList, contributions: newContributions}))
+                              dispatch(setQueueListAction({ ...queueList, contributions: newContributions }))
                     } else {
                               const newContribution = {
                                         _id: contributor._id,
                                         actions: {
                                                   action: selectContribution ? contributor.contributionAmount : undefined,
                                                   debt: selectDebt ? contributor.debt?.monthlyRestrain : undefined,
+                                                  payedDebt: selectPayedDebt ? contributor.debt?.amount : undefined,
                                                   rates: selectedRateTypes
                                         }
                               }
-                              dispatch(setQueueListAction({...queueList, contributions: [...queueList.contributions, newContribution]}))
+                              dispatch(setQueueListAction({ ...queueList, contributions: [...queueList.contributions, newContribution] }))
                     }
                     modalizeRef.current?.close()
-          }, [selectContribution, selectDebt, myContibution, queueList, selectedRateTypes])
+          }, [selectContribution, selectDebt, selectPayedDebt, myContibution, queueList, selectedRateTypes])
 
           const toggleDebetTypes = () => {
                     setShowRateTypes(t => !t)
@@ -79,12 +83,16 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
           const isRateTypeSelected: (type: RateTypeInterface) => boolean = type => selectedRateTypes.find(t => t._id == type._id) ? true : false
 
           const toggleRateType = (type: RateTypeInterface) => {
-                    if(isRateTypeSelected(type)) {
+                    if (isRateTypeSelected(type)) {
                               const newTypes = selectedRateTypes.filter(t => t._id != type._id)
                               setSelectedRateTypes(newTypes)
                     } else {
                               setSelectedRateTypes(types => [...types, type])
                     }
+          }
+          const onDebtLongPress = () => {
+                    setSelectPayedDebt(t => !t)
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
           }
 
           const entering = () => {
@@ -129,11 +137,12 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
           useEffect(() => {
                     setSelectContribution(myContibution && myContibution.actions?.action ? true : false)
                     setSelectDebt(myContibution && myContibution.actions?.debt ? true : false)
+                    setSelectPayedDebt(myContibution && myContibution.actions?.payedDebt ? true : false)
                     setSelectedRateTypes(myContibution && myContibution.actions?.rates ? myContibution.actions.rates : [])
           }, [myContibution])
 
           useEffect(() => {
-                    if(showRateTypes) {
+                    if (showRateTypes) {
                               contentRef.current?.scrollToEnd({ animated: true })
                               const handler = BackHandler.addEventListener('hardwareBackPress', () => {
                                         setShowRateTypes(false)
@@ -172,97 +181,101 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
                                                             color='#777'
                                                             style={{ alignSelf: 'center', marginBottom: 15, marginTop: 20 }}
                                                   /> : <View style={styles.modalContainer}>
-                                                                      <View style={styles.userImage}>
-                                                                                <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../../assets/girl.jpg')} />
-                                                                      </View>
-                                                                      <Text style={styles.title}>
-                                                                                { contributor.firstName } { contributor.lastName }
-                                                                      </Text>
-                                                                      <View style={styles.actions}>
-                                                                                <TouchableNativeFeedback onPress={() => setSelectContribution(t => !t)}>
-                                                                                          <View style={styles.action}>
-                                                                                                    <View style={styles.actionDetails}>
-                                                                                                              <Image source={require('../../../../assets/icons/contribution.png')} style={styles.actionImage} />
-                                                                                                              <View style={styles.actionLabels}>
-                                                                                                                        <Text style={styles.actionTitle}>Contribution</Text>
-                                                                                                                        <Text style={styles.actionAmount}>
-                                                                                                                                  {contributor.contributionAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
-                                                                                                                        </Text>
-                                                                                                              </View>
-                                                                                                    </View>
-                                                                                                    <View style={[styles.checkCircle, selectContribution && { backgroundColor: primaryColor, borderWidth: 0 }]}>
-                                                                                                              {selectContribution && <Ionicons name="md-checkmark-outline" size={18} color="#fff" />}
+                                                            <View style={styles.userImage}>
+                                                                      <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../../assets/girl.jpg')} />
+                                                            </View>
+                                                            <Text style={styles.title}>
+                                                                      {contributor.firstName} {contributor.lastName}
+                                                            </Text>
+                                                            <View style={styles.actions}>
+                                                                      <TouchableNativeFeedback onPress={() => setSelectContribution(t => !t)}>
+                                                                                <View style={styles.action}>
+                                                                                          <View style={styles.actionDetails}>
+                                                                                                    <Image source={require('../../../../assets/icons/contribution.png')} style={styles.actionImage} />
+                                                                                                    <View style={styles.actionLabels}>
+                                                                                                              <Text style={styles.actionTitle}>Contribution</Text>
+                                                                                                              <Text style={styles.actionAmount}>
+                                                                                                                        {contributor.contributionAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                                              </Text>
                                                                                                     </View>
                                                                                           </View>
-                                                                                </TouchableNativeFeedback>
-                                                                                <TouchableNativeFeedback onPress={() => setSelectDebt(t => !t)} disabled={!contributor.debt || contributor.debt.amount == 0}>
-                                                                                          <View style={styles.action}>
-                                                                                                    <View style={styles.actionDetails}>
-                                                                                                              <Image source={require('../../../../assets/icons/debt.png')} style={styles.actionImage} />
-                                                                                                              <View style={styles.actionLabels}>
-                                                                                                                        <Text style={styles.actionTitle}>Dette</Text>
-                                                                                                                        {contributor.debt ? <Text style={styles.actionAmount}>
-                                                                                                                                  {contributor.debt?.monthlyRestrain.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
-                                                                                                                        </Text> : <Text style={[styles.actionAmount, { color: COLORS.primary }]}>
-                                                                                                                                  Pas de dette
-                                                                                                                        </Text>}
-                                                                                                              </View>
-                                                                                                    </View>
-                                                                                                    {contributor.debt ? <View style={[styles.checkCircle, selectDebt && { backgroundColor: primaryColor, borderWidth: 0 }]}>
-                                                                                                              {selectDebt && <Ionicons name="md-checkmark-outline" size={18} color="#fff" />}
-                                                                                                    </View> : null}
+                                                                                          <View style={[styles.checkCircle, selectContribution && { backgroundColor: primaryColor, borderWidth: 0 }]}>
+                                                                                                    {selectContribution && <Ionicons name="md-checkmark-outline" size={18} color="#fff" />}
                                                                                           </View>
-                                                                                </TouchableNativeFeedback>
-                                                                                <TouchableNativeFeedback onPress={toggleDebetTypes}>
-                                                                                          <View style={styles.action}>
-                                                                                                    <View style={styles.actionDetails}>
-                                                                                                              <Image source={require('../../../../assets/icons/contribution.png')} style={styles.actionImage} />
-                                                                                                              <View style={styles.actionLabels}>
-                                                                                                                        <Text style={styles.actionTitle}>Retard</Text>
-                                                                                                                        {(myContibution?.actions?.rates && myContibution.actions?.rates?.length > 0 ) ? <View>
-                                                                                                                                  <Text style={styles.actionAmount}>
-                                                                                                                                            {getRateAmount().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
-                                                                                                                                            ({myContibution?.actions?.rates.length > 1 ? `${myContibution?.actions?.rates.length} retards` : 
-                                                                                                                                            myContibution?.actions?.rates[0].name})
-                                                                                                                                  </Text>
-                                                                                                                        </View> :
-                                                                                                                        <View>
-                                                                                                                                  {showRateTypes ? <Text style={styles.actionAmount}>Cliquer pour masquer les types</Text> :
-                                                                                                                                  <Text style={styles.actionAmount}>Cliquer pour choisr le type</Text>}
-                                                                                                                        </View>}
-                                                                                                              </View>
-                                                                                                    </View>
-                                                                                                    {showRateTypes ? <Entypo name="chevron-small-up" size={24} color="#777" /> :
-                                                                                                    <Entypo name="chevron-small-down" size={24} color="#777" />}
-                                                                                          </View>
-                                                                                </TouchableNativeFeedback>
-                                                                                {showRateTypes && <>
-                                                                                          <Animated.View style={styles.rateTypes} entering={entering} exiting={exiting}>
-                                                                                                    {rateTypes.map(type => {
-                                                                                                              return (
-                                                                                                                        <TouchableNativeFeedback key={type._id} onPress={() => toggleRateType(type)}>
-                                                                                                                                  <View style={styles.rateType}>
-                                                                                                                                            <View style={styles.rateTypeLabels}>
-                                                                                                                                                      <Text style={styles.rateTypeName}>{ type.name }</Text>
-                                                                                                                                                      <Text style={styles.actionAmount}>
-                                                                                                                                                                {type.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
-                                                                                                                                                      </Text>
-                                                                                                                                            </View>
-                                                                                                                                            <View style={[styles.checkCircle, isRateTypeSelected(type) && { backgroundColor: primaryColor, borderWidth: 0 }]}>
-                                                                                                                                                      {isRateTypeSelected(type) && <Ionicons name="md-checkmark-outline" size={18} color="#fff" />}
-                                                                                                                                            </View>
-                                                                                                                                  </View>
-                                                                                                                        </TouchableNativeFeedback>
-                                                                                                              )
-                                                                                                    })}
-                                                                                          </Animated.View>
-                                                                                </> }
-                                                                      </View>
-                                                                      <TouchableNativeFeedback onPress={handleConfirm}>
-                                                                                <View style={[styles.confirmBtn]}>
-                                                                                          <Text style={styles.confirmBtnText}>Confirmer</Text>
                                                                                 </View>
                                                                       </TouchableNativeFeedback>
+                                                                      <TouchableNativeFeedback onPress={() => setSelectDebt(t => !t)} disabled={!contributor.debt || contributor.debt.amount == 0} onLongPress={onDebtLongPress}>
+                                                                                <View style={styles.action}>
+                                                                                          <View style={styles.actionDetails}>
+                                                                                                    <Image source={require('../../../../assets/icons/debt.png')} style={styles.actionImage} />
+                                                                                                    <View style={styles.actionLabels}>
+                                                                                                              <Text style={styles.actionTitle}>
+                                                                                                                        Dette{contributor.debt && ` - ${contributor.debt?.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF`}
+                                                                                                                        {selectPayedDebt && <Ionicons name="checkmark-circle" size={13} color={COLORS.primary} style={{ marginLeft: 5 }} />}
+                                                                                                              </Text>
+                                                                                                              {contributor.debt ? <Text style={styles.actionAmount}>
+                                                                                                                        {contributor.debt?.monthlyRestrain.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                                                        ({(contributor.debt.histories?.length || 0) + 1}/{contributor.debt.payIn} mois)
+                                                                                                              </Text> : <Text style={[styles.actionAmount, { color: COLORS.primary }]}>
+                                                                                                                        Pas de dette
+                                                                                                              </Text>}
+                                                                                                    </View>
+                                                                                          </View>
+                                                                                          {contributor.debt ? <View style={[styles.checkCircle, selectDebt && { backgroundColor: primaryColor, borderWidth: 0 }]}>
+                                                                                                    {selectDebt && <Ionicons name="md-checkmark-outline" size={18} color="#fff" />}
+                                                                                          </View> : null}
+                                                                                </View>
+                                                                      </TouchableNativeFeedback>
+                                                                      <TouchableNativeFeedback onPress={toggleDebetTypes}>
+                                                                                <View style={styles.action}>
+                                                                                          <View style={styles.actionDetails}>
+                                                                                                    <Image source={require('../../../../assets/icons/contribution.png')} style={styles.actionImage} />
+                                                                                                    <View style={styles.actionLabels}>
+                                                                                                              <Text style={styles.actionTitle}>Retard</Text>
+                                                                                                              {(myContibution?.actions?.rates && myContibution.actions?.rates?.length > 0) ? <View>
+                                                                                                                        <Text style={styles.actionAmount}>
+                                                                                                                                  {getRateAmount().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                                                                  ({myContibution?.actions?.rates.length > 1 ? `${myContibution?.actions?.rates.length} retards` :
+                                                                                                                                            myContibution?.actions?.rates[0].name})
+                                                                                                                        </Text>
+                                                                                                              </View> :
+                                                                                                                        <View>
+                                                                                                                                  {showRateTypes ? <Text style={styles.actionAmount}>Cliquer pour masquer les types</Text> :
+                                                                                                                                            <Text style={styles.actionAmount}>Cliquer pour choisr le type</Text>}
+                                                                                                                        </View>}
+                                                                                                    </View>
+                                                                                          </View>
+                                                                                          {showRateTypes ? <Entypo name="chevron-small-up" size={24} color="#777" /> :
+                                                                                                    <Entypo name="chevron-small-down" size={24} color="#777" />}
+                                                                                </View>
+                                                                      </TouchableNativeFeedback>
+                                                                      {showRateTypes && <>
+                                                                                <Animated.View style={styles.rateTypes} entering={entering} exiting={exiting}>
+                                                                                          {rateTypes.map(type => {
+                                                                                                    return (
+                                                                                                              <TouchableNativeFeedback key={type._id} onPress={() => toggleRateType(type)}>
+                                                                                                                        <View style={styles.rateType}>
+                                                                                                                                  <View style={styles.rateTypeLabels}>
+                                                                                                                                            <Text style={styles.rateTypeName}>{type.name}</Text>
+                                                                                                                                            <Text style={styles.actionAmount}>
+                                                                                                                                                      {type.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                                                                            </Text>
+                                                                                                                                  </View>
+                                                                                                                                  <View style={[styles.checkCircle, isRateTypeSelected(type) && { backgroundColor: primaryColor, borderWidth: 0 }]}>
+                                                                                                                                            {isRateTypeSelected(type) && <Ionicons name="md-checkmark-outline" size={18} color="#fff" />}
+                                                                                                                                  </View>
+                                                                                                                        </View>
+                                                                                                              </TouchableNativeFeedback>
+                                                                                                    )
+                                                                                          })}
+                                                                                </Animated.View>
+                                                                      </>}
+                                                            </View>
+                                                            <TouchableNativeFeedback onPress={handleConfirm}>
+                                                                      <View style={[styles.confirmBtn]}>
+                                                                                <Text style={styles.confirmBtnText}>Confirmer</Text>
+                                                                      </View>
+                                                            </TouchableNativeFeedback>
                                                   </View>}
                                         </Modalize>
                               </GestureHandlerRootView>

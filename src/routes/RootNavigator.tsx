@@ -9,8 +9,6 @@ import ConfirmContributionScreen from '../screens/ContributionTab/ConfirmContrib
 import ContributionSuccessScreen from '../screens/ContributionTab/ContributionSuccessScreen';
 import DebtScreen from '../screens/ContributionTab/DebtScreen';
 import NewContributionScreen from '../screens/ContributionTab/NewContributionScreen';
-import { User } from '../types/User';
-import Tabs from './Tabs';
 import BottomTabs from './BottomTabs';
 
 export default function RootNavigator() {

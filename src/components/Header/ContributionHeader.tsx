@@ -60,6 +60,7 @@ export default memo(function ContributionHeader() {
                     queueList.contributions.forEach(contribution => {
                               newTotal += contribution.actions?.action ? contribution.actions?.action : 0
                               newTotal += contribution.actions?.debt ? contribution.actions?.debt : 0
+                              newTotal += contribution.actions?.payedDebt ? contribution.actions?.payedDebt : 0
                               var ratesTotal = 0
                               if (contribution.actions?.rates && contribution.actions?.rates?.length > 0) {
                                         contribution.actions?.rates.forEach(rate => {
@@ -77,8 +78,9 @@ export default memo(function ContributionHeader() {
                                         return {
                                                   contributedBy: contribution._id,
                                                   actions: {
-                                                            action: contribution.actions?.action,
-                                                            debt: contribution.actions?.debt,
+                                                            action: contribution.actions?.action ? 1 : 0,
+                                                            debt: contribution.actions?.debt ? 1 : 0,
+                                                            payedDebt: contribution.actions?.payedDebt ? 1 : 0,
                                                             rates: contribution.actions?.rates
                                                   }
                                         }
@@ -172,7 +174,7 @@ export default memo(function ContributionHeader() {
                                         setPrevTotal(total)
                               }
                     })
-                    return <Text style={style}>{`${value} Fbu`}</Text>
+                    return <Text style={style}>{`${value} BIF`}</Text>
           }
 
           const noAnimationsRouteNames = ['AcitivitiesScreen', 'ConfirmContributionScreen', 'ContributionSuccessScreen']

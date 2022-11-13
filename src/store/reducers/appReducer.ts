@@ -1,6 +1,6 @@
 import { AppReducerIntreface } from "../../interfaces/AppReducerInterface"
 import { ContributionContextInterface } from "../../types/ContributionContextInterface"
-import { User } from "../../types/User"
+import { QueuedUser } from "../../types/QueuedUser"
 
 export enum APP_TYPES {
           SET_LOADING = "SET_LOADING",

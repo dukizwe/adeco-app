@@ -20,14 +20,14 @@
     "@types/react-native-snap-carousel": "^3.8.5",
     "@types/react-redux": "^7.1.24",
     "deprecated-react-native-prop-types": "^2.2.0",
-    "expo": "~46.0.13",
+    "expo": "~46.0.17",
     "expo-splash-screen": "~0.16.2",
     "expo-status-bar": "~1.4.0",
     "moment": "^2.29.4",
     "native-base": "^3.4.12",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "react-native": "0.69.5",
+    "react-native": "0.69.6",
     "react-native-gesture-handler": "~2.5.0",
     "react-native-modalize": "^2.1.1",
     "react-native-pager-view": "5.4.24",
@@ -42,7 +42,8 @@
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
-    "use-count-up": "^3.0.1"
+    "use-count-up": "^3.0.1",
+    "expo-haptics": "~11.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

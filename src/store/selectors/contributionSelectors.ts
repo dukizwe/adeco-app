@@ -3,7 +3,7 @@ import { ContributorInterface } from "../../interfaces/ContributorInterface";
 import { RateTypeInterface } from "../../interfaces/RateTypeInterface";
 import { Activity } from "../../types/Activity";
 import { ContributionContextInterface, QueueRecord } from "../../types/ContributionContextInterface";
-import { User } from "../../types/User";
+import { QueuedUser } from "../../types/QueuedUser";
 
 export const usersSelector: ({ contribution }: RootState) => ContributorInterface[] = ({ contribution }: RootState) => contribution.contributors
 export const contributorsSelector: ({ contribution }: RootState) => ContributorInterface[] = ({ contribution }: RootState) => contribution.contributors

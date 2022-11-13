@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import DebtScreenHeader from '../../components/ContributionTab/DebtScreenHeader';
 import { useContext } from 'react';
 import UserDebt from '../../components/ContributionTab/UserDebt';
-import { User } from '../../types/User';
+import { QueuedUser } from '../../types/QueuedUser';
 import { UserDebtInterface } from '../../interfaces/UserDebtInterface';
 import fetchApi from '../../utils/fetchApi';
 

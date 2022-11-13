@@ -7,7 +7,7 @@ import { ActionNames } from '../../types/ActionNames';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { setInSelectAction, setQueueListAction, setSelectedBatchAction, setStartAnimationAction } from '../../store/actions/contributionActions';
 import { ContributorInterface } from '../../interfaces/ContributorInterface';
-import { User } from '../../types/User';
+import { QueuedUser } from '../../types/QueuedUser';
 
 interface Props {
           contributors: ContributorInterface[]
@@ -39,12 +39,12 @@ export default function ContributionQuickActions({ contributors }: Props) {
           }
 
           const payBatch = (actionName: ActionNames) => {
-                    const newContributions: User[] = []
+                    const newContributions: QueuedUser[] = []
                     selectedBatch.forEach(user => {
                               const myContribution = queueList.contributions.find(c => c._id == user._id)
                               if(myContribution) {
                                         if(actionName === 'both') {
-                                                  const newContribution: User = {
+                                                  const newContribution: QueuedUser = {
                                                             ...myContribution,
                                                             actions: {
                                                                       ...myContribution.actions,
@@ -54,7 +54,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                   }
                                                   newContributions.push(newContribution)
                                         } else {
-                                                  const newContribution: User = {
+                                                  const newContribution: QueuedUser = {
                                                             ...myContribution,
                                                             actions: {
                                                                       ...myContribution.actions,
@@ -65,7 +65,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                         }
                               } else {
                                         if(actionName === 'both') {
-                                                  const newContribution: User = {
+                                                  const newContribution: QueuedUser = {
                                                             _id: user._id,
                                                             actions: {
                                                                       action: user.contributionAmount,
@@ -74,7 +74,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                   }
                                                   newContributions.push(newContribution)
                                         } else {
-                                                  const newContribution: User = {
+                                                  const newContribution: QueuedUser = {
                                                             _id: user._id,
                                                             actions: {
                                                                       [actionName]: actionName == "action" ? user.contributionAmount : user.debt?.monthlyRestrain

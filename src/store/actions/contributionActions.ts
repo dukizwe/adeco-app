@@ -2,7 +2,7 @@ import { ContributorInterface } from "../../interfaces/ContributorInterface"
 import { RateTypeInterface } from "../../interfaces/RateTypeInterface"
 import { Activity } from "../../types/Activity"
 import { QueueRecord } from "../../types/ContributionContextInterface"
-import { User } from "../../types/User"
+import { QueuedUser } from "../../types/QueuedUser"
 import { ContributionAction, CONTRIBUTION_TYPES } from "../reducers/contributionReducer"
 
 export const setInSelectAction = (bool: boolean) => {

@@ -1,5 +1,5 @@
 import { ContributionContextInterface } from "../../types/ContributionContextInterface"
-import { User } from "../../types/User"
+import { QueuedUser } from "../../types/QueuedUser"
 
 export enum CONTRIBUTION_TYPES {
           SET_IN_SELECT = "SET_IN_SELECT",

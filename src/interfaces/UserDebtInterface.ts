@@ -1,4 +1,4 @@
-interface DebtHistory {
+export interface DebtHistory {
           _id: string,
           contributionId: string,
           debtId: string,

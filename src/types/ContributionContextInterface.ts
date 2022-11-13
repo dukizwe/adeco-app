@@ -3,11 +3,11 @@ import { ContributorInterface } from "../interfaces/ContributorInterface";
 import { RateTypeInterface } from "../interfaces/RateTypeInterface";
 import { UserDebtInterface } from "../interfaces/UserDebtInterface";
 import { Activity } from "./Activity";
-import type { User } from "./User";
+import type { QueuedUser } from "./QueuedUser";
 
 export interface QueueRecord {
           date?: string,
-          contributions: User[],
+          contributions: QueuedUser[],
           activities?: Activity[],
           debts?: UserDebtInterface[]
 }

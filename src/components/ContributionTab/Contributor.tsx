@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet, Keyboard } from 'react-native'
 import { Feather, Ionicons } from '@expo/vector-icons'
-import { User } from '../../types/User'
+import { QueuedUser } from '../../types/QueuedUser'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { inSelectSelector, queueListSelector, selectedBatchSelector } from '../../store/selectors/contributionSelectors'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
@@ -14,6 +14,8 @@ import { Modalize } from 'react-native-modalize'
 import ContibutorActionsModalize from './NewContributionScreen/ContibutorActionsModalize'
 import { primaryColor } from '../../styles'
 import { RateTypeInterface } from '../../interfaces/RateTypeInterface'
+import { COLORS } from '../../styles/COLORS'
+import * as Haptics from 'expo-haptics';
 
 export default function Contributor({ contributor, rateTypes, noBatch = false }: { contributor: ContributorInterface, rateTypes: RateTypeInterface[], noBatch?: boolean }) {
 
@@ -56,6 +58,7 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                     if(noBatch) {
                               return false
                     }
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
                     dispatch(setInSelectAction(true))
                     toggleSelectedBatch()
                     dispatch(setStartAnimationAction(true))
@@ -70,7 +73,11 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
           const getExpectedTotal: () => number = useCallback(() => {
                     var total = 0
                     const debt = contributor.debt ? contributor.debt?.monthlyRestrain : 0
-                    return contributor.contributionAmount + debt
+                    if(contributor.debt && contributor.debt.payIn <= ((contributor.debt.histories?.length || 0) + 1)) {
+                              total += contributor.debt.amount
+                    }
+                    total += contributor.contributionAmount + debt
+                    return total
           }, [contributor])
 
           const getContributedTotal = useCallback(() => {
@@ -78,7 +85,8 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                     if(myContibution && myContibution.actions) {
                               const action = myContibution.actions?.action ? myContibution.actions?.action : 0
                               const debt = myContibution.actions?.debt ? myContibution.actions?.debt : 0
-                              total = action + debt
+                              const payedDebt = myContibution.actions?.payedDebt ? myContibution.actions?.payedDebt : 0
+                              total = action + debt + payedDebt
                     }
                     return total
           }, [myContibution])
@@ -145,8 +153,9 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                                                                                 {contributor.debt ? <View style={[styles.action, { marginLeft: 10 }]}>
                                                                                           <Image source={require('../../../assets/icons/debt.png')} style={styles.actionIcon} />
                                                                                           <Text style={[styles.actionAmount, (myContibution && myContibution.actions?.debt) ? { color: primaryColor } : undefined]}>
-                                                                                                    { contributor.debt.monthlyRestrain.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } ({ contributor.debt.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") })
+                                                                                                    { contributor.debt.monthlyRestrain.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
                                                                                           </Text>
+                                                                                          {myContibution && myContibution.actions?.payedDebt && <Ionicons name="checkmark-circle" size={15} color={COLORS.primary} style={{ marginLeft: 2 }} />}
                                                                                 </View> : null}
                                                                                 {(myContibution?.actions?.rates && myContibution?.actions?.rates?.length > 0) ? <View style={[styles.action, { marginLeft: 10 }]}>
                                                                                           <Image source={require('../../../assets/icons/contribution.png')} style={styles.actionIcon} />

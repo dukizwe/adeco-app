@@ -8,7 +8,16 @@ export interface ContributorInterface {
                     code: string
           },
           debt?: {
-
+                    _id: string,
+                    assignedTo: string,
+                    contributionId: string,
+                    amount: number,
+                    payIn: number,
+                    percentage: number,
+                    monthlyRestrain: number,
+                    hasPayed: boolean,
+                    statusId: string,
+                    createdAt: string
           },
           contributionAmount: number
 }

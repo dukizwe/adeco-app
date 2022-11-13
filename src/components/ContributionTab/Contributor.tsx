@@ -64,10 +64,24 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
           const contributions = queueList.contributions
           const myContibution = contributions.find(c => c._id == contributor._id)
 
-          const getTotal: () => number = useCallback(() => {
+          /**
+           * Return the expected amount of a contributor
+           */
+          const getExpectedTotal: () => number = useCallback(() => {
                     var total = 0
-                    return contributor.contributionAmount
+                    const debt = contributor.debt ? contributor.debt?.monthlyRestrain : 0
+                    return contributor.contributionAmount + debt
           }, [contributor])
+
+          const getContributedTotal = useCallback(() => {
+                    var total = 0
+                    if(myContibution && myContibution.actions) {
+                              const action = myContibution.actions?.action ? myContibution.actions?.action : 0
+                              const debt = myContibution.actions?.debt ? myContibution.actions?.debt : 0
+                              total = action + debt
+                    }
+                    return total
+          }, [myContibution])
 
           const getRateAmount: () => number = useCallback(() => {
                     var total = 0
@@ -116,7 +130,7 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                                                                       <Text style={styles.userNames}>
                                                                                 { contributor.firstName } { contributor.lastName }
                                                                       </Text>
-                                                                      {(myContibution && myContibution.actions?.action) ? <View style={[styles.checkCircle]}>
+                                                                      {(getExpectedTotal() == getContributedTotal()) ? <View style={[styles.checkCircle]}>
                                                                                 <Ionicons name="md-checkmark-outline" size={18} color="#fff" />
                                                                       </View> : null}
                                                             </View>
@@ -128,12 +142,12 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                                                                                                     { contributor.contributionAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
                                                                                           </Text>
                                                                                 </View>
-                                                                                <View style={[styles.action, { marginLeft: 10 }]}>
+                                                                                {contributor.debt ? <View style={[styles.action, { marginLeft: 10 }]}>
                                                                                           <Image source={require('../../../assets/icons/debt.png')} style={styles.actionIcon} />
-                                                                                          <Text style={styles.actionAmount}>
-                                                                                                    { contributor.contributionAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
+                                                                                          <Text style={[styles.actionAmount, (myContibution && myContibution.actions?.debt) ? { color: primaryColor } : undefined]}>
+                                                                                                    { contributor.debt.monthlyRestrain.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } ({ contributor.debt.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") })
                                                                                           </Text>
-                                                                                </View>
+                                                                                </View> : null}
                                                                                 {(myContibution?.actions?.rates && myContibution?.actions?.rates?.length > 0) ? <View style={[styles.action, { marginLeft: 10 }]}>
                                                                                           <Image source={require('../../../assets/icons/contribution.png')} style={styles.actionIcon} />
                                                                                           <Text style={[styles.actionAmount, { color: primaryColor }]}>
@@ -141,7 +155,7 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                                                                                           </Text>
                                                                                 </View> : null}
                                                                       </View>
-                                                                      <Text style={styles.contributorTotal}>{ getTotal().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") } BIF</Text>
+                                                                      <Text style={styles.contributorTotal}>{ getExpectedTotal().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") } BIF</Text>
                                                             </View>
                                                   </View>
                                         </View>

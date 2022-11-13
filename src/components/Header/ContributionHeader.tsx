@@ -179,7 +179,7 @@ export default memo(function ContributionHeader() {
           return (
                     <>
                     <View style={styles.header}>
-                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onCalendaPress}>
+                              <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple('#c4c4c4', false)} useForeground onPress={onCalendaPress} disabled={route.name != "NewContributionScreen"}>
                                         <Animated.View style={[styles.opDate, calendarAnimatedStyles, noAnimationsRouteNames.includes(route.name) && { transform: [{ translateX: -30 }], opacity: 0 }]}>
                                                   <FontAwesome5 name="calendar-check" size={22} color="#189fed" style={styles.icon} />
                                         </Animated.View>

@@ -1,3 +1,11 @@
+interface DebtHistory {
+          _id: string,
+          contributionId: string,
+          debtId: string,
+          month: number,
+          createdAt: string,
+          updatedAt: string
+}
 export interface UserDebtInterface {
           _id: string,
           assignedTo: {
@@ -19,4 +27,5 @@ export interface UserDebtInterface {
           },
           createdAt: string,
           updatedAt: string,
+          histories?: DebtHistory[]
 }

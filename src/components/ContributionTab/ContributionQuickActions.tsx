@@ -49,7 +49,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                             actions: {
                                                                       ...myContribution.actions,
                                                                       action: user.contributionAmount,
-                                                                      debts: 0
+                                                                      debt: user.debt?.monthlyRestrain
                                                             }
                                                   }
                                                   newContributions.push(newContribution)
@@ -58,7 +58,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                             ...myContribution,
                                                             actions: {
                                                                       ...myContribution.actions,
-                                                                      [actionName]: actionName == "action" ? user.contributionAmount : 0
+                                                                      [actionName]: actionName == "action" ? user.contributionAmount : user.debt?.monthlyRestrain
                                                             }
                                                   }
                                                   newContributions.push(newContribution)
@@ -69,7 +69,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                             _id: user._id,
                                                             actions: {
                                                                       action: user.contributionAmount,
-                                                                      debts: 0
+                                                                      debt: user.debt?.monthlyRestrain
                                                             }
                                                   }
                                                   newContributions.push(newContribution)
@@ -77,7 +77,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                   const newContribution: User = {
                                                             _id: user._id,
                                                             actions: {
-                                                                      [actionName]: actionName == "action" ? user.contributionAmount : 0
+                                                                      [actionName]: actionName == "action" ? user.contributionAmount : user.debt?.monthlyRestrain
                                                             }
                                                   }
                                                   newContributions.push(newContribution)

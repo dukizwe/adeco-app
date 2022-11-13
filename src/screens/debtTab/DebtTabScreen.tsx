@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { findNodeHandle, FlatList, Keyboard, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
+import { findNodeHandle, FlatList, Keyboard, RefreshControl, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
 import { Entypo, Feather, MaterialIcons, Octicons, Ionicons } from '@expo/vector-icons';
 import { COLORS } from "../../styles/COLORS";
 import { useNavigation } from "@react-navigation/native";
@@ -21,6 +21,8 @@ export default function DebtTabScreen() {
           const [isSending, setIsSending] = useState(false)
           const [debts, setDebts] = useState<UserDebtInterface[]>([])
           const [error, setError] = useState<null|string>(null)
+          const [refreshing, setRefreshing] = useState(false)
+
           const [data, handleChange] = useForm({
                     amount: "",
                     month: "",
@@ -38,13 +40,24 @@ export default function DebtTabScreen() {
                                         }),
                                         headers: { "Content-Type": "application/json" },
                               })
-                              console.log(newDebt)
+                              setDebts(t => [newDebt.data, ...t])
                     } catch (error: any) {
                               console.log(error)
                               const apiError: ApiResponse = error
                               setError(apiError.message)
                     } finally {
                               setIsSending(false)
+                    }
+          }
+
+          const onRefresh = async () => {
+                    try {
+                              const result = await fetchApi('/debts')
+                              setDebts(result.data)
+                    } catch (error) {
+                              console.log(error)
+                    } finally {
+                              setRefreshing(false)
                     }
           }
 
@@ -124,6 +137,11 @@ export default function DebtTabScreen() {
                                                   )
                                         }}
                                         style={styles.debts}
+                                        refreshControl={<RefreshControl
+                                                  refreshing={refreshing}
+                                                  onRefresh={onRefresh}
+                                                  colors={[COLORS.primary]}
+                                        />}
                               />
                     </View>
                     </>
@@ -132,7 +150,7 @@ export default function DebtTabScreen() {
 
 const styles = StyleSheet.create({
           container: {
-
+                    flex: 1
           },
           header: {
                     flexDirection: "row",

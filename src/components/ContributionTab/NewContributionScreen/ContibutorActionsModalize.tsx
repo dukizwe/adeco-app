@@ -15,6 +15,7 @@ import { ActionNames } from '../../../types/ActionNames'
 import { User } from '../../../types/User'
 import { RateTypeInterface } from '../../../interfaces/RateTypeInterface'
 import Animated, { withTiming } from 'react-native-reanimated'
+import { COLORS } from '../../../styles/COLORS'
 
 interface Props {
           contributor: ContributorInterface,
@@ -48,7 +49,7 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
                                                             ...c,
                                                             actions: {
                                                                       action: selectContribution ? contributor.contributionAmount : undefined,
-                                                                      debts: selectDebt ? 0 : undefined,
+                                                                      debt: selectDebt ? contributor.debt?.monthlyRestrain : undefined,
                                                                       rates: selectedRateTypes
                                                             }
                                                   }
@@ -62,7 +63,7 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
                                         _id: contributor._id,
                                         actions: {
                                                   action: selectContribution ? contributor.contributionAmount : undefined,
-                                                  debt: selectDebt ? 0 : undefined,
+                                                  debt: selectDebt ? contributor.debt?.monthlyRestrain : undefined,
                                                   rates: selectedRateTypes
                                         }
                               }
@@ -194,18 +195,22 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
                                                                                                     </View>
                                                                                           </View>
                                                                                 </TouchableNativeFeedback>
-                                                                                <TouchableNativeFeedback onPress={() => setSelectDebt(t => !t)}>
+                                                                                <TouchableNativeFeedback onPress={() => setSelectDebt(t => !t)} disabled={!contributor.debt || contributor.debt.amount == 0}>
                                                                                           <View style={styles.action}>
                                                                                                     <View style={styles.actionDetails}>
                                                                                                               <Image source={require('../../../../assets/icons/debt.png')} style={styles.actionImage} />
                                                                                                               <View style={styles.actionLabels}>
                                                                                                                         <Text style={styles.actionTitle}>Dette</Text>
-                                                                                                                        <Text style={styles.actionAmount}>6 000 BIF</Text>
+                                                                                                                        {contributor.debt ? <Text style={styles.actionAmount}>
+                                                                                                                                  {contributor.debt?.monthlyRestrain.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF
+                                                                                                                        </Text> : <Text style={[styles.actionAmount, { color: COLORS.primary }]}>
+                                                                                                                                  Pas de dette
+                                                                                                                        </Text>}
                                                                                                               </View>
                                                                                                     </View>
-                                                                                                    <View style={[styles.checkCircle, selectDebt && { backgroundColor: primaryColor, borderWidth: 0 }]}>
+                                                                                                    {contributor.debt ? <View style={[styles.checkCircle, selectDebt && { backgroundColor: primaryColor, borderWidth: 0 }]}>
                                                                                                               {selectDebt && <Ionicons name="md-checkmark-outline" size={18} color="#fff" />}
-                                                                                                    </View>
+                                                                                                    </View> : null}
                                                                                           </View>
                                                                                 </TouchableNativeFeedback>
                                                                                 <TouchableNativeFeedback onPress={toggleDebetTypes}>

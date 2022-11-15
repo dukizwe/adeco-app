@@ -123,7 +123,8 @@ export default function AcitivitiesScreen() {
 const styles = StyleSheet.create({
           container: {
                     flex: 1,
-                    backgroundColor: '#fff'
+                    backgroundColor: '#fff',
+                    marginTop: -60
           },
           subContent: {
                     flexDirection: "row",

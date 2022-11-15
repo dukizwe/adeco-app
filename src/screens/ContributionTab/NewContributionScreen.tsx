@@ -13,8 +13,15 @@ import { ContributorInterface } from '../../interfaces/ContributorInterface'
 import { RateTypeInterface } from '../../interfaces/RateTypeInterface'
 import { useDispatch } from 'react-redux'
 import { setContributorsAction, setRateTypesAction } from '../../store/actions/contributionActions'
+import ContributorsSkeletons from '../../components/skeleton/Skeleton'
+import wait from '../../helpers/wait'
 
-export default function NewContributionScreen() {
+/**
+ * A sceen to display users contributors for actions
+ * @returns {JSX.Element}
+ * @author <mbagapro@gmail.com>
+ */
+export default function NewContributionScreen(): JSX.Element {
           const users = useSelector(usersSelector)
           const startAnimation = useSelector(startAnimationSelector)
           const [contributors, setContributors] = useState<ContributorInterface[]>([])
@@ -31,7 +38,7 @@ export default function NewContributionScreen() {
                               } catch (error) {
                                         console.log(error)
                               } finally {
-                                        setIsLoading(true)
+                                        setIsLoading(false)
                               }
                     })()
           }, [])
@@ -47,6 +54,9 @@ export default function NewContributionScreen() {
                               }
                     })()
           }, [])
+          if(isLoading) {
+                    return <ContributorsSkeletons />
+          }
           return (
                     <View style={{backgroundColor: '#fff', paddingHorizontal: 10, flex: 1}}>
                               <FlatList

@@ -5,6 +5,7 @@ import { ActivityStyles } from './styles';
 import { Activity as ActivityInterface } from '../../types/Activity';
 import { ActivitiesIcons } from '../ContributionTab/ActivityForm';
 import moment from 'moment';
+import { COLORS } from '../../styles/COLORS';
 
 interface Props {
           activity: ActivityInterface,
@@ -59,15 +60,15 @@ export default function Activity({ activity, onLongPress, index, isSelected, isI
                                                             </View>
                                                             <View style={styles.transanctionMiddle}>
                                                                       <Text style={styles.transationTitle}>{activity.category ? activity.category.name : `Flight booking`}</Text>
-                                                                      <Text style={styles.transationDay}>{activity.date ? moment(activity.date).format("DD MMMM YYYY") :`17 june 2019`}</Text>
+                                                                      <Text style={styles.transationDay}>{activity.date ? moment(new Date(activity.date)).format("DD MMMM YYYY") :`17 june 2019`}</Text>
                                                             </View>
                                                   </View>
                                                   <View style={styles.transanctionAmount}>
-                                                            <Text style={{...styles.amountSign, color: '#362b89ed'}}>
+                                                            <Text style={[styles.amountSign, {color: activity.category?.type == "in" ? COLORS.plusAmount : COLORS.minusAmount}]}>
                                                                       {activity.category?.type == "in" ? `+` : `-`}
                                                             </Text>
-                                                            <Text style={styles.amount}>
-                                                                      {activity.amount ? `${activity.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} Fbu` : `$5100.10`}
+                                                            <Text style={[styles.amount, { color: activity.category?.type == "in" ? COLORS.plusAmount : COLORS.minusAmount }]}>
+                                                                      {activity.amount ? `${activity.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF` : `$5100.10`}
                                                             </Text>
                                                   </View>
                                         </View>

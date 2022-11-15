@@ -7,10 +7,12 @@ import UserDebt from '../../components/ContributionTab/UserDebt';
 import { QueuedUser } from '../../types/QueuedUser';
 import { UserDebtInterface } from '../../interfaces/UserDebtInterface';
 import fetchApi from '../../utils/fetchApi';
+import ContributorsSkeletons from '../../components/skeleton/Skeleton';
 
 export default function DebtScreen() {
           const navigation = useNavigation()
           const [debts, setDebts] = useState<UserDebtInterface[]>([])
+          const [isLoading, setIsLoading] = useState(true)
 
           useEffect(() => {
                     (async () => {
@@ -20,10 +22,13 @@ export default function DebtScreen() {
                               } catch (error) {
                                         console.log(error)
                               } finally {
-
+                                        setIsLoading(false)
                               }
                     })()
           }, [])
+          if(isLoading) {
+                    return <ContributorsSkeletons />
+          }
           return (
                     <>
                               <View style={styles.container}>

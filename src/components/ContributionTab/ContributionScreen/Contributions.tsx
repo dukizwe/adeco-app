@@ -1,17 +1,22 @@
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { ContributionInterface } from "../../../interfaces/api/ContributionInterface";
 import Contribution from "./Contribution";
-export default function Contributions() {
+
+interface Props{
+          contributions: ContributionInterface[]
+}
+export default function Contributions({ contributions }: Props) {
           return (
                     <View style={styles.container}>
                               <View style={styles.contributionsHeader}>
                                         {/* <Text style={styles.title}>Toutes les contributions</Text> */}
                                         <View style={styles.contributions}>
                                                   <FlatList
-                                                            data={new Array(20).fill(0)}
+                                                            data={contributions}
                                                             renderItem={({ item: contribution, index}) => {
                                                                       return (
-                                                                                <Contribution key={index} />
+                                                                                <Contribution key={index} contribution={contribution} />
                                                                       )
                                                             }}
                                                             showsVerticalScrollIndicator={false}

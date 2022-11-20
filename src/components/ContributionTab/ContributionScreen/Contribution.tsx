@@ -1,8 +1,15 @@
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons, FontAwesome5, AntDesign, Ionicons, FontAwesome } from '@expo/vector-icons'; 
+import moment from "moment";
+import { ContributionInterface } from "../../../interfaces/api/ContributionInterface";
+import { COLORS } from "../../../styles/COLORS";
 
-export default function Contribution() {
+interface Props {
+          contribution: ContributionInterface
+}
+
+export default function Contribution({ contribution }: Props) {
           return (
                     <View style={styles.contribution}>
                               <View style={styles.contributionLeftSide}>
@@ -12,13 +19,17 @@ export default function Contribution() {
                                                   <Image source={require('../../../../assets/icons/contribution.png')} style={styles.iconImage} />
                                         </View>
                                         <View style={styles.details}>
-                                                  <Text style={styles.title}>Contribution N° 12</Text>
-                                                  <Text style={styles.date}>24 Aug 2022</Text>
+                                                  <Text style={styles.title}>Contribution N° {contribution.month}</Text>
+                                                  <Text style={styles.date}>
+                                                            {moment(new Date(contribution.contributionDate)).format("DD MMM YYYY")}
+                                                  </Text>
                                         </View>
                               </View>
                               <View style={styles.amounts}>
-                                        <Text style={styles.total}>BIF 1 200 000</Text>
-                                        <Text style={styles.additional}>+45 000 BIF</Text>
+                                        <Text style={styles.total}>{ contribution.mainTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } BIF</Text>
+                                        <Text style={[styles.additional, { color: contribution.total >= 0 ? COLORS.plusAmount : COLORS.minusAmount}]}>
+                                                  {contribution.total > 0 && '+'}{ contribution.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } BIF
+                                        </Text>
                               </View>
                     </View>
           )

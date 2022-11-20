@@ -259,7 +259,7 @@ export default function ConfirmContributionScreen() {
                                                                                           Dettes rendus
                                                                                 </Text>
                                                                                 <Text style={styles.cardSubTitle}>
-                                                                                          {getTotals().debts.length > 0 ? `${getTotals().debts.length} dette${getTotals().late.length > 1 && 's'}` : 'Pas de demande'}
+                                                                                          {getTotals().debts.length > 0 ? `${getTotals().debts.length} dette${getTotals().late.length > 1 ? 's' : ''}` : 'Pas de demande'}
                                                                                 </Text>
                                                                       </View>
                                                             </View>

@@ -97,7 +97,7 @@ export default function DebtTabScreen() {
                               />}
                               <View style={styles.header}>
                                         <Text style={styles.title}>
-                                                  Les dettes
+                                                  Dette
                                         </Text>
                                         <View style={styles.contributionRightSide}>
                                                   <TouchableNativeFeedback useForeground onPress={() => setShowForm(true)}>
@@ -110,7 +110,7 @@ export default function DebtTabScreen() {
                                                   </TouchableNativeFeedback>
                                         </View>
                               </View>
-                              <View style={styles.subHeader}>
+                              {/* <View style={styles.subHeader}>
                                         <TouchableOpacity>
                                                   <View style={styles.selectedStatusBtn}>
                                                             <Text style={styles.statusTitle}>
@@ -122,7 +122,7 @@ export default function DebtTabScreen() {
                                         <Text style={styles.statusCount}>
                                                   2
                                         </Text>
-                              </View>
+                              </View> */}
                               <FlatList
                                         // ListHeaderComponent={() => <DebtScreenHeader />}
                                         showsVerticalScrollIndicator={false}

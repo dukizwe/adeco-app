@@ -20,8 +20,8 @@ export default function Card({item}) {
                                         </View>
                               </View>
                               <View style={styles.cardAmounts}>
-                                        <Text style={styles.mainAmount}>1 000 000 000 fbu</Text>
-                                        <Text style={styles.availableAmount}>500 000 fbu</Text>
+                                        <Text style={styles.mainAmount}>1 000 000 000 BIF</Text>
+                                        <Text style={styles.availableAmount}>500 000 BIF</Text>
                               </View>
                               <View style={styles.cardFooter}>
                                         <View style={styles.benefitAmount}>

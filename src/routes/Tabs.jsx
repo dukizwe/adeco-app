@@ -1,12 +1,12 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Carousel from 'react-native-snap-carousel';
-import BottomTabBar from '../components/BottomTabBar/BottomTabBar';
+import BottomTabBar from '../components/app/BottomTabBar';
 import Comp1 from '../components/Comp1';
 import Comp2 from '../components/Comp2';
 import Comp3 from '../components/Comp3';
 import Comp4 from '../components/Comp4';
-import Header from '../components/Header/Header';
+import Header from '../components/HomeTab/Header';
 import ContributionHeader from '../components/Header/ContributionHeader';
 import HomeScreen from '../screens/HomeScreen';
 import NewContributionScreen from '../screens/ContributionTab/NewContributionScreen';

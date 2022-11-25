@@ -10,17 +10,17 @@ const styles = StyleSheet.create({
                     width,
           },
           category: {
-                    width: 90,
                     justifyContent: 'space-between',
                     flexDirection: 'row',
                     alignItems: 'center',
                     alignContent: 'center',
-                    paddingHorizontal: 15,
                     paddingVertical: 5,
                     borderWidth: 1,
                     borderColor: '#ddd',
                     borderRadius: 10,
-                    marginLeft: 30
+                    alignSelf: "flex-end",
+                    marginRight: 20,
+                    paddingHorizontal: 10
           },
           selectedCategory: {
                     fontSize: 13,
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
                     paddingHorizontal: 20
           },
           card: {
-                    borderRadius: 30,
+                    borderRadius: 20,
                     padding: 20,
                     height: '100%',
                     width: '100%',
@@ -148,6 +148,16 @@ const styles = StyleSheet.create({
                     color: '#fff',
                     fontWeight: 'bold',
                     fontSize: 9
+          },
+          cardsFooter: {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingHorizontal: 20
+          },
+          footerDateText: {
+                    color: '#777',
+                    fontSize: 12
           }
 })
 export default styles

@@ -7,10 +7,9 @@ import { useAppSelector } from '../../hooks/useAppSelector'
 import { UserDebtInterface } from '../../interfaces/UserDebtInterface'
 import { queueListSelector } from '../../store/selectors/contributionSelectors'
 import { primaryColor } from '../../styles'
-import { QueuedUser } from '../../types/QueuedUser'
-import UserDebtModalize from '../debtTab/UserDebtModalize'
 import { Ionicons } from '@expo/vector-icons'; 
 import { COLORS } from '../../styles/COLORS'
+import UserDebtModalize from '../DebtTab/UserDebtModalize'
 
 interface Props {
           userDebt: UserDebtInterface,

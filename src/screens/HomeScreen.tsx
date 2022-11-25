@@ -5,6 +5,7 @@ import Activities from '../components/Activities/Activities';
 import Header from '../components/HomeTab/Header';
 import ContributionDashboard from '../components/HomeTab/ContributionDashboard';
 import ContributionChart from '../components/HomeTab/ContributionChart';
+import ContributorsTree from '../components/HomeTab/ContributorsTree';
 
 export default function HomeScreen() {
           const [loading, setLoading] = useState(true)
@@ -16,6 +17,7 @@ export default function HomeScreen() {
                               <ContributionDashboard />
                               <ContributionChart />
                               <Activities loading={loading} setLoading={setLoading}/>
+                              {/* <ContributorsTree /> */}
                     </ScrollView>
                     </>
           )

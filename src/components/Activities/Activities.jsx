@@ -64,11 +64,11 @@ export default function Activities({ loading, setLoading }) {
                     <>
                     {loading ? <Skeletons /> :
                     <View style={styles.transationsContainer}>
-                              <View style={styles.transanctionHeader}>
+                              {/* <View style={styles.transanctionHeader}>
                                         <Text style={styles.transationsTitle}>Activites</Text>
-                              </View>
+                              </View> */}
                               <ActivitiesCategories />
-                              <Text style={styles.transanctionDate}>Today</Text>
+                              {/* <Text style={styles.transanctionDate}>Today</Text> */}
                               {/* {entries.map((activity, i) =><Activity activity={activity} key={i.toString()} />)} */}
                     </View>}
                     </>

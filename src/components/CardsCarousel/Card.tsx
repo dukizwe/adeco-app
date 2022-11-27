@@ -37,7 +37,7 @@ export default function Card({ contribution }: {contribution: ContributionInterf
                                         <View>
                                                   <Text style={styles.footerLabel}>Montant</Text>
                                                   <Text style={styles.benefitAmountText}>
-                                                            { contribution.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } BIF
+                                                            {contribution.total > 0 ? '+' : ''}{ contribution.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } BIF
                                                   </Text>
                                         </View>
                                         <View>

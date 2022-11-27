@@ -1,19 +1,56 @@
 import React, { useState } from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { LineChart, PieChart, ProgressChart } from "react-native-chart-kit";
 import { AbstractChartConfig } from "react-native-chart-kit/dist/AbstractChart";
 import { LineChartData } from "react-native-chart-kit/dist/line-chart/LineChart";
+import { ContributionInterface } from "../../interfaces/api/ContributionInterface";
+import numeral from "numeral"
 
-export default function ContributionChart() {
+interface DotContentProps {
+          x: number;
+          y: number;
+          index: number;
+          indexData: number;
+}
+const DotContent = ({ x, y, index, indexData }: DotContentProps) => {
+          const amount = indexData >= 1000000 ? numeral(indexData).format('0.0a').toUpperCase() : indexData.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+          return (
+                    indexData > 0 ? <View
+                              style={[
+                                        styles.dotContent,
+                                        {
+                                                  transform: [
+                                                            { translateX: x - 40 },
+                                                            { translateY: y - 55 }
+                                                  ] 
+                                        }
+                              ]}>
+                              <Text style={styles.dotContentText}>
+                                        +{ amount }
+                              </Text>
+                              <View style={styles.downCaret} />
+                    </View> : null
+          )
+}
+
+export default function ContributionChart({ selectedContribution }: { selectedContribution: ContributionInterface }) {
           const { width } = useWindowDimensions()
-          const [performanceData, setPerformanceData] = useState<LineChartData>({
-                    labels: ["Action", "Dettes", "Dettes", "Action", "Dettes", "Dettes"],
+          const activitiesAmount = selectedContribution.inActivitiesAmount - selectedContribution.outActivitiesAmount
+          const performanceData: LineChartData = {
+                    labels: ["Action", "Mensuel", "Reglées", "Rendus", "Retard", "Activités"],
                     datasets: [{
-                              data: [15000, 5000, 40000, 30000, 20000, 40000],
+                              data: [
+                                        selectedContribution.actionsAmount,
+                                        selectedContribution.monthlyAmount,
+                                        selectedContribution.payedDebtsAmount,
+                                        selectedContribution.debtsAmount,
+                                        selectedContribution.latesAmount,
+                                        selectedContribution.inActivitiesAmount
+                              ],
                               color: (opacity = 1) => `#34A9FF`, // optional
                               strokeWidth: 1
                     }]
-          })
+          }
           const chartConfig: AbstractChartConfig = {
                     backgroundGradientFrom: "#fff",
                     backgroundGradientFromOpacity: 0,
@@ -27,43 +64,60 @@ export default function ContributionChart() {
           };
           return (
                     <View style={styles.container}>
-                              <LineChart
-                                        data={performanceData}
-                                        width={width + 40}
-                                        height={256}
-                                        chartConfig={chartConfig}
-                                        formatYLabel={value => "15k"}
-                                        bezier
-                                        yLabelsOffset={20}
-                                        withHorizontalLines={false}
-                                        withVerticalLines={false}
-                                        fromZero
-                                        onDataPointClick={(data) => {
-                                                  // setSelectedDataPoint({
-                                                  //           index: data.index,
-                                                  //           value: data.value
-                                                  // })
-                                                  // Animated.spring(translateX, {
-                                                  //           toValue: data.x - 25,
-                                                  //           useNativeDriver: true
-                                                  // }).start()
-                                                  // Animated.spring(translateY, {
-                                                  //           toValue: data.y - 10,
-                                                  //           useNativeDriver: true
-                                                  // }).start()
-                                        }}
-                                        style={{ zIndex: -1, marginTop: 40, marginLeft: -20 }}
-                              // renderDotContent={({x, y, index, indexData}) => <Text key={index}>hy</Text>}
-                              // withHorizontalLabels={false}
-                              // withInnerLines={false}
-                              // withOuterLines={false}
-                              />
+                              <ScrollView
+                                        horizontal
+                                        style={{ height: 300 }}
+                                        disableIntervalMomentum={true}
+                                        showsHorizontalScrollIndicator={false}
+                              >
+                                        <LineChart
+                                                  data={performanceData}
+                                                  width={500}
+                                                  height={256}
+                                                  chartConfig={chartConfig}
+                                                  formatYLabel={value => numeral(value).format('0a')}
+                                                  bezier
+                                                  yLabelsOffset={20}
+                                                  withHorizontalLines={false}
+                                                  withVerticalLines={false}
+                                                  fromZero
+                                                  style={{ zIndex: -1, marginTop: 60, marginLeft: -20, paddingHorizontal: 20 }}
+                                                  renderDotContent={({index, ...params}) => <DotContent index={index} {...params}  key={index} />}
+                                        />
+                              </ScrollView>
                     </View>
           )
 }
 
 const styles = StyleSheet.create({
           container: {
-                    paddingHorizontal: 20
-          }
+                    // paddingHorizontal: 20
+          },
+          dotContent: {
+                    backgroundColor: '#1b3555',
+                    width: 80,
+                    borderRadius: 30,
+                    height: 40,
+                    position: "absolute",
+                    justifyContent: "center"
+          },
+          dotContentText: {
+                    fontSize: 12,
+                    color: '#FFF',
+                    textAlign: "center",
+                    fontWeight: "bold",
+          },
+          downCaret: {
+                    position: 'absolute',
+                    width: 15,
+                    height: 15,
+                    backgroundColor: '#1b3555',
+                    borderRadius: 4,
+                    zIndex: 1,
+                    alignSelf: 'center',
+                    bottom: '-15%',
+                    transform: [{
+                              rotate: '45deg'
+                    }]
+          },
 })

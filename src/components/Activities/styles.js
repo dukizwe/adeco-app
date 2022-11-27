@@ -2,7 +2,8 @@ import { StyleSheet } from "react-native";
 
 export const ActivitiesStyles = StyleSheet.create({
           transationsContainer: {
-                    paddingHorizontal: 20
+                    paddingHorizontal: 20,
+                    marginTop: 20
           },
           transanctionHeader: {
                     flexDirection: 'row',

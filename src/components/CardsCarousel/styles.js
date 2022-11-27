@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
                     padding: 20,
                     height: '100%',
                     width: '100%',
+                    backgroundColor: '#5d647f'
           },
           cardHeader: {
                     flexDirection: 'row',
@@ -77,6 +78,9 @@ const styles = StyleSheet.create({
                     height: 8,
                     marginTop: 5
           },
+          date: {
+
+          },
           dateText: {
                     color: '#fff',
                     fontSize: 15,
@@ -104,8 +108,9 @@ const styles = StyleSheet.create({
                     alignItems: 'center',
                     alignContent: 'center'
           },
-          benefitAmount: {
-
+          footerLabel: {
+                    color: '#F1F1F1',
+                    fontSize: 12
           },
           benefitAmountText: {
                     fontWeight: 'bold',
@@ -158,6 +163,9 @@ const styles = StyleSheet.create({
           footerDateText: {
                     color: '#777',
                     fontSize: 12
+          },
+          footerDate: {
+                    
           }
 })
 export default styles

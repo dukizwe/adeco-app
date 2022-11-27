@@ -7,7 +7,7 @@ import { entries } from '../CardsCarousel/CardsCarousel';
 import Activity from './Activity';
 import { ActivitiesCategoriesStyles, ActivitiesStyles, ActivityStyles } from './styles';
 
-const Skeletons = () => {
+export const Skeletons = () => {
           return (
                     <View style={styles.transationsContainer}>
                               <View style={styles.transanctionHeader}>

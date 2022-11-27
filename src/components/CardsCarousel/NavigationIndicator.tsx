@@ -2,11 +2,11 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { COLORS } from '../../styles/COLORS'
 
-export default function NavigationIndicator({ activendex }: { activendex: number }) {
+export default function NavigationIndicator({ contributionsLength, activendex }: { contributionsLength: number, activendex: number }) {
           return (
                     <View style={styles.navigation}>
                               <View style={styles.dots}>
-                                        {new Array(12).fill(0).map((dot, index) => {
+                                        {new Array(contributionsLength).fill(0).map((dot, index) => {
                                                   return (
                                                             <View style={[styles.dot, index == activendex && { backgroundColor: COLORS.primary}]} key={index} />
                                                   )

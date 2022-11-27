@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Dimensions, View, Text, ScrollView, TouchableOpacity, TouchableNativeFeedback} from 'react-native';
+import { Dimensions, View, Text, ScrollView, TouchableOpacity, TouchableNativeFeedback, FlatList, useWindowDimensions} from 'react-native';
 import Carousel from 'react-native-snap-carousel'
 import randomInt from '../../helpers/randomInt';
 import subText from '../../helpers/subText';
@@ -7,6 +7,9 @@ import Card from './Card';
 import styles from './styles';
 import { Entypo } from '@expo/vector-icons';
 import NavigationIndicator from './NavigationIndicator';
+import { ContributionInterface } from '../../interfaces/api/ContributionInterface';
+import moment from 'moment';
+import { ContributorInterface } from '../../interfaces/ContributorInterface';
 
 
 const cardColors = ['#18a8c9', '#5d647f', '#3555a2', '#1b3555']
@@ -53,20 +56,22 @@ export const entries = [
           },
 ];
 
-const { width, height } = Dimensions.get('window')
-export default function CardsCarousel({ setLoading }: { setLoading: React.Dispatch<React.SetStateAction<boolean>>}) {
-          const [showModal, setShowModal] = useState(false)
-          const [activendex, setActiveIndex] = useState(entries.length-1)
-          const scrollViewRef = useRef<ScrollView>(null);
-          useEffect(() => {
-                    setLoading(true)
-                    setTimeout(() => {
-                              setLoading(false)
-                    }, 2000)
-          }, [activendex])
+interface Props {
+          contributions: ContributionInterface[],
+          activendex: number,
+          setActiveIndex: React.Dispatch<React.SetStateAction<number>>,
+          selectedContribution: ContributionInterface | null
+}
+
+export default function CardsCarousel({ contributions, activendex, setActiveIndex, selectedContribution }: Props) {
+          const scrollViewRef = useRef<FlatList>(null);
+          const { width } = useWindowDimensions()
+
           return (
                     <View style={styles.carouselContainer}>
-                              <ScrollView style={styles.carousel}
+                              <FlatList
+                                        data={contributions}
+                                        style={styles.carousel}
                                         horizontal={true}
                                         pagingEnabled={true} /* scrollEventThrottle={width - 60} */
                                         ref={scrollViewRef}
@@ -76,17 +81,19 @@ export default function CardsCarousel({ setLoading }: { setLoading: React.Dispat
                                         onScroll={(e) => {
                                                   const index = e.nativeEvent.contentOffset.x / (width - 40)
                                                   setActiveIndex(parseInt(index.toString()))
-                                        }}>
-                                                  {entries.map((item, index) => {
-                                                            return <View style={styles.slide} key={index.toString()}>
-                                                                      <Card item={item} />
-                                                            </View>
-                                                  })}
-                              </ScrollView>
+                                        }}
+                                        renderItem={({item: contribution, index}) => {
+                                                  return <View style={styles.slide} key={index.toString()}>
+                                                            <Card contribution={contribution} />
+                                                  </View>
+                                        }}
+                              />
                               <View style={styles.cardsFooter}>
-                                        <NavigationIndicator activendex={activendex}/>
+                                        <NavigationIndicator contributionsLength={contributions.length} activendex={activendex}/>
                                         <TouchableOpacity style={styles.footerDate}>
-                                                  <Text style={styles.footerDateText}>25 nov 2022</Text>
+                                                  <Text style={styles.footerDateText}>
+                                                            { moment(selectedContribution?.contributionDate).format('DD MMM YYYY').toLowerCase() }
+                                                  </Text>
                                         </TouchableOpacity>
                               </View>
                     </View>)

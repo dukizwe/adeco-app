@@ -7,12 +7,13 @@ import RootNavigator from './routes/RootNavigator'
 import { setUserAction } from "./store/actions/userActions";
 import { userSelector } from "./store/selectors/userSelector";
 import { Text } from 'react-native'
-import { createStackNavigator } from "@react-navigation/stack";
+import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
 import { Host } from "react-native-portalize";
 import { PortalProvider } from "@gorhom/portal";
 import LoginScreen from "./screens/welcome/LoginScreen";
 import Loading from "./components/app/Loading";
 import { isLoadingSelector } from "./store/selectors/appSelectors";
+import RegisterScreen from "./screens/welcome/RegisterScreen";
 
 const Stack = createStackNavigator()
 
@@ -23,7 +24,9 @@ export default function AppContainer() {
                     (async function() {
                               const user = await AsyncStorage.getItem('user')
                               // await AsyncStorage.removeItem('user')
-                              dispatch(setUserAction(JSON.parse(user)))
+                              if(user) {
+                                        dispatch(setUserAction(JSON.parse(user)))
+                              }
                               setUserLoading(false)
                     })()
           }, [dispatch])
@@ -36,10 +39,11 @@ export default function AppContainer() {
                     <View style={{ flex: 1, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
                               <ActivityIndicator color="#007BFF" animating={userLoading} size='large' />
                     </View> :
-                              <NavigationContainer theme={{ colors: { background: "#fff", }}}>
+                              <NavigationContainer theme={{ colors: { background: "#fff" } } as any}>
                                         {user ? <RootNavigator /> :
-                                        <Stack.Navigator>
+                                        <Stack.Navigator screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}>
                                                   <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false}}/>
+                                                  <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false}}/>
                                         </Stack.Navigator>}
                               </NavigationContainer>}
                     </>

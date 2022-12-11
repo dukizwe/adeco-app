@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, useWindowDimensions, ScrollView, StatusBar, TextInput, TouchableWithoutFeedback, TouchableNativeFeedback, ActivityIndicator, Keyboard } from 'react-native'
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons, Feather } from '@expo/vector-icons';
 import { primaryColor } from '../../styles';
 import { useForm } from '../../hooks/useForm';
 import { useFormErrorsHandle } from '../../hooks/useFormErrorsHandle';
@@ -14,12 +14,17 @@ import { useDispatch } from 'react-redux';
 import { setUserAction } from '../../store/actions/userActions';
 import { useNavigation } from '@react-navigation/native';
 
-type Inputs = "email" | "password" | undefined
+type Inputs = 'lastname' | 'firstname' | "email" | "password" | "passwordConfirm" | undefined
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
           const [showPassword, setShowPassword] = useState(false)
           const { height } = useWindowDimensions()
+
+          const firstnameRef = useRef<TextInput>(null)
+          const emailRef = useRef<TextInput>(null)
           const passwordInputRef = useRef<TextInput>(null)
+          const passwordConfirmInputRef = useRef<TextInput>(null)
+
           const statusBarHeight = StatusBar.currentHeight || 0
           const [isFocused, setIsFocused] = useState<Inputs>(undefined)
 
@@ -30,33 +35,60 @@ export default function LoginScreen() {
           const navigation = useNavigation()
 
           const [data, handleChange] = useForm({
+                    lastname: '',
+                    firstname: '',
                     email: "",
-                    password: ""
+                    password: "",
+                    passwordConfirm: ""
           })
-          const { isValidate, hasError, getError, checkFieldData } = useFormErrorsHandle(data, {
+          const { isValidate, hasError, getError, checkFieldData, setErrors } = useFormErrorsHandle(data, {
+                    lastname: {
+                              required: true,
+                    },
+                    firstname: {
+                              required: true,
+                    },
                     email: {
                               required: true,
                               email: true,
                     },
                     password: {
-                              required: true
+                              required: true,
+                              length: [8]
+                    },
+                    passwordConfirm: {
+                              required: true,
+                              match: "password"
                     }
           }, {
+                    lastname: {
+                              required: "Le nom est requis",
+                    },
+                    firstname: {
+                              required: "Le prénom est requis",
+                    },
                     email: {
                               required: "L'email est requis",
                               email: "Email invalide"
                     },
                     password: {
-                              required: "Le mot de passe est requis"
+                              required: "Le mot de passe est requis",
+                              length: "Mot de passe trop court"
+                    },
+                    passwordConfirm: {
+                              required: "Ce champ est requis",
+                              match: "Les mots de passe ne correpondent pas"
                     }
           })
 
-          const handleLogin = async () => {
+          const handleRegister = async () => {
                     try {
                               setIsLoading(true)
-                              const res = await fetchApi('/auth/login', {
+                              const res = await fetchApi('/auth/register', {
                                         method: "POST",
                                         body: JSON.stringify({
+                                                  firstName: data.firstname,
+                                                  lastName: data.lastname,
                                                   email: data.email,
                                                   password: data.password
                                         }),
@@ -71,6 +103,9 @@ export default function LoginScreen() {
                               if(apiError.httpStatus == Status.UNAUTHORIZED) {
                                         setIsMainError(true)
                               }
+                              if(apiError.httpStatus == Status.UNPROCESSABLE_ENTITY && apiError.data.errors) {
+                                        setErrors(apiError.data.errors)
+                              }
                     } finally {
                               setIsLoading(false)
                     }
@@ -80,17 +115,84 @@ export default function LoginScreen() {
                     {isMainError && <ErrorModal onClose={() => setIsMainError(false)} />}
                     <View style={styles.container}>
                               <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-                                        <Image source={require('../../../assets/illustrators/login.png')} style={{ ...styles.image, resizeMode: 'center', height: (30 * height - statusBarHeight) / 100 }} />
+                                        <Image source={require('../../../assets/illustrators/new-register.png')} style={{ ...styles.image, resizeMode: 'center', height: (30 * height - statusBarHeight) / 100 }} />
                                         <Text style={styles.title}>
-                                                  Connexion
+                                                  Inscription
                                         </Text>
+                                        {/* <TouchableNativeFeedback>
+                                                  <View style={styles.userImage} >
+                                                            <Image source={require('../../../assets/girl.jpg')} style={styles.profilePhoto} />
+                                                  </View>
+                                        </TouchableNativeFeedback> */}
                                         <View style={styles.inputs}>
+                                                  <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between"}}>
+                                                            <View style={{ flex: 1 }}>
+                                                                      <View style={[styles.input, isFocused == "lastname" && { borderBottomColor: primaryColor }, hasError('lastname') && { borderBottomColor: 'red',}, { marginRight: 10 }]}>
+                                                                                <TextInput
+                                                                                          placeholder='Nom'
+                                                                                          style={styles.textInput}
+                                                                                          returnKeyType="next"
+                                                                                          blurOnSubmit={false}
+                                                                                          onSubmitEditing={() => {
+                                                                                                    firstnameRef.current?.focus()
+                                                                                          }}
+                                                                                          autoComplete="off"
+                                                                                          value={data.lastname}
+                                                                                          onChangeText={t => handleChange('lastname', t)}
+                                                                                          onFocus={() => setIsFocused('lastname')}
+                                                                                          onBlur={() => {
+                                                                                                    setIsFocused(undefined)
+                                                                                                    checkFieldData('lastname')
+                                                                                          }}
+                                                                                          editable={!isLoading}
+                                                                                          
+                                                                                />
+                                                                                <View style={styles.inputLeftSide}>
+                                                                                          <View style={styles.InputLeftElement}>
+                                                                                                    <Feather name="user" size={20} color="#777" />
+                                                                                          </View>
+                                                                                </View>
+                                                                      </View>
+                                                                      {hasError('lastname') && <Text style={styles.invalidFeedback}>{ getError('lastname') }</Text>}
+                                                            </View>
+                                                            <View style={{ flex: 1 }}>
+                                                                      <View style={[styles.input, isFocused == "firstname" && { borderBottomColor: primaryColor }, hasError('firstname') && { borderBottomColor: 'red',}, { marginLeft: 10 }]}>
+                                                                                <TextInput
+                                                                                          placeholder='Prénom'
+                                                                                          style={styles.textInput}
+                                                                                          returnKeyType="next"
+                                                                                          blurOnSubmit={false}
+                                                                                          ref={firstnameRef}
+                                                                                          onSubmitEditing={() => {
+                                                                                                    emailRef.current?.focus()
+                                                                                          }}
+                                                                                          autoComplete="off"
+                                                                                          value={data.firstname}
+                                                                                          onChangeText={t => handleChange('firstname', t)}
+                                                                                          onFocus={() => setIsFocused('firstname')}
+                                                                                          onBlur={() => {
+                                                                                                    setIsFocused(undefined)
+                                                                                                    checkFieldData('firstname')
+                                                                                          }}
+                                                                                          editable={!isLoading}
+                                                                                />
+                                                                                <View style={styles.inputLeftSide}>
+                                                                                          <View style={styles.InputLeftElement}>
+                                                                                                    <Feather name="user" size={20} color="#777" />
+                                                                                          </View>
+                                                                                </View>
+                                                                      </View>
+                                                                      {hasError('firstname') && <Text style={styles.invalidFeedback}>{ getError('firstname') }</Text>}
+                                                            </View>
+                                                  </View>
+
                                                   <View style={[styles.input, isFocused == "email" && { borderBottomColor: primaryColor }, hasError('email') && { borderBottomColor: 'red'}]}>
                                                             <TextInput
                                                                       placeholder='Email'
                                                                       style={styles.textInput}
                                                                       returnKeyType="next"
                                                                       blurOnSubmit={false}
+                                                                      ref={emailRef}
                                                                       onSubmitEditing={() => {
                                                                                 passwordInputRef.current?.focus()
                                                                       }}
@@ -103,7 +205,6 @@ export default function LoginScreen() {
                                                                                 checkFieldData('email')
                                                                       }}
                                                                       editable={!isLoading}
-                                                                      keyboardType="email-address"
                                                             />
                                                             <View style={styles.inputLeftSide}>
                                                                       <View style={styles.InputLeftElement}>
@@ -128,13 +229,9 @@ export default function LoginScreen() {
                                                                                 checkFieldData('password')
                                                                       }}
                                                                       editable={!isLoading}
-                                                                      returnKeyType="go"
+                                                                      returnKeyType="next"
                                                                       onSubmitEditing={() => {
-                                                                                Keyboard.dismiss()
-                                                                                if(!isValidate()) {
-                                                                                          return false
-                                                                                }
-                                                                                handleLogin()
+                                                                                passwordConfirmInputRef.current?.focus()
                                                                       }}
                                                             />
                                                             <View style={styles.inputLeftSide}>
@@ -147,11 +244,44 @@ export default function LoginScreen() {
                                                             </TouchableWithoutFeedback>
                                                   </View>
                                                   {hasError('password') && <Text style={styles.invalidFeedback}>{ getError('password') }</Text>}
+
+
+                                                  <View style={[styles.input, { marginTop: 10 }, isFocused == "passwordConfirm" && { borderBottomColor: primaryColor }, hasError('passwordConfirm') && { borderBottomColor: 'red'}]}>
+                                                            <TextInput
+                                                                      placeholder='Confirmer le mot de passe'
+                                                                      secureTextEntry={!showPassword}
+                                                                      style={styles.textInput}
+                                                                      blurOnSubmit={false}
+                                                                      ref={passwordConfirmInputRef}
+                                                                      value={data.passwordConfirm}
+                                                                      onChangeText={t => handleChange('passwordConfirm', t)}
+                                                                      onFocus={() => setIsFocused('passwordConfirm')}
+                                                                      onBlur={() => {
+                                                                                setIsFocused(undefined)
+                                                                                checkFieldData('passwordConfirm')
+                                                                      }}
+                                                                      editable={!isLoading}
+                                                                      returnKeyType="go"
+                                                                      onSubmitEditing={() => {
+                                                                                Keyboard.dismiss()
+                                                                                if(!isValidate()) {
+                                                                                          return false
+                                                                                }
+                                                                                handleRegister()
+                                                                      }}
+                                                            />
+                                                            <View style={styles.inputLeftSide}>
+                                                                      <View style={styles.InputLeftElement}>
+                                                                                <Ionicons name="lock-closed-outline" size={20} color="#777" />
+                                                                      </View>
+                                                            </View>
+                                                            <TouchableWithoutFeedback style={styles.InputRightElement} onPress={() => setShowPassword(t => !t)}>
+                                                                      <Ionicons name={!showPassword ? "eye-off-outline" : "eye-outline"} size={20} color="#777" />
+                                                            </TouchableWithoutFeedback>
+                                                  </View>
+                                                  {hasError('passwordConfirm') && <Text style={styles.invalidFeedback}>{ getError('passwordConfirm') }</Text>}
                                         </View>
-                                        <TouchableOpacity>
-                                                  <Text style={styles.forgetPass}>Mot de passe oublié</Text>
-                                        </TouchableOpacity>
-                                        <TouchableNativeFeedback useForeground disabled={!isValidate() || isLoading} onPress={handleLogin}>
+                                        <TouchableNativeFeedback useForeground disabled={!isValidate() || isLoading} onPress={handleRegister}>
                                                   <View style={[styles.submitBtn, !isValidate() && { opacity: 0.5 }]}>
                                                             <View style={{ backgroundColor: primaryColor, paddingVertical: 15 }}>
                                                                       {isLoading ? <View style={styles.loadingWrapper}>
@@ -160,24 +290,19 @@ export default function LoginScreen() {
                                                                                           Traitement...
                                                                                 </Text>
                                                                       </View> :<Text style={styles.submitBtnText}>
-                                                                                Se connecter
+                                                                                S'inscire
                                                                       </Text>}
                                                             </View>
                                                   </View>
                                         </TouchableNativeFeedback>
-                                        <Text style={styles.orLabel}>Ou</Text>
-                                        <View style={styles.socials}>
-                                                  <TouchableOpacity style={{ ...styles.social }}>
-                                                            <Image source={require('../../../assets/images/google.png')} style={styles.socialImage} />
-                                                            <Text style={styles.socialTitle}>Continuer avec Google</Text>
-                                                  </TouchableOpacity>
-                                        </View>
                                         <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center', marginVertical: 30 }}>
                                                   <Text style={styles.toRegisterText}>
-                                                            Nouveau membre ?
+                                                            Déjà un membre ?
                                                   </Text>
-                                                  <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen' as never)}>
-                                                            <Text style={styles.registerText} >Créer un compte</Text>
+                                                  <TouchableOpacity onPress={() => navigation.navigate('LoginScreen' as never)}>
+                                                            <Text style={styles.registerText} >
+                                                                      Se connecter
+                                                            </Text>
                                                   </TouchableOpacity>
                                         </View>
                               </ScrollView>
@@ -207,7 +332,7 @@ const styles = StyleSheet.create({
 
           },
           input: {
-                    borderBottomWidth: 1,
+                    borderBottomWidth: 0.5,
                     borderBottomColor: '#ddd',
                     alignItems: "center",
                     flexDirection: "row",
@@ -296,4 +421,14 @@ const styles = StyleSheet.create({
                     textAlign: 'center',
                     fontSize: 13
           },
+          userImage: {
+                    width: 80,
+                    height: 80,
+                    alignSelf: "center"
+          },
+          profilePhoto: {
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: 15
+          }
 })

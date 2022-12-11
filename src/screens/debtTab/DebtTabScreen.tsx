@@ -4,16 +4,16 @@ import { Entypo, Feather, MaterialIcons, Octicons, Ionicons } from '@expo/vector
 import { COLORS } from "../../styles/COLORS";
 import { useNavigation } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
-import DebtForm from "../../components/ContributionTab/DebtForm";
+import DebtForm from "../../components/ContributionTab/DebtScreen/DebtForm";
 import { useForm } from "../../hooks/useForm";
 import { UserDebtFormInterface } from "../../types/DebtFormInterface";
 import wait from "../../helpers/wait";
 import Loading from "../../components/app/Loading";
 import fetchApi from "../../utils/fetchApi";
 import { UserDebtInterface } from "../../interfaces/UserDebtInterface";
-import UserDebt from "../../components/ContributionTab/UserDebt";
 import ErrorModal from "../../components/Modals/ErrorModal";
 import { ApiResponse } from "../../types/ApiResponse";
+import UserDebt from "../../components/ContributionTab/DebtScreen/UserDebt";
 
 export default function DebtTabScreen() {
           const navigation = useNavigation()

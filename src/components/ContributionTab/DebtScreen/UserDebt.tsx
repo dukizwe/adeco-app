@@ -2,14 +2,14 @@ import moment from 'moment'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet } from 'react-native'
 import { Modalize } from 'react-native-modalize'
-import { DebtStatusCodes } from '../../enum/debtStatusCodes.enum'
-import { useAppSelector } from '../../hooks/useAppSelector'
-import { UserDebtInterface } from '../../interfaces/UserDebtInterface'
-import { queueListSelector } from '../../store/selectors/contributionSelectors'
-import { primaryColor } from '../../styles'
+import { DebtStatusCodes } from '../../../enum/debtStatusCodes.enum'
+import { useAppSelector } from '../../../hooks/useAppSelector'
+import { UserDebtInterface } from '../../../interfaces/UserDebtInterface'
+import { queueListSelector } from '../../../store/selectors/contributionSelectors'
+import { primaryColor } from '../../../styles'
 import { Ionicons } from '@expo/vector-icons'; 
-import { COLORS } from '../../styles/COLORS'
-import UserDebtModalize from '../DebtTab/UserDebtModalize'
+import { COLORS } from '../../../styles/COLORS'
+import UserDebtModalize from '../../DebtTab/UserDebtModalize'
 
 interface Props {
           userDebt: UserDebtInterface,
@@ -92,7 +92,7 @@ export default function UserDebt({ userDebt, onUserDebtUpdate, isContribution = 
                                         >
                                                   <View style={{ ...styles.user }}>
                                                             <View style={styles.userImage}>
-                                                                      <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../assets/girl.jpg')} />
+                                                                      <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../../assets/girl.jpg')} />
                                                                       {(isContribution && isDebited()) ? <View  style={styles.debitedIcon}>
                                                                                 <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} style={{ marginLeft: 2}} />
                                                                       </View> : null}

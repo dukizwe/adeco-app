@@ -1,20 +1,20 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Image, TouchableNativeFeedback, View, Text, StyleSheet, Keyboard } from 'react-native'
 import { Feather, Ionicons } from '@expo/vector-icons'
-import { QueuedUser } from '../../types/QueuedUser'
-import { useAppSelector } from '../../hooks/useAppSelector'
-import { inSelectSelector, queueListSelector, selectedBatchSelector } from '../../store/selectors/contributionSelectors'
-import { useAppDispatch } from '../../hooks/useAppDispatch'
-import { setInSelectAction, setQueueListAction, setSelectedBatchAction, setStartAnimationAction } from '../../store/actions/contributionActions'
-import { ActionNames } from '../../types/ActionNames'
-import { ContributorInterface } from '../../interfaces/ContributorInterface'
+import { QueuedUser } from '../../../types/QueuedUser'
+import { useAppSelector } from '../../../hooks/useAppSelector'
+import { inSelectSelector, queueListSelector, selectedBatchSelector } from '../../../store/selectors/contributionSelectors'
+import { useAppDispatch } from '../../../hooks/useAppDispatch'
+import { setInSelectAction, setQueueListAction, setSelectedBatchAction, setStartAnimationAction } from '../../../store/actions/contributionActions'
+import { ActionNames } from '../../../types/ActionNames'
+import { ContributorInterface } from '../../../interfaces/ContributorInterface'
 import { Portal } from 'react-native-portalize'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Modalize } from 'react-native-modalize'
-import ContibutorActionsModalize from './NewContributionScreen/ContibutorActionsModalize'
-import { primaryColor } from '../../styles'
-import { RateTypeInterface } from '../../interfaces/RateTypeInterface'
-import { COLORS } from '../../styles/COLORS'
+import ContibutorActionsModalize from './ContibutorActionsModalize'
+import { primaryColor } from '../../../styles'
+import { RateTypeInterface } from '../../../interfaces/RateTypeInterface'
+import { COLORS } from '../../../styles/COLORS'
 import * as Haptics from 'expo-haptics';
 
 export default function Contributor({ contributor, rateTypes, noBatch = false }: { contributor: ContributorInterface, rateTypes: RateTypeInterface[], noBatch?: boolean }) {
@@ -131,7 +131,7 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                               >
                                         <View style={{...styles.user, ...inSelectStyles}}>
                                                   <View style={styles.userImage}>
-                                                            <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../assets/girl.jpg')} />
+                                                            <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../../assets/girl.jpg')} />
                                                   </View>
                                                   <View style={styles.userInfo}>
                                                             <View style={styles.infoTop}>
@@ -145,20 +145,20 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                                                             <View style={styles.userActions}>
                                                                       <View style={styles.actionsDetails}>
                                                                                 <View style={styles.action}>
-                                                                                          <Image source={require('../../../assets/icons/contribution.png')} style={styles.actionIcon} />
+                                                                                          <Image source={require('../../../../assets/icons/contribution.png')} style={styles.actionIcon} />
                                                                                           <Text style={[styles.actionAmount, (myContibution && myContibution.actions?.action) ? { color: primaryColor } : undefined]}>
                                                                                                     { contributor.contributionAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
                                                                                           </Text>
                                                                                 </View>
                                                                                 {contributor.debt ? <View style={[styles.action, { marginLeft: 10 }]}>
-                                                                                          <Image source={require('../../../assets/icons/debt.png')} style={styles.actionIcon} />
+                                                                                          <Image source={require('../../../../assets/icons/debt.png')} style={styles.actionIcon} />
                                                                                           <Text style={[styles.actionAmount, (myContibution && myContibution.actions?.debt) ? { color: primaryColor } : undefined]}>
                                                                                                     { contributor.debt.monthlyRestrain.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
                                                                                           </Text>
                                                                                           {myContibution && myContibution.actions?.payedDebt && <Ionicons name="checkmark-circle" size={15} color={COLORS.primary} style={{ marginLeft: 2 }} />}
                                                                                 </View> : null}
                                                                                 {(myContibution?.actions?.rates && myContibution?.actions?.rates?.length > 0) ? <View style={[styles.action, { marginLeft: 10 }]}>
-                                                                                          <Image source={require('../../../assets/icons/contribution.png')} style={styles.actionIcon} />
+                                                                                          <Image source={require('../../../../assets/icons/contribution.png')} style={styles.actionIcon} />
                                                                                           <Text style={[styles.actionAmount, { color: primaryColor }]}>
                                                                                                     { getRateAmount().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") }
                                                                                           </Text>

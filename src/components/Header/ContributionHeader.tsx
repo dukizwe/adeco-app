@@ -11,9 +11,7 @@ import { useDispatch } from 'react-redux';
 import { resetNewContributionAcion, setQueueListAction } from '../../store/actions/contributionActions';
 import moment from 'moment';
 import { COLORS } from '../../styles/COLORS';
-import Loading from '../app/Loading';
 import { setIsLoadingAction } from '../../store/actions/appActions';
-import wait from '../../helpers/wait';
 import fetchApi from '../../utils/fetchApi';
 
 export default memo(function ContributionHeader() {
@@ -103,7 +101,8 @@ export default memo(function ContributionHeader() {
                                                   body: JSON.stringify({
                                                             contributions,
                                                             activities,
-                                                            debts: queueList.debts?.map(d => d._id)
+                                                            debts: queueList.debts?.map(d => d._id),
+                                                            pastDebts: queueList.pastDebts
                                                   }),
                                                   headers: { "Content-Type": "application/json" },
                                         })

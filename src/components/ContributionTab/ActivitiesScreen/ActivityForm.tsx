@@ -4,18 +4,17 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Modalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'
 import { Entypo, Feather, MaterialIcons, Octicons, Ionicons } from '@expo/vector-icons';
-import { primaryColor, smallGreenWhiteColor } from '../../styles'
+import { primaryColor, smallGreenWhiteColor } from '../../../styles'
 import { FormControl, Input } from 'native-base'
 import Animated, { interpolate, useAnimatedStyle, useDerivedValue, useHandler, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
-import { ACTIVITY_CATEGORIES } from '../../constants/ActivityCategories'
-import { ActivityCategoryInterface } from '../../types/ActivityCategoryInterface'
-import { Activity } from '../../types/Activity'
+import { ActivityCategoryInterface } from '../../../types/ActivityCategoryInterface'
+import { Activity } from '../../../types/Activity'
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import moment from 'moment'
-import { useAppSelector } from '../../hooks/useAppSelector'
-import { queueListSelector } from '../../store/selectors/contributionSelectors'
+import { useAppSelector } from '../../../hooks/useAppSelector'
+import { queueListSelector } from '../../../store/selectors/contributionSelectors'
 import { useDispatch } from 'react-redux'
-import { appendActivityAction } from '../../store/actions/contributionActions'
+import { appendActivityAction } from '../../../store/actions/contributionActions'
 interface Props {
           formRef: React.RefObject<Modalize>,
           isOpen: boolean,

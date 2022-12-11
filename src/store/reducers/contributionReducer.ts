@@ -13,7 +13,10 @@ export enum CONTRIBUTION_TYPES {
           APPEND_ACTIVITY = "APPEND_ACTIVITY",
           SET_CONTRIBUTORS = "SET_CONTRIBUTORS",
           SET_RATE_TYPES = "SET_RATE_TYPES",
-          RESET_NEW_CONTRIBUTION = "RESET_NEW_CONTRIBUTION"
+          RESET_NEW_CONTRIBUTION = "RESET_NEW_CONTRIBUTION",
+          SET_PAST_DEBTS = "SET_PAST_DEBTS",
+          APPEND_PAST_DEBT = "APPEND_PAST_DEBT",
+          SET_LAST_CONTRIBUTION = "SET_LAST_CONTRIBUTION",
 }
 
 export interface ContributionAction {
@@ -28,7 +31,8 @@ const initial: ContributionContextInterface = {
           rateTypes: [],
           queueList: {
                     contributions: [],
-                    activities: []
+                    activities: [],
+                    pastDebts: []
           },
           startAnimation: false
 }
@@ -56,6 +60,12 @@ export default function contributionReducer(contributionState: ContributionConte
                               return {...contributionState, contributors: action.payload}
                     case CONTRIBUTION_TYPES.SET_RATE_TYPES:
                               return {...contributionState, rateTypes: action.payload}
+                    case CONTRIBUTION_TYPES.SET_PAST_DEBTS:
+                              return {...contributionState, queueList: {...contributionState.queueList, pastDebts: action.payload}}
+                    case CONTRIBUTION_TYPES.APPEND_PAST_DEBT:
+                              return {...contributionState, queueList: {...contributionState.queueList, pastDebts: [...contributionState.queueList.pastDebts, action.payload]}}
+                    case CONTRIBUTION_TYPES.SET_LAST_CONTRIBUTION:
+                              return {...contributionState, lastContribution: action.payload}
                     case CONTRIBUTION_TYPES.RESET_NEW_CONTRIBUTION:
                               return initial
                     default:

@@ -3,9 +3,9 @@ import ReactNative, { View, Text, StyleSheet, TouchableNativeFeedback, Animated,
 import { FontAwesome } from '@expo/vector-icons'; 
 import { ActivityStyles } from './styles';
 import { Activity as ActivityInterface } from '../../types/Activity';
-import { ActivitiesIcons } from '../ContributionTab/ActivityForm';
 import moment from 'moment';
 import { COLORS } from '../../styles/COLORS';
+import { ActivitiesIcons } from '../ContributionTab/ActivitiesScreen/ActivityForm';
 
 interface Props {
           activity: ActivityInterface,

@@ -1,15 +1,24 @@
 import React from "react";
+import { ContributionInterface } from "../interfaces/api/ContributionInterface";
 import { ContributorInterface } from "../interfaces/ContributorInterface";
 import { RateTypeInterface } from "../interfaces/RateTypeInterface";
 import { UserDebtInterface } from "../interfaces/UserDebtInterface";
 import { Activity } from "./Activity";
 import type { QueuedUser } from "./QueuedUser";
 
+
+export interface PastDebtInterface {
+          _id: string,
+          amount: number,
+          date: string,
+          comment: string
+}
 export interface QueueRecord {
           date?: string,
           contributions: QueuedUser[],
           activities?: Activity[],
-          debts?: UserDebtInterface[]
+          debts?: UserDebtInterface[],
+          pastDebts: PastDebtInterface[]
 }
 
 export interface ContributionContextInterface {
@@ -25,5 +34,6 @@ export interface ContributionContextInterface {
           // setQueueList: React.Dispatch<React.SetStateAction<QueueRecord>>,
           // onUserLongPress: (user: User) => void,
           // setStartAnimation: React.Dispatch<React.SetStateAction<boolean>>,
-          startAnimation: boolean
+          startAnimation: boolean,
+          lastContribution?: ContributionInterface
 }

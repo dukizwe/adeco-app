@@ -4,4 +4,5 @@ export const COLORS = {
           plusAmount: 'green',
           minusAmount: '#D2001A',
           skeleton: '#d9ddde',
+          smallGreenWhiteColor: '#D1E4F1'
 }

@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { Image, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { useSelector } from "react-redux";
-import Contributor from "../../components/ContributionTab/Contributor";
-import { contributorsSelector, queueActivitiesSelector, queueListSelector, rateTypesSelector } from "../../store/selectors/contributionSelectors";
+import Contributor from "../../components/ContributionTab/NewContributionScreen/Contributor";
+import { contributorsSelector, lastContributionSelector, queueActivitiesSelector, queueListSelector, rateTypesSelector } from "../../store/selectors/contributionSelectors";
 import { COLORS } from "../../styles/COLORS";
 import { AntDesign } from '@expo/vector-icons';
 import Activity from "../../components/Activities/Activity";
@@ -16,6 +16,7 @@ export default function ConfirmContributionScreen() {
           const contributors = useSelector(contributorsSelector)
           const rateTypes = useSelector(rateTypesSelector)
           const activities = useSelector(queueActivitiesSelector)
+          const lastContribution = useAppSelector(lastContributionSelector)
 
           const queueList = useAppSelector(queueListSelector)
 
@@ -66,6 +67,12 @@ export default function ConfirmContributionScreen() {
                                         debts.length += 1
                               })
                     }
+                    if(queueList.pastDebts) {
+                              queueList.pastDebts.forEach(debt => {
+                                        debts.total += debt.amount
+                                        debts.length += 1
+                              })
+                    }
                     return {
                               action,
                               late,
@@ -110,6 +117,10 @@ export default function ConfirmContributionScreen() {
                     const totalActivities = getActivitiesTotal().crediter.total + getTotals().debts.total
                     return totalActivities
           }, [getActivitiesTotal])
+
+          const mainTotal: number = lastContribution ?
+                    lastContribution?.mainTotal + (getTotals().action.total + getTotals().debt.total + getActivitiesTotal().debiter.total - getActivitiesTotal().crediter.total)
+                    : (getTotals().action.total + getTotals().debt.total + getActivitiesTotal().debiter.total - getActivitiesTotal().crediter.total)
           return (
                     <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
                               <View style={styles.container}>
@@ -119,11 +130,13 @@ export default function ConfirmContributionScreen() {
                                                                       NOUVEAU MOIS
                                                             </Text>
                                                             <View style={styles.monthBadge}>
-                                                                      <Text style={styles.monthCount}>4</Text>
+                                                                      <Text style={styles.monthCount}>
+                                                                                { lastContribution ? lastContribution.month + 1 : 1}
+                                                                      </Text>
                                                             </View>
                                                   </View>
                                                   <Text style={styles.overviewAmount}>
-                                                            BIF 1 000 2000
+                                                            { mainTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } BIF
                                                   </Text>
                                                   <View style={styles.amountBenefits}>
                                                             <Text style={styles.benefit}>
@@ -186,7 +199,7 @@ export default function ConfirmContributionScreen() {
                                                                                           Retard
                                                                                 </Text>
                                                                                 <Text style={styles.cardSubTitle}>
-                                                                                          {getTotals().late.length > 0 ? `${getTotals().late.length} retard{getTotals().late.length > 1 && 's'}` : 'Pas de retard'}
+                                                                                          {getTotals().late.length > 0 ? `${getTotals().late.length} retard${getTotals().late.length > 1 ? 's': ''}` : 'Pas de retard'}
                                                                                 </Text>
                                                                       </View>
                                                             </View>
@@ -259,7 +272,7 @@ export default function ConfirmContributionScreen() {
                                                                                           Dettes rendus
                                                                                 </Text>
                                                                                 <Text style={styles.cardSubTitle}>
-                                                                                          {getTotals().debts.length > 0 ? `${getTotals().debts.length} dette${getTotals().late.length > 1 ? 's' : ''}` : 'Pas de demande'}
+                                                                                          {getTotals().debts.length > 0 ? `${getTotals().debts.length} dette${getTotals().debts.length > 1 ? 's' : ''}` : 'Pas de demande'}
                                                                                 </Text>
                                                                       </View>
                                                             </View>

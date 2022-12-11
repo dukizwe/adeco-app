@@ -1,22 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, FlatList, Image, Modal, StatusBar, StyleSheet, Text, TouchableHighlight, TouchableNativeFeedback, useWindowDimensions, View } from "react-native";
-import Svg, { Circle, Path } from "react-native-svg";
 import { Ionicons } from '@expo/vector-icons';
 import { smallGreenWhiteColor } from "../../styles";
-import ActivityForm from "../../components/ContributionTab/ActivityForm";
-import { gestureHandlerRootHOC, GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
-import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, WithSpringConfig, runOnJS } from "react-native-reanimated";
 import { Portal } from "@gorhom/portal";
 import { Modalize } from 'react-native-modalize';
 import { useSelector } from "react-redux";
 import { queueActivitiesSelector } from "../../store/selectors/contributionSelectors";
 import Activity from "../../components/Activities/Activity";
-import ActivitiesScreenHeader from "../../components/ContributionTab/ActivitiesScreenHeader";
+import ActivitiesScreenHeader from "../../components/ContributionTab/ActivitiesScreen/ActivitiesScreenHeader";
 import { Activity as ActivityInterface } from "../../types/Activity";
 import { ActivityCategoryInterface } from "../../types/ActivityCategoryInterface";
 import fetchApi from "../../utils/fetchApi";
 import { setActivitiesAction } from "../../store/actions/contributionActions";
 import { useDispatch } from "react-redux";
+import ActivityForm from "../../components/ContributionTab/ActivitiesScreen/ActivityForm";
 
 export default function AcitivitiesScreen() {
           const { width, height } = useWindowDimensions()

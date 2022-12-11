@@ -1,8 +1,24 @@
 import React from "react";
 import { StyleSheet, TouchableNativeFeedback, View } from "react-native";
 import { Feather, MaterialIcons } from '@expo/vector-icons'
+import { useDispatch } from "react-redux";
+import { unsetUserAction } from "../../store/actions/userActions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileHeader() {
+          const dispatch = useDispatch()
+
+          const removeTokenAndCaches = async () => {
+                    const locale = await AsyncStorage.getItem('locale')
+                    await AsyncStorage.clear()
+                    if(locale) {
+                              await AsyncStorage.setItem('locale', locale)
+                    }
+          }
+          const onLogout  = () => {
+                    removeTokenAndCaches()
+                    dispatch(unsetUserAction())
+          }
           return (
                     <View style={styles.header}>
                               <TouchableNativeFeedback
@@ -26,6 +42,7 @@ export default function ProfileHeader() {
                                         <TouchableNativeFeedback
                                                   accessibilityRole="button"
                                                   background={TouchableNativeFeedback.Ripple('#c9c5c5', true)}
+                                                  onPress={onLogout}
                                         >
                                                   <View style={styles.headerBtn}>
                                                             <MaterialIcons name="logout" size={24} color="#777" />

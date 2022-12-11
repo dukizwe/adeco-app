@@ -1,4 +1,5 @@
 import { RootState } from "..";
+import { ContributionInterface } from "../../interfaces/api/ContributionInterface";
 import { ContributorInterface } from "../../interfaces/ContributorInterface";
 import { RateTypeInterface } from "../../interfaces/RateTypeInterface";
 import { Activity } from "../../types/Activity";
@@ -13,3 +14,4 @@ export const selectedBatchSelector: ({ contribution }: RootState) => Contributor
 export const queueListSelector: ({ contribution }: RootState) => QueueRecord  = ({ contribution }: RootState) => contribution.queueList
 export const startAnimationSelector: ({ contribution }: RootState) => boolean = ({ contribution }: RootState) => contribution.startAnimation
 export const queueActivitiesSelector: ({ contribution }: RootState) => Activity[] = ({ contribution }: RootState) => contribution.queueList.activities
+export const lastContributionSelector: ({ contribution }: RootState) => ContributionInterface | undefined = ({ contribution }: RootState) => contribution.lastContribution

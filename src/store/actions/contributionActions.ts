@@ -1,7 +1,8 @@
 import { ContributorInterface } from "../../interfaces/ContributorInterface"
 import { RateTypeInterface } from "../../interfaces/RateTypeInterface"
 import { Activity } from "../../types/Activity"
-import { QueueRecord } from "../../types/ContributionContextInterface"
+import { PastDebtInterface, QueueRecord } from "../../types/ContributionContextInterface"
+import { ContributionInterface } from "../../interfaces/api/ContributionInterface"
 import { QueuedUser } from "../../types/QueuedUser"
 import { ContributionAction, CONTRIBUTION_TYPES } from "../reducers/contributionReducer"
 
@@ -65,6 +66,20 @@ export const appendActivityAction = (activity: Activity) => {
           }
 }
 
+export const setPastDebtsAction = (pastDebts: PastDebtInterface[]) => {
+          return {
+                    type: CONTRIBUTION_TYPES.SET_PAST_DEBTS,
+                    payload: pastDebts
+          }
+}
+
+export const appendPastDebtAction = (pastDebt: PastDebtInterface) => {
+          return {
+                    type: CONTRIBUTION_TYPES.APPEND_PAST_DEBT,
+                    payload: pastDebt
+          }
+}
+
 export const setContributorsAction = (contributors: ContributorInterface[]) => {
           return {
                     type: CONTRIBUTION_TYPES.SET_CONTRIBUTORS,
@@ -75,6 +90,13 @@ export const setRateTypesAction = (rateTypes: RateTypeInterface[]) => {
           return {
                     type: CONTRIBUTION_TYPES.SET_RATE_TYPES,
                     payload: rateTypes
+          }
+}
+
+export const setLastContribution = (contribution: ContributionInterface) => {
+          return {
+                    type: CONTRIBUTION_TYPES.SET_LAST_CONTRIBUTION,
+                    payload: contribution
           }
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { COLORS } from '../../styles/COLORS'
 
 export default function NavigationIndicator({ contributionsLength, activendex }: { contributionsLength: number, activendex: number }) {
@@ -7,6 +7,7 @@ export default function NavigationIndicator({ contributionsLength, activendex }:
                     <View style={styles.navigation}>
                               <View style={styles.dots}>
                                         {new Array(contributionsLength).fill(0).map((dot, index) => {
+                                                  // return <Text>{ index }</Text>
                                                   return (
                                                             <View style={[styles.dot, index == activendex && { backgroundColor: COLORS.primary}]} key={index} />
                                                   )

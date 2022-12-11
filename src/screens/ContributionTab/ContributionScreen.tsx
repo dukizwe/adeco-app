@@ -8,6 +8,8 @@ import fetchApi from "../../utils/fetchApi";
 import { ContributionInterface } from "../../interfaces/api/ContributionInterface";
 import { COLORS } from "../../styles/COLORS";
 import ContributorsSkeletons from "../../components/skeleton/Skeleton";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { setLastContribution } from "../../store/actions/contributionActions";
 
 const { width: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -19,7 +21,7 @@ export default function ContributionScreen() {
           const navigation = useNavigation()
           const [contributions, setContributions] = useState<ContributionInterface[]>([])
           const [loading, setLoading] = useState(true)
-
+          const dispatch = useAppDispatch()
 
           useFocusEffect(useCallback(() => {
                     (async () => {
@@ -34,7 +36,15 @@ export default function ContributionScreen() {
                     })()
           }, []))
 
-          const lastContribution = contributions.length > 0 ? contributions[0] : null
+          useEffect(() => {
+                    if (contributions) {
+                              const lastContribution = contributions.length > 0 ? contributions[0] : null
+                              if(lastContribution) {
+                                        dispatch(setLastContribution(lastContribution))
+                              }
+                    }
+          }, [contributions])
+
           return (
                     <View style={styles.container}>
                               <View style={styles.header}>

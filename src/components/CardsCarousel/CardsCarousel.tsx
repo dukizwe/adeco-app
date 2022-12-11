@@ -60,10 +60,11 @@ interface Props {
           contributions: ContributionInterface[],
           activendex: number,
           setActiveIndex: React.Dispatch<React.SetStateAction<number>>,
-          selectedContribution: ContributionInterface | null
+          selectedContribution: ContributionInterface | null,
+          defaultActiveIndex: number
 }
 
-export default function CardsCarousel({ contributions, activendex, setActiveIndex, selectedContribution }: Props) {
+export default function CardsCarousel({ contributions, activendex, setActiveIndex, selectedContribution, defaultActiveIndex }: Props) {
           const scrollViewRef = useRef<FlatList>(null);
           const { width } = useWindowDimensions()
 
@@ -75,11 +76,13 @@ export default function CardsCarousel({ contributions, activendex, setActiveInde
                                         horizontal={true}
                                         pagingEnabled={true} /* scrollEventThrottle={width - 60} */
                                         ref={scrollViewRef}
-                                        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: false })}
+                                        onContentSizeChange={() => {
+                                                  scrollViewRef.current?.scrollToEnd({ animated: false })
+                                        }}
                                         showsHorizontalScrollIndicator={false}
                                         // onScrollBeginDrag={() => setLoading(true)}
                                         onScroll={(e) => {
-                                                  const index = e.nativeEvent.contentOffset.x / (width - 40)
+                                                  const index = e.nativeEvent.contentOffset.x / (width - 20)
                                                   setActiveIndex(parseInt(index.toString()))
                                         }}
                                         renderItem={({item: contribution, index}) => {

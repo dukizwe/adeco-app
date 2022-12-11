@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Animated, BackHandler, Easing, Text, TouchableNativeFeedback, StyleSheet, View, Image } from 'react-native'
 import { Feather, FontAwesome } from '@expo/vector-icons'; 
-import { useAppSelector } from '../../hooks/useAppSelector';
-import { queueListSelector, selectedBatchSelector, usersSelector } from '../../store/selectors/contributionSelectors';
-import { ActionNames } from '../../types/ActionNames';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { setInSelectAction, setQueueListAction, setSelectedBatchAction, setStartAnimationAction } from '../../store/actions/contributionActions';
-import { ContributorInterface } from '../../interfaces/ContributorInterface';
-import { QueuedUser } from '../../types/QueuedUser';
+import { useAppSelector } from '../../../hooks/useAppSelector';
+import { queueListSelector, selectedBatchSelector, usersSelector } from '../../../store/selectors/contributionSelectors';
+import { ActionNames } from '../../../types/ActionNames';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { setInSelectAction, setQueueListAction, setSelectedBatchAction, setStartAnimationAction } from '../../../store/actions/contributionActions';
+import { ContributorInterface } from '../../../interfaces/ContributorInterface';
+import { QueuedUser } from '../../../types/QueuedUser';
 
 interface Props {
           contributors: ContributorInterface[]
@@ -150,7 +150,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                   onPress={() => payBatch('action')}>
                                                             <View style={styles.quickActionButtonWrapper}>
                                                                       <View style={{...styles.quickActionButton}}>
-                                                                                <Image source={require('../../../assets/icons/contribution.png')} style={styles.actionImage} />
+                                                                                <Image source={require('../../../../assets/icons/contribution.png')} style={styles.actionImage} />
                                                                                 <Text style={styles.actionButtonText}>action</Text>
                                                                       </View>
                                                             </View>
@@ -162,7 +162,7 @@ export default function ContributionQuickActions({ contributors }: Props) {
                                                   onPress={() => payBatch('debt')}>
                                                             <View style={styles.quickActionButtonWrapper}>
                                                                       <View style={{...styles.quickActionButton}}>
-                                                                                <Image source={require('../../../assets/icons/debt.png')} style={styles.actionImage} />
+                                                                                <Image source={require('../../../../assets/icons/debt.png')} style={styles.actionImage} />
                                                                                 <Text style={styles.actionButtonText}>dette</Text>
                                                                       </View>
                                                             </View>

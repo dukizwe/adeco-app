@@ -16,7 +16,6 @@ import { queueListSelector } from "../../store/selectors/contributionSelectors";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { setQueueListAction } from "../../store/actions/contributionActions";
 
-
 interface Props {
           userDebt: UserDebtInterface,
           modalizeRef: React.RefObject<Modalize>,

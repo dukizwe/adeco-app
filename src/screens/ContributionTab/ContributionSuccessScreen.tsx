@@ -2,9 +2,9 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useAppSelector } from "../../hooks/useAppSelector";
-import { queueActivitiesSelector, queueListSelector } from "../../store/selectors/contributionSelectors";
+import { lastContributionSelector, queueActivitiesSelector, queueListSelector } from "../../store/selectors/contributionSelectors";
 import { COLORS } from "../../styles/COLORS";
-import { AntDesign } from '@expo/vector-icons'; 
+import { AntDesign } from '@expo/vector-icons';
 import { primaryColor } from "../../styles";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { resetNewContributionAcion } from "../../store/actions/contributionActions";
@@ -14,6 +14,7 @@ export default function ContributionSuccessScreen() {
           const activities = useAppSelector(queueActivitiesSelector)
           const navigation = useNavigation()
           const dispatch = useAppDispatch()
+          const lastContribution = useAppSelector(lastContributionSelector)
 
           const getTotals = useCallback(() => {
                     var action = {
@@ -48,7 +49,7 @@ export default function ContributionSuccessScreen() {
                                         })
                               }
                     })
-                    if(queueList.debts) {
+                    if (queueList.debts) {
                               queueList.debts.forEach(debt => {
                                         debts.total += debt.amount
                                         debts.length += 1
@@ -106,6 +107,10 @@ export default function ContributionSuccessScreen() {
                     })
                     return unsubscribe
           }, [navigation])
+
+          const mainTotal: number = lastContribution ?
+                    lastContribution?.mainTotal + (getTotals().action.total + getTotals().debt.total + getActivitiesTotal().debiter.total - getActivitiesTotal().crediter.total)
+                    : (getTotals().action.total + getTotals().debt.total + getActivitiesTotal().debiter.total - getActivitiesTotal().crediter.total)
           return (
                     <View style={styles.container}>
                               <View style={styles.successDescription}>
@@ -120,11 +125,13 @@ export default function ContributionSuccessScreen() {
                                                             NOUVEAU MOIS
                                                   </Text>
                                                   <View style={styles.monthBadge}>
-                                                            <Text style={styles.monthCount}>4</Text>
+                                                            <Text style={styles.monthCount}>
+                                                                      {lastContribution ? lastContribution.month + 1 : 1}
+                                                            </Text>
                                                   </View>
                                         </View>
                                         <Text style={styles.overviewAmount}>
-                                                  BIF 1 000 2000
+                                                  { mainTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") } BIF
                                         </Text>
                                         <View style={styles.amountBenefits}>
                                                   <Text style={styles.benefit}>

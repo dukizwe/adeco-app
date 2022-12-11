@@ -2,13 +2,13 @@ import { FormControl, Input, WarningOutlineIcon } from 'native-base'
 import React, { FC, memo, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BackHandler, InputAccessoryView, ScrollView, StyleSheet, Text, TextInput, TextInputComponent, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native'
 import { Portal } from 'react-native-portalize'
-import { primaryColor } from '../../styles'
+import { primaryColor } from '../../../styles'
 import { Feather } from '@expo/vector-icons';
-import { useForm } from '../../hooks/useForm'
+import { useForm } from '../../../hooks/useForm'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, FadeIn, BaseAnimationBuilder, FadeInDown, SlideInDown, SlideInUp, SlideOutUp, SlideInRight, SlideOutDown } from 'react-native-reanimated'
-import { DataChanger, DebtFormInterface } from '../../types/DebtFormInterface'
-import { useAppSelector } from '../../hooks/useAppSelector'
-import { queueListSelector } from '../../store/selectors/contributionSelectors'
+import { DataChanger, DebtFormInterface } from '../../../types/DebtFormInterface'
+import { useAppSelector } from '../../../hooks/useAppSelector'
+import { queueListSelector } from '../../../store/selectors/contributionSelectors'
 
 interface UserDebtInitial {
           [key: number]: DebtFormInterface

@@ -109,7 +109,7 @@ export default function UserDebt({ userDebt, onUserDebtUpdate, isContribution = 
                                                                       </View>
                                                                       <View style={styles.userBottom}>
                                                                                 <Text style={styles.debtDate}>
-                                                                                          {moment(userDebt.createdAt).format('DD MMM YYYY')}
+                                                                                          {moment(userDebt.issueDate).format('DD MMM YYYY')}
                                                                                 </Text>
                                                                                 <View style={styles.status}>
                                                                                           <StatusBubble />

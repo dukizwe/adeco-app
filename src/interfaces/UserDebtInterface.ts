@@ -22,6 +22,7 @@ export interface UserDebtInterface {
           monthlyRestrain: number,
           hasPayed: boolean,
           description?: string,
+          issueDate: string,
           statusId: {
                     _id: string,
                     title: string,

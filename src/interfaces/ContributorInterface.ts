@@ -4,6 +4,8 @@ export interface ContributorInterface {
           _id: string,
           firstName: string,
           lastName: string,
+          email: string,
+          image?: string | null,
           profile: {
                     _id: string,
                     name: string,

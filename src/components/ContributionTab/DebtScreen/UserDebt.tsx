@@ -7,7 +7,7 @@ import { useAppSelector } from '../../../hooks/useAppSelector'
 import { UserDebtInterface } from '../../../interfaces/UserDebtInterface'
 import { queueListSelector } from '../../../store/selectors/contributionSelectors'
 import { primaryColor } from '../../../styles'
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../../styles/COLORS'
 import UserDebtModalize from '../../DebtTab/UserDebtModalize'
 
@@ -32,7 +32,7 @@ export default function UserDebt({ userDebt, onUserDebtUpdate, isContribution = 
            */
           const isDebited = useCallback(() => {
                     const debts = queueList.debts
-                    if(!debts) {
+                    if (!debts) {
                               return false
                     }
                     return debts.find(u => u._id == userDebt._id) ? true : false
@@ -64,9 +64,9 @@ export default function UserDebt({ userDebt, onUserDebtUpdate, isContribution = 
           }, [isOpen])
 
           const getColor = () => {
-                    if(userDebt.statusId.code == DebtStatusCodes.CANCELLED) {
+                    if (userDebt.statusId.code == DebtStatusCodes.CANCELLED) {
                               return COLORS.minusAmount
-                    } if(userDebt.statusId.code != DebtStatusCodes.PEDDING && userDebt.statusId.code != DebtStatusCodes.CANCELLED) {
+                    } if (userDebt.statusId.code != DebtStatusCodes.PEDDING && userDebt.statusId.code != DebtStatusCodes.CANCELLED) {
                               return COLORS.primary
                     }
                     return '#777'
@@ -92,9 +92,10 @@ export default function UserDebt({ userDebt, onUserDebtUpdate, isContribution = 
                                         >
                                                   <View style={{ ...styles.user }}>
                                                             <View style={styles.userImage}>
-                                                                      <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../../assets/girl.jpg')} />
-                                                                      {(isContribution && isDebited()) ? <View  style={styles.debitedIcon}>
-                                                                                <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} style={{ marginLeft: 2}} />
+                                                                      {userDebt.assignedTo.image ? <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={{ uri: userDebt.assignedTo.image }} /> :
+                                                                                <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../../assets/images/man.jpg')} />}
+                                                                      {(isContribution && isDebited()) ? <View style={styles.debitedIcon}>
+                                                                                <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} style={{ marginLeft: 2 }} />
                                                                       </View> : null}
                                                             </View>
                                                             <View style={styles.userInfo}>

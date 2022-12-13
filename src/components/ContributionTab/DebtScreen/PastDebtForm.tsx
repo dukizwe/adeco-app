@@ -104,7 +104,8 @@ export default memo(function PastDebtForm({ pastDebtUser, onClose }: Props): JSX
                                                                                 <View style={styles.header}>
                                                                                           <View style={styles.userInfo}>
                                                                                                     <View style={styles.userImage}>
-                                                                                                              <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../../assets/girl.jpg')} />
+                                                                                                              {pastDebtUser.image ? <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={{ uri: pastDebtUser.image }} /> :
+                                                                                                              <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../../assets/images/man.jpg')} />}
                                                                                                     </View>
                                                                                                     <Text style={styles.title}>
                                                                                                               {pastDebtUser.firstName} {pastDebtUser.lastName}

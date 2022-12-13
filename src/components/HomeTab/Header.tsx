@@ -13,7 +13,8 @@ export default function Header() {
                               <TouchableWithoutFeedback>
                                         <View style={styles.headerRight}>
                                                   <View style={styles.userImageContainer}>
-                                                            <Image source={require('../../../assets/girl.jpg')} style={styles.userImage} />
+                                                            {user.image ? <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={{ uri: user.image }} /> :
+                                                            <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../assets/images/man.jpg')} />}
                                                   </View>
                                                   <View style={styles.nameRole}>
                                                             <Text style={styles.name}>{ user.firstName } { user.lastName }</Text>

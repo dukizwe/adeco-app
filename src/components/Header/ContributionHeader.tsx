@@ -102,7 +102,8 @@ export default memo(function ContributionHeader() {
                                                             contributions,
                                                             activities,
                                                             debts: queueList.debts?.map(d => d._id),
-                                                            pastDebts: queueList.pastDebts
+                                                            pastDebts: queueList.pastDebts,
+                                                            contributionDate: queueList.date
                                                   }),
                                                   headers: { "Content-Type": "application/json" },
                                         })

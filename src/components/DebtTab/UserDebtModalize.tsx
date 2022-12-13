@@ -156,7 +156,8 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                                                       style={{ alignSelf: 'center', marginBottom: 15, marginTop: 20 }}
                                                             /> : <View style={styles.modalContainer}>
                                                                       <View style={styles.userImage}>
-                                                                                <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../assets/girl.jpg')} />
+                                                                                {userDebt.assignedTo.image ? <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={{ uri: userDebt.assignedTo.image }} /> :
+                                                                                          <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../assets/images/man.jpg')} />}
                                                                       </View>
                                                                       <Text style={styles.title}>
                                                                                 {userDebt.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF

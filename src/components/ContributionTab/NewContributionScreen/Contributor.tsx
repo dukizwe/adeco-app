@@ -131,7 +131,8 @@ export default function Contributor({ contributor, rateTypes, noBatch = false }:
                               >
                                         <View style={{...styles.user, ...inSelectStyles}}>
                                                   <View style={styles.userImage}>
-                                                            <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../../assets/girl.jpg')} />
+                                                            {contributor.image ? <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={{ uri: contributor.image }} /> :
+                                                            <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../../assets/images/man.jpg')} />}
                                                   </View>
                                                   <View style={styles.userInfo}>
                                                             <View style={styles.infoTop}>

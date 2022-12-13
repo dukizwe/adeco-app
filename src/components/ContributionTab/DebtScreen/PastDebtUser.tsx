@@ -28,7 +28,8 @@ export default function PastDebtUser({ contributor, onUserPress }: Props) {
                               >
                                         <View style={styles.user}>
                                                   <View style={styles.userImage}>
-                                                            <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../../assets/girl.jpg')} />
+                                                            {contributor.image ? <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={{ uri: contributor.image }} /> :
+                                                            <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../../assets/images/man.jpg')} />}
                                                   </View>
                                                   <View style={styles.userInfo}>
                                                             <Text style={styles.userNames}>
@@ -36,7 +37,7 @@ export default function PastDebtUser({ contributor, onUserPress }: Props) {
                                                             </Text>
                                                             <View style={styles.debtUserFooter}>
                                                                       <Text style={styles.contributorEmail}>
-                                                                                {contributor.profile.name}
+                                                                                {contributor.email}
                                                                       </Text>
                                                                       {contributorDebt(contributor._id) ? <Text style={styles.pastDebtAmount}>
                                                                                 { contributorDebt(contributor._id)?.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF

@@ -11,7 +11,9 @@ export interface UserDebtInterface {
           assignedTo: {
                     _id: string,
                     firstName: string,
-                    lastName: string
+                    lastName: string,
+                    image?: string | null,
+                    email: string
           },
           contributionId: null,
           amount: number,

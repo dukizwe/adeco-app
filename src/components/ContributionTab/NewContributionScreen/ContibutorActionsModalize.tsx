@@ -182,7 +182,8 @@ export default function ContibutorActionsModalize({ contributor, modalizeRef, is
                                                             style={{ alignSelf: 'center', marginBottom: 15, marginTop: 20 }}
                                                   /> : <View style={styles.modalContainer}>
                                                             <View style={styles.userImage}>
-                                                                      <Image style={{ width: '100%', height: '100%', borderRadius: 50 }} source={require('../../../../assets/girl.jpg')} />
+                                                                      {contributor.image ? <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={{ uri: contributor.image }} /> :
+                                                                      <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={require('../../../../assets/images/man.jpg')} />}
                                                             </View>
                                                             <Text style={styles.title}>
                                                                       {contributor.firstName} {contributor.lastName}

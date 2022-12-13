@@ -14,6 +14,7 @@ import { UserDebtInterface } from "../../interfaces/UserDebtInterface";
 import ErrorModal from "../../components/Modals/ErrorModal";
 import { ApiResponse } from "../../types/ApiResponse";
 import UserDebt from "../../components/ContributionTab/DebtScreen/UserDebt";
+import LottieView from 'lottie-react-native'
 
 export default function DebtTabScreen() {
           const navigation = useNavigation()
@@ -123,6 +124,16 @@ export default function DebtTabScreen() {
                                                   2
                                         </Text>
                               </View> */}
+                              {debts.length == 0 ? <View style={styles.emptyContainer}>
+                                        <LottieView
+                                                  style={{ width: "100%", }}
+                                                  source={require('../../../assets/lotties/empty.json')}
+                                                  autoPlay
+                                        />
+                                        <Text style={styles.emptyFeedback}>
+                                                  Aucune dette trouvé
+                                        </Text>
+                              </View> :
                               <FlatList
                                         // ListHeaderComponent={() => <DebtScreenHeader />}
                                         showsVerticalScrollIndicator={false}
@@ -142,7 +153,7 @@ export default function DebtTabScreen() {
                                                   onRefresh={onRefresh}
                                                   colors={[COLORS.primary]}
                                         />}
-                              />
+                              />}
                     </View>
                     </>
           )
@@ -202,5 +213,13 @@ const styles = StyleSheet.create({
           },
           debts: {
                     paddingHorizontal: 10
+          },
+          emptyContainer: {
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
+          },
+          emptyFeedback: {
+                    color: '#777'
           }
 })

@@ -10,6 +10,7 @@ import { COLORS } from "../../styles/COLORS";
 import ContributorsSkeletons from "../../components/skeleton/Skeleton";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { setLastContribution } from "../../store/actions/contributionActions";
+import LottieView from 'lottie-react-native'
 
 const { width: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -39,7 +40,7 @@ export default function ContributionScreen() {
           useEffect(() => {
                     if (contributions) {
                               const lastContribution = contributions.length > 0 ? contributions[0] : null
-                              if(lastContribution) {
+                              if (lastContribution) {
                                         dispatch(setLastContribution(lastContribution))
                               }
                     }
@@ -62,9 +63,19 @@ export default function ContributionScreen() {
                                                   </TouchableNativeFeedback>
                                         </View>
                               </View>
-                              {loading ? <ContributorsSkeletons /> : <>
-                                        <Contributions contributions={contributions} />
-                              </>}
+                              {loading ? <ContributorsSkeletons /> :
+                                        contributions.length == 0 ? <View style={styles.emptyContainer}>
+                                                  <LottieView
+                                                            style={{ width: "100%", }}
+                                                            source={require('../../../assets/lotties/empty.json')}
+                                                            autoPlay
+                                                  />
+                                                  <Text style={styles.emptyFeedback}>
+                                                            Aucune contribution
+                                                  </Text>
+                                        </View> :
+                                                  <Contributions contributions={contributions} />
+                              }
                     </View>
           )
 }
@@ -101,4 +112,12 @@ const styles = StyleSheet.create({
                     fontWeight: 'bold',
                     fontSize: 13
           },
+          emptyContainer: {
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
+          },
+          emptyFeedback: {
+                    color: '#777'
+          }
 })

@@ -15,6 +15,8 @@ import { useAppSelector } from "../../hooks/useAppSelector";
 import { queueListSelector } from "../../store/selectors/contributionSelectors";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { setQueueListAction } from "../../store/actions/contributionActions";
+import { userSelector } from "../../store/selectors/userSelector";
+import { UserProfileCodes } from "../../enum/userProfileCodes.enum";
 
 interface Props {
           userDebt: UserDebtInterface,
@@ -35,6 +37,8 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
           const [isAccepting, setIsaccepting] = useState(false)
           const queueList = useAppSelector(queueListSelector)
           const dispacth = useAppDispatch()
+
+          const user = useAppSelector(userSelector)
 
           /**
            * Handle REJECT or ACCEPT press
@@ -122,6 +126,11 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                     if (isContribution) {
                               return true
                     }
+
+                    const allowedCodes = [UserProfileCodes.ADMIN, UserProfileCodes.PRESIDENT]
+                    if(!user || !allowedCodes.includes(user?.profileId.code)) {
+                              return false
+                    }
                     if (userDebt.statusId.code != DebtStatusCodes.PEDDING) {
                               return false
                     }
@@ -185,7 +194,7 @@ export default function UserDebtModalize({ userDebt, modalizeRef, isOpen, setIsO
                                                                                                               Date de demande
                                                                                                     </Text>
                                                                                                     <Text style={styles.detailValue}>
-                                                                                                              {moment(userDebt.createdAt).format('DD MMM[.] YYYY')}
+                                                                                                              {moment(userDebt.issueDate).format('DD MMM[.] YYYY')}
                                                                                                     </Text>
                                                                                           </View>
                                                                                 </View>

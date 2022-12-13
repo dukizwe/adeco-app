@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
 import { StyleSheet, View, Text, TouchableOpacity, Image, TouchableNativeFeedback, TouchableWithoutFeedback } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import { Button, Menu, Modal, Input, Icon } from 'native-base';
 import { useNavigation } from '@react-navigation/core';
 import { useSelector } from 'react-redux';
 import { userSelector } from '../../store/selectors/userSelector';
+import { useAppSelector } from '../../hooks/useAppSelector';
 
 export default function Header() {
-          const user = useSelector(userSelector)
+          const user = useAppSelector(userSelector)
+          const navigation = useNavigation()
+
+          if(!user) return null
           return (
                     <View style={styles.header}>
-                              <TouchableWithoutFeedback>
+                              <TouchableWithoutFeedback onPress={() => navigation.navigate('ProfileScreen' as never)}>
                                         <View style={styles.headerRight}>
                                                   <View style={styles.userImageContainer}>
                                                             {user.image ? <Image style={{width: '100%', height: '100%', borderRadius: 50}} source={{ uri: user.image }} /> :

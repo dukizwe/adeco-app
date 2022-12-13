@@ -24,12 +24,15 @@ export default function PastDebts() {
                                                   Anciennes dettes
                                         </Text>
                               </View>
+                              {pastDebts.length == 0 ?<Text style={{ marginTop: 0, fontSize: 12, color: '#777', paddingHorizontal: 10 }}>
+                                        Aucune ancienne dette
+                              </Text>  :
                               <View>
                                         {pastDebts.map((debt, index) => {
                                                   const contributor = contributors.find(c => c._id == debt._id) as ContributorInterface
                                                   return <PastDebtUser contributor={contributor} onUserPress={onUserPress} key={contributor?._id} />
                                         })}
-                              </View>
+                              </View>}
                     </View>
           )
 }

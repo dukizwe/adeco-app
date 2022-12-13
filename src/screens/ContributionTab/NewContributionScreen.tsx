@@ -1,4 +1,3 @@
-import { Button } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { useContext } from 'react'
 import { FlatList, Text, View, BackHandler } from 'react-native'

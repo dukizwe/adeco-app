@@ -11,6 +11,9 @@ import ContributorsSkeletons from "../../components/skeleton/Skeleton";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { setLastContribution } from "../../store/actions/contributionActions";
 import LottieView from 'lottie-react-native'
+import { useAppSelector } from "../../hooks/useAppSelector";
+import { userSelector } from "../../store/selectors/userSelector";
+import { UserProfileCodes } from "../../enum/userProfileCodes.enum";
 
 const { width: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -23,6 +26,7 @@ export default function ContributionScreen() {
           const [contributions, setContributions] = useState<ContributionInterface[]>([])
           const [loading, setLoading] = useState(true)
           const dispatch = useAppDispatch()
+          const user = useAppSelector(userSelector)
 
           useFocusEffect(useCallback(() => {
                     (async () => {
@@ -52,7 +56,7 @@ export default function ContributionScreen() {
                                         <Text style={styles.title}>
                                                   Contribution
                                         </Text>
-                                        <View style={styles.contributionRightSide}>
+                                        {user && (user.profileId.code == UserProfileCodes.ADMIN || user.profileId.code == UserProfileCodes.CAISIER) ? <View style={styles.contributionRightSide}>
                                                   <TouchableNativeFeedback useForeground onPress={() => navigation.navigate('NewContributionScreen' as never)}>
                                                             <View style={{ overflow: "hidden", borderRadius: 10 }}>
                                                                       <View style={styles.headerIconTitle}>
@@ -61,7 +65,7 @@ export default function ContributionScreen() {
                                                                       </View>
                                                             </View>
                                                   </TouchableNativeFeedback>
-                                        </View>
+                                        </View> : null}
                               </View>
                               {loading ? <ContributorsSkeletons /> :
                                         contributions.length == 0 ? <View style={styles.emptyContainer}>

@@ -1,6 +1,5 @@
-import { View } from 'native-base'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, Image, Keyboard, StyleSheet, Text, TouchableNativeFeedback, BackHandler, ScrollView } from 'react-native'
+import { ActivityIndicator, Image, Keyboard, StyleSheet, Text, TouchableNativeFeedback, BackHandler, ScrollView, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Modalize } from 'react-native-modalize'
 import { Portal } from 'react-native-portalize'

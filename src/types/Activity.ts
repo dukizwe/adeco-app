@@ -5,5 +5,6 @@ export interface Activity {
           date: Date | string,
           amount: string,
           comment?: string,
-          id?: string
+          id?: string,
+          isNew?: boolean
 }

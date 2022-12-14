@@ -1,4 +1,3 @@
-import { FormControl, Input, WarningOutlineIcon } from 'native-base'
 import React, { FC, memo, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { BackHandler, InputAccessoryView, ScrollView, StyleSheet, Text, TextInput, TextInputComponent, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native'
 import { Portal } from 'react-native-portalize'
@@ -24,11 +23,14 @@ interface Props {
 }
 
 
+type Inputs = 'amount' | 'comment' | undefined
 export default memo(function DebtForm({ onClose, onSubmit, data, handleChange }: Props): JSX.Element {
           const monthInputRef = useRef<TextInput>(null)
           const commentInputRef = useRef<TextInput>(null)
           const sendBtnOpacity = useSharedValue<number>(1)
           const queueList = useAppSelector(queueListSelector)
+
+          const [isFocused, setIsFocused] = useState<Inputs>(undefined)
           
           useEffect(() => {
                     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -90,43 +92,32 @@ export default memo(function DebtForm({ onClose, onSubmit, data, handleChange }:
                                                             <Animated.View style={styles.formContent}>
                                                                       <ScrollView keyboardShouldPersistTaps="handled">
                                                                                 <View style={styles.inputs}>
-                                                                                          <FormControl mr={2} flex={1}>
-                                                                                                    <FormControl.Label style={{ marginBottom: 2 }}>Montant</FormControl.Label>
-                                                                                                    <Input
+                                                                                          <View style={[styles.formControl, { marginRight: 5}]}>
+                                                                                                    <Text style={styles.inputLabel}>Montant</Text>
+                                                                                                    <TextInput
                                                                                                               keyboardType='number-pad'
                                                                                                               placeholder="Entrez le montant"
-                                                                                                              borderRadius={8}
                                                                                                               autoFocus
                                                                                                               value={data.amount.toString()}
                                                                                                               onChangeText={n => {
                                                                                                                         handleChange('amount', n)
-                                                                                                              }}
-                                                                                                              _focus={{
-                                                                                                                        borderColor: primaryColor,
-                                                                                                                        backgroundColor: '#fff'
                                                                                                               }}
                                                                                                               returnKeyType="next"
                                                                                                               blurOnSubmit={false}
                                                                                                               onSubmitEditing={() => {
                                                                                                                         commentInputRef.current?.focus()
                                                                                                               }}
+                                                                                                              onFocus={() => setIsFocused('amount')}
+                                                                                                              style={[styles.input, isFocused == "amount" && { borderColor: primaryColor }]}
                                                                                                     />
-                                                                                                    {/* <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                                                                    Try different from previous passwords.
-                                                                                          </FormControl.ErrorMessage> */}
-                                                                                          </FormControl>
-                                                                                          <FormControl ml={2} flex={1}>
-                                                                                                    <FormControl.Label style={{ marginBottom: 2 }} >
+                                                                                          </View>
+                                                                                          <View style={[styles.formControl, { marginLeft: 5 }]}>
+                                                                                                    <Text style={styles.inputLabel}>
                                                                                                               Cumul mensuel
-                                                                                                    </FormControl.Label>
-                                                                                                    <Input
+                                                                                                    </Text>
+                                                                                                    <TextInput
                                                                                                               keyboardType='number-pad'
                                                                                                               placeholder="Entrez le mois"
-                                                                                                              borderRadius={8}
-                                                                                                              _focus={{
-                                                                                                                        borderColor: primaryColor,
-                                                                                                                        backgroundColor: '#fff'
-                                                                                                              }}
                                                                                                               ref={monthInputRef}
                                                                                                               value={`${getCumul().toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} BIF (3 mois)`}
                                                                                                               onChangeText={n => {
@@ -137,9 +128,10 @@ export default memo(function DebtForm({ onClose, onSubmit, data, handleChange }:
                                                                                                               onSubmitEditing={() => {
                                                                                                                         commentInputRef.current?.focus()
                                                                                                               }}
-                                                                                                              isDisabled
+                                                                                                              editable={false}
+                                                                                                              style={[styles.input ]}
                                                                                                     />
-                                                                                          </FormControl>
+                                                                                          </View>
                                                                                           {/* <FormControl ml={2} flex={1}>
                                                                                                     <FormControl.Label style={{ marginBottom: 2 }} >Mois</FormControl.Label>
                                                                                                     <Input
@@ -165,26 +157,21 @@ export default memo(function DebtForm({ onClose, onSubmit, data, handleChange }:
                                                                                           </FormControl> */}
                                                                                 </View>
                                                                                 <View style={styles.formFooter}>
-                                                                                          <FormControl flex={1}>
-                                                                                                    <FormControl.Label style={{ marginBottom: 2 }} >Commentaire</FormControl.Label>
-                                                                                                    <Input
+                                                                                          <View style={[styles.formControl, { marginRight: 10 }]}>
+                                                                                                    <Text style={styles.inputLabel}>Commentaire</Text>
+                                                                                                    <TextInput
                                                                                                               placeholder="Ecrire un commentaire"
-                                                                                                              borderRadius={8}
                                                                                                               multiline
-                                                                                                              mr={5}
-                                                                                                              _focus={{
-                                                                                                                        borderColor: primaryColor,
-                                                                                                                        backgroundColor: '#fff'
-                                                                                                              }}
                                                                                                               ref={commentInputRef}
                                                                                                               blurOnSubmit={false}
                                                                                                               value={data.comment}
                                                                                                               onChangeText={n => {
                                                                                                                         handleChange('comment', n)
                                                                                                               }}
-                                                                                                              maxHeight={100}
+                                                                                                              onFocus={() => setIsFocused('comment')}
+                                                                                                              style={[styles.input, isFocused == "comment" && { borderColor: primaryColor }, { maxHeight: 100, height: 'auto', minHeight:  45 }]}
                                                                                                     />
-                                                                                          </FormControl>
+                                                                                          </View>
                                                                                           <TouchableWithoutFeedback onPress={() => onSubmit(parseInt(data.amount, 10), parseInt(data.month), data.comment)} disabled={!isValid}>
                                                                                           <Animated.View style={[styles.sendBtn, opacityAnimatedstyles]}>
                                                                                                     <Feather name="save" size={24} color="#fff" />
@@ -218,13 +205,6 @@ const styles = StyleSheet.create({
                     flexDirection: 'row',
                     alignItems: 'center'
           },
-          input: {
-                    borderColor: '#777',
-                    borderWidth: 2,
-                    borderRadius: 5,
-                    flex: 1,
-                    padding: 5
-          },
           formFooter: {
                     marginTop: 5,
                     flexDirection: 'row',
@@ -238,5 +218,20 @@ const styles = StyleSheet.create({
                     justifyContent: 'center',
                     alignItems: 'center',
                     opacity: 0.9
+          },
+          input: {
+                    borderColor: '#F1F1F1',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    paddingHorizontal: 15,
+                    height: 45,
+                    fontSize: 12
+          },
+          formControl: {
+                    flex: 1
+          },
+          inputLabel: {
+                    color: '#777',
+                    marginBottom: 5
           }
 })

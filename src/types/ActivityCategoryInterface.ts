@@ -1,5 +1,5 @@
 export interface ActivityCategoryInterface {
-          _id: number,
+          _id: string,
           name: string,
           type: 'in' | 'out',
           iconType?: "Ionicons" | "MaterialIcons",

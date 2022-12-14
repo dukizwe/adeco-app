@@ -8,8 +8,6 @@ import { setUserAction } from "./store/actions/userActions";
 import { userSelector } from "./store/selectors/userSelector";
 import { Text } from 'react-native'
 import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
-import { Host } from "react-native-portalize";
-import { PortalProvider } from "@gorhom/portal";
 import LoginScreen from "./screens/welcome/LoginScreen";
 import Loading from "./components/app/Loading";
 import { isLoadingSelector } from "./store/selectors/appSelectors";

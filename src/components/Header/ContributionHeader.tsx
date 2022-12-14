@@ -91,6 +91,7 @@ export default memo(function ContributionHeader() {
                                                             amount: activity.amount,
                                                             description: activity.comment,
                                                             activityDate: activity.date,
+                                                            newCategory: activity.isNew ? activity.category : undefined
                                                   }
                                         })
                               }

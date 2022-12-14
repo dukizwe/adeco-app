@@ -17,11 +17,13 @@ interface Props {
           onClose: () => void,
 }
 
-
+type Inputs = 'amount' | 'comment' | undefined
 export default memo(function PastDebtForm({ pastDebtUser, onClose }: Props): JSX.Element {
           const monthInputRef = useRef<TextInput>(null)
           const commentInputRef = useRef<TextInput>(null)
           const sendBtnOpacity = useSharedValue<number>(1)
+
+          const [isFocused, setIsFocused] = useState<Inputs>(undefined)
 
           const queueList = useAppSelector(queueListSelector)
           const dispatch = useAppDispatch()
@@ -128,12 +130,13 @@ export default memo(function PastDebtForm({ pastDebtUser, onClose }: Props): JSX
                                                                                                               onChangeText={n => {
                                                                                                                         setAmount(n)
                                                                                                               }}
-                                                                                                              style={styles.textInput}
+                                                                                                              style={[styles.textInput, isFocused == "amount" && { borderColor: COLORS.primary }]}
                                                                                                               returnKeyType="next"
                                                                                                               blurOnSubmit={false}
                                                                                                               onSubmitEditing={() => {
                                                                                                                         commentInputRef.current?.focus()
                                                                                                               }}
+                                                                                                              onFocus={() => setIsFocused('amount')}
                                                                                                     />
                                                                                           </View>
                                                                                           <View style={[styles.formControl, { marginLeft: 5, opacity: 0.8 }]}>
@@ -166,13 +169,14 @@ export default memo(function PastDebtForm({ pastDebtUser, onClose }: Props): JSX
                                                                                                     <TextInput
                                                                                                               placeholder="Ecrire un commentaire"
                                                                                                               multiline
-                                                                                                              style={[styles.textInput, { marginRight: 5, maxHeight: 100 }]}
+                                                                                                              style={[styles.textInput, { marginRight: 5, maxHeight: 100, height: 'auto', minHeight: 50 }, isFocused == "comment" && { borderColor: COLORS.primary }]}
                                                                                                               ref={commentInputRef}
                                                                                                               blurOnSubmit={false}
                                                                                                               value={comment}
                                                                                                               onChangeText={n => {
                                                                                                                         setComment(n)
                                                                                                               }}
+                                                                                                              onFocus={() => setIsFocused('comment')}
                                                                                                     />
                                                                                           </View>
                                                                                           <TouchableWithoutFeedback onPress={onSubmit} disabled={!isValid}>
@@ -263,13 +267,15 @@ const styles = StyleSheet.create({
                     flex: 1
           },
           formLabel: {
-                    color: '#333',
-                    marginBottom: 3
+                    color: '#777',
+                    marginBottom: 5
           },
           textInput: {
-                    borderColor: '#aaaa',
-                    borderWidth: 0.5,
+                    borderColor: '#F1F1F1',
+                    borderWidth: 1,
                     borderRadius: 5,
-                    padding: 10
+                    paddingHorizontal: 15,
+                    fontSize: 12,
+                    height: 50
           }
 })

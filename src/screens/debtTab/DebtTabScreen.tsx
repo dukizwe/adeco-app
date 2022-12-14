@@ -42,6 +42,7 @@ export default function DebtTabScreen() {
                                         headers: { "Content-Type": "application/json" },
                               })
                               setDebts(t => [newDebt.data, ...t])
+                              setShowForm(false)
                     } catch (error: any) {
                               console.log(error)
                               const apiError: ApiResponse = error

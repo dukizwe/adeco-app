@@ -9,6 +9,7 @@ import ConfirmContributionScreen from '../screens/ContributionTab/ConfirmContrib
 import ContributionSuccessScreen from '../screens/ContributionTab/ContributionSuccessScreen';
 import DebtScreen from '../screens/ContributionTab/DebtScreen';
 import NewContributionScreen from '../screens/ContributionTab/NewContributionScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
 import BottomTabs from './BottomTabs';
 
 export default function RootNavigator() {
@@ -40,6 +41,11 @@ export default function RootNavigator() {
                                         header: () => <ContributionHeader />,
                                         headerMode: 'float'
                               }} />
+                              <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{
+                                        cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
+                                        headerShown: false
+                              }} />
+                              
                     </Stack.Navigator>
           );
 }

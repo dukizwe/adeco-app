@@ -4,19 +4,39 @@ import { Feather, MaterialIcons } from '@expo/vector-icons'
 import { useDispatch } from "react-redux";
 import { unsetUserAction } from "../../store/actions/userActions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAppSelector } from "../../hooks/useAppSelector";
+import { pushTokenSelector } from "../../store/selectors/appSelectors";
+import fetchApi from "../../utils/fetchApi";
+import { userSelector } from "../../store/selectors/userSelector";
 
 export default function ProfileHeader() {
           const dispatch = useDispatch()
+          const pushToken = useAppSelector(pushTokenSelector)
+          const user = useAppSelector(userSelector)
 
-          const removeTokenAndCaches = async () => {
+          const removeTokenAndCaches = async (userId: string) => {
                     const locale = await AsyncStorage.getItem('locale')
                     await AsyncStorage.clear()
                     if(locale) {
                               await AsyncStorage.setItem('locale', locale)
                     }
+                    try {
+                              await fetchApi('/auth/logout', {
+                                        method: 'POST',
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                                  pushNotificationToken: pushToken,
+                                                  userId
+                                        }),
+                              })
+                    } catch (error) {
+                              console.log(error)
+                    }
           }
+
           const onLogout  = () => {
-                    removeTokenAndCaches()
+                    if(!user) throw new Error('no user found')
+                    removeTokenAndCaches(user?._id)
                     dispatch(unsetUserAction())
           }
           return (

@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUserAction } from '../../store/actions/userActions';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import Loading from '../../components/app/Loading';
+import { UserInterface } from '../../interfaces/api/UserInterface';
 
 
 export default function ProfileScreen() {
@@ -23,6 +24,7 @@ export default function ProfileScreen() {
 
           const onImageChange = async () => {
                     try {
+                              if(!user) throw new Error('No user found')
                               setLoading(true)
                               const image = await ImagePicker.launchImageLibraryAsync({
                                         mediaTypes: ImagePicker.MediaTypeOptions.Images
@@ -42,7 +44,7 @@ export default function ProfileScreen() {
                                                   method: "PUT",
                                                   body: form
                                         })
-                                        const newUser = {
+                                        const newUser: UserInterface = {
                                                   ...user,
                                                   image: res.data.url
                                         }
@@ -55,6 +57,9 @@ export default function ProfileScreen() {
                     } finally {
                               setLoading(false)
                     }
+          }
+          if(!user) {
+                    return null
           }
           return (
                     <>

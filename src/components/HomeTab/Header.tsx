@@ -28,8 +28,9 @@ export default function Header() {
                               <TouchableNativeFeedback
                                         accessibilityRole="button"
                                         background={TouchableNativeFeedback.Ripple('#c9c5c5', true)}
+                                        onPress={() => navigation.navigate('NotificationsScreen' as never)}
                               >
-                                        <View style={{ width: 30, height: 30, alignItems: 'center', alignContent: 'center', justifyContent: 'center' }}>
+                                        <View style={{ padding: 10 }}>
                                                   <Feather name="bell" size={24} color="#777" />
                                                   <View style={styles.badge} />
                                         </View>
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
                     borderRadius: 100,
                     backgroundColor: 'red',
                     position: 'absolute',
-                    top: -3,
-                    left: 20
+                    top: 5,
+                    right: 10
           }
 })

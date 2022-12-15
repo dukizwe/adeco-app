@@ -59,6 +59,7 @@ export default function AppContainer() {
                               <NavigationContainer theme={{ colors: { background: "#fff" } } as any}
                                         linking={{
                                                   prefixes: [prefix],
+                                                  config: {},
                                                   async getInitialURL() {
                                                             // First, you may want to do the default deep link handling
                                                             // Check if app was opened from a deep link

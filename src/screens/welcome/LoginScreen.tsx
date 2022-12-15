@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
 import { setUserAction } from '../../store/actions/userActions';
 import { useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { pushTokenSelector } from '../../store/selectors/appSelectors';
 
 type Inputs = "email" | "password" | undefined
 
@@ -28,6 +30,8 @@ export default function LoginScreen() {
 
           const dispatch = useDispatch()
           const navigation = useNavigation()
+
+          const pushToken = useAppSelector(pushTokenSelector)
 
           const [data, handleChange] = useForm({
                     email: "",
@@ -58,7 +62,8 @@ export default function LoginScreen() {
                                         method: "POST",
                                         body: JSON.stringify({
                                                   email: data.email,
-                                                  password: data.password
+                                                  password: data.password,
+                                                  pushNotificationToken: pushToken ? pushToken : undefined
                                         }),
                                         headers: { "Content-Type": "application/json" }
                               })

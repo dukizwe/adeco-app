@@ -1,3 +1,4 @@
 export interface AppReducerIntreface {
-          isLoading: boolean
+          isLoading: boolean,
+          pushToken: string | null
 }

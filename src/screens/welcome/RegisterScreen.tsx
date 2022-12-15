@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
 import { setUserAction } from '../../store/actions/userActions';
 import { useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { pushTokenSelector } from '../../store/selectors/appSelectors';
 
 type Inputs = 'lastname' | 'firstname' | "email" | "password" | "passwordConfirm" | undefined
 
@@ -33,6 +35,7 @@ export default function RegisterScreen() {
 
           const dispatch = useDispatch()
           const navigation = useNavigation()
+          const pushToken = useAppSelector(pushTokenSelector)
 
           const [data, handleChange] = useForm({
                     lastname: '',
@@ -90,7 +93,8 @@ export default function RegisterScreen() {
                                                   firstName: data.firstname,
                                                   lastName: data.lastname,
                                                   email: data.email,
-                                                  password: data.password
+                                                  password: data.password,
+                                                  pushNotificationToken: pushToken ? pushToken : undefined
                                         }),
                                         headers: { "Content-Type": "application/json" }
                               })

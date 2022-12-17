@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "630466467051",
+    "project_id": "adeco-371820",
+    "storage_bucket": "adeco-371820.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630466467051:android:aac270414e936e39311aae",
+        "android_client_info": {
+          "package_name": "com.dukizwe.adecoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630466467051-k300n8cf77phqcrnh0ck3qrl7eqtnthc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdE_6ZrDbMh_P7J7TcImVXUL_epFSF-sg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630466467051-k300n8cf77phqcrnh0ck3qrl7eqtnthc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

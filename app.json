@@ -1,5 +1,6 @@
 {
           "expo": {
+                    "jsEngine": "hermes",
                     "name": "Adeco",
                     "slug": "adeco-app",
                     "version": "1.0.0",
@@ -20,6 +21,7 @@
                               "bundleIdentifier": "com.dukizwe.adecoapp"
                     },
                     "android": {
+                              "googleServicesFile": "./google-services.json",
                               "adaptiveIcon": {
                                         "foregroundImage": "./assets/adaptive-icon.png",
                                         "backgroundColor": "#FFFFFF"

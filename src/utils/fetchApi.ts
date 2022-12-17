@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiResponse } from "../types/ApiResponse";
 import cache from "./cache";
 const API_URL = false
-          ? "http://app.mediabox.bi:2522"
+          ? "https://adeco.onrender.com"
           : "http://192.168.43.195:3000";
 
 interface Options extends RequestInit  {

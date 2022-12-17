@@ -11,6 +11,7 @@ export default function Header() {
           const navigation = useNavigation()
 
           if(!user) return null
+          console.log({ user })
           return (
                     <View style={styles.header}>
                               <TouchableWithoutFeedback onPress={() => navigation.navigate('ProfileScreen' as never)}>

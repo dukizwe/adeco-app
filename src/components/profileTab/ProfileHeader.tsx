@@ -8,11 +8,13 @@ import { useAppSelector } from "../../hooks/useAppSelector";
 import { pushTokenSelector } from "../../store/selectors/appSelectors";
 import fetchApi from "../../utils/fetchApi";
 import { userSelector } from "../../store/selectors/userSelector";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProfileHeader() {
           const dispatch = useDispatch()
           const pushToken = useAppSelector(pushTokenSelector)
           const user = useAppSelector(userSelector)
+          const navigation = useNavigation()
 
           const removeTokenAndCaches = async (userId: string) => {
                     const locale = await AsyncStorage.getItem('locale')
@@ -44,6 +46,7 @@ export default function ProfileHeader() {
                               <TouchableNativeFeedback
                                         accessibilityRole="button"
                                         background={TouchableNativeFeedback.Ripple('#c9c5c5', true)}
+                                        onPress={() => navigation.navigate('NotificationsScreen' as never)}
                               >
                                         <View style={{ padding: 10 }}>
                                                   <Feather name="bell" size={24} color="#777" />
